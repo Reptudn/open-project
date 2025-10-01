@@ -3,35 +3,40 @@ import { Button, List, ListItem } from "@ui-kitten/components";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { ThemeContext } from "../theme-context";
 
 function onPress() {
   alert("Hilfeeee");
 }
 
 export default function HomeScreen() {
+  const themeContext = React.useContext(ThemeContext);
   return (
     <SafeAreaView>
       <Text style={styles.header}>Settings</Text>
-      <TouchableOpacity style={styles.item}>
+      <TouchableOpacity style={styles.item} onPress={themeContext.toggleTheme}>
         <Ionicons
+          name={themeContext.theme === "light" ? "sunny-sharp" : "moon-sharp"}
           size={24}
-          color="#666"
+          color="#ffffffff"
           style={styles.itemIcon}
         />
         <Text style={styles.title}>Appearance</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.item}>
         <Ionicons
+          name="beer-sharp"
           size={24}
-          color="#666"
+          color="#ffffffff"
           style={styles.itemIcon}
         />
         <Text style={styles.title}>Test12</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.item}>
         <Ionicons
+          name="log-out-sharp"
           size={24}
-          color="#666"
+          color="#ffffffff"
           style={styles.itemIcon}
         />
         <Text style={styles.title}>Log out</Text>
@@ -76,7 +81,6 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     marginHorizontal: 16,
     borderRadius: 20,
-    borderColor: "black",
     flexDirection: "row",
     alignItems: "center",
   },
