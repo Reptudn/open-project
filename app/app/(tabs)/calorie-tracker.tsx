@@ -1,7 +1,7 @@
 import { StyleSheet, Text } from "react-native";
 
-export default function HomeScreen() {
-  return <Text style={styles.text}>Profile Page</Text>;
+export default function CalorieTrackerScreen() {
+  return <Text style={styles.text}>Calorie Tracker</Text>;
 }
 
 const styles = StyleSheet.create({
