@@ -20,4 +20,6 @@ We are trying to build the (in our minds) ultimate Gym App
 - Training Plan and Exercise recommendations
 - Cool and Modern Design with useful Widgets
 - Achievements (100kg benchpress / 200kg squats)
+- Catoon Guy that gets trained when you train (depending on what you train) and looses gains when you don't train
+- 
 
