@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./assets/gymAppGHDone.png" alt="Header" width="800"/>
+  <img src="./assets/gymAppGHDone.png" alt="Header" width="1000"/>
 </p>
 
 # 42 Open Project
