@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="./assets/gymAppGHDone.png" alt="Header" width="800"/>
+</p>
+
 # 42 Open Project
 [@jkauker](https://profile.intra.42.fr/users/jkauker) [@lbohm](https://profile.intra.42.fr/users/lbohm) [@lglauch](https://profile.intra.42.fr/users/lglauch)
 
