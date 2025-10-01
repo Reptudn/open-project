@@ -1,7 +1,7 @@
 import { StyleSheet, Text } from "react-native";
 
 export default function HomeScreen() {
-  return <Text style={styles.text}>Profile Page</Text>;
+  return <Text style={styles.text}>Training</Text>;
 }
 
 const styles = StyleSheet.create({
