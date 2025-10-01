@@ -19,4 +19,5 @@ We are trying to build the (in our minds) ultimate Gym App
 - All Exercises with a Tutorial Video / Description etc.
 - Training Plan and Exercise recommendations
 - Cool and Modern Design with useful Widgets
+- Achievements (100kg benchpress / 200kg squats)
 
