@@ -1,44 +1,236 @@
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  Alert,
+  View,
+  Appearance,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useColorScheme } from "@/hooks/use-color-scheme";
+// import { useAuth } from "../../contexts/AuthContext";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-export default function HomeScreen() {
+export default function SettingsScreen() {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
+  // const { logout, user } = useAuth();
+
+  const handleLogout = () => {
+    Alert.alert("Sign Out", "Are you sure you want to sign out?", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "Sign Out",
+        style: "destructive",
+        onPress: async () => {
+          // await logout();
+        },
+      },
+    ]);
+  };
+
+  const showThemeSelector = () => {
+    Alert.alert("Choose Theme", "Select your preferred color scheme", [
+      {
+        text: "Light Mode",
+        onPress: () => Appearance.setColorScheme("light"),
+      },
+      {
+        text: "Dark Mode",
+        onPress: () => Appearance.setColorScheme("dark"),
+      },
+      {
+        text: "Auto (System)",
+        onPress: () => Appearance.setColorScheme(null), // null means follow system
+      },
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+    ]);
+  };
+
+  const getThemeIcon = () => {
+    return isDark ? "moon-outline" : "sunny-outline";
+  };
+
+  const getThemeText = () => {
+    return isDark ? "Dark Mode" : "Light Mode";
+  };
+
   return (
-    <SafeAreaView>
-      <Text style={styles.header}>Settings</Text>
-      <TouchableOpacity style={styles.item}>
+    <SafeAreaView
+      style={[
+        styles.container,
+        { backgroundColor: isDark ? "#242c40" : "#d0d0c0" },
+      ]}
+    >
+      <TouchableOpacity
+        style={[
+          styles.item,
+          { backgroundColor: isDark ? "#404040" : "#f0f0f0" },
+        ]}
+        onPress={showThemeSelector}
+      >
         <Ionicons
-          name="moon-sharp"
+          name={getThemeIcon()}
           size={24}
-          color="#ffffffff"
+          color={isDark ? "#d0d0c0" : "#242c40"}
           style={styles.itemIcon}
         />
-        <Text style={styles.title}>Appearance</Text>
+        <View style={styles.itemContent}>
+          <Text
+            style={[styles.title, { color: isDark ? "#d0d0c0" : "#242c40" }]}
+          >
+            Appearance
+          </Text>
+          <Text
+            style={[styles.subtitle, { color: isDark ? "#8a8a8a" : "#666666" }]}
+          >
+            {getThemeText()}
+          </Text>
+        </View>
+        <Ionicons
+          name="chevron-forward"
+          size={20}
+          color={isDark ? "#8a8a8a" : "#666666"}
+        />
       </TouchableOpacity>
-      <TouchableOpacity style={styles.item}>
+
+      <TouchableOpacity
+        style={[
+          styles.item,
+          { backgroundColor: isDark ? "#404040" : "#f0f0f0" },
+        ]}
+        onPress={() => {
+          const newTheme = isDark ? "light" : "dark";
+          Appearance.setColorScheme(newTheme);
+        }}
+      >
         <Ionicons
-          name="beer-sharp"
+          name="contrast-outline"
           size={24}
-          color="#ffffffff"
+          color={isDark ? "#d0d0c0" : "#242c40"}
           style={styles.itemIcon}
         />
-        <Text style={styles.title}>Test12</Text>
+        <View style={styles.itemContent}>
+          <Text
+            style={[styles.title, { color: isDark ? "#d0d0c0" : "#242c40" }]}
+          >
+            Quick Theme Toggle
+          </Text>
+          <Text
+            style={[styles.subtitle, { color: isDark ? "#8a8a8a" : "#666666" }]}
+          >
+            Switch to {isDark ? "Light" : "Dark"} Mode
+          </Text>
+        </View>
+        <Ionicons
+          name={isDark ? "sunny-outline" : "moon-outline"}
+          size={20}
+          color={isDark ? "#8a8a8a" : "#666666"}
+        />
       </TouchableOpacity>
-      <TouchableOpacity style={styles.item}>
+      {/* Profile Section */}
+      <TouchableOpacity
+        style={[
+          styles.item,
+          { backgroundColor: isDark ? "#404040" : "#f0f0f0" },
+        ]}
+      >
         <Ionicons
-          name="log-out-sharp"
+          name="person-circle-outline"
           size={24}
-          color="#ffffffff"
+          color={isDark ? "#d0d0c0" : "#242c40"}
           style={styles.itemIcon}
         />
-        <Text style={styles.title}>Log out</Text>
+        <View style={styles.itemContent}>
+          <Text
+            style={[styles.title, { color: isDark ? "#d0d0c0" : "#242c40" }]}
+          >
+            Profile
+          </Text>
+          <Text
+            style={[styles.subtitle, { color: isDark ? "#8a8a8a" : "#666666" }]}
+          >
+            {/* {user?.name || user?.email || "User"} */} User
+          </Text>
+        </View>
+        <Ionicons
+          name="chevron-forward"
+          size={20}
+          color={isDark ? "#8a8a8a" : "#666666"}
+        />
+      </TouchableOpacity>
+
+      {/* Notifications */}
+      <TouchableOpacity
+        style={[
+          styles.item,
+          { backgroundColor: isDark ? "#404040" : "#f0f0f0" },
+        ]}
+      >
+        <Ionicons
+          name="notifications-outline"
+          size={24}
+          color={isDark ? "#d0d0c0" : "#242c40"}
+          style={styles.itemIcon}
+        />
+        <View style={styles.itemContent}>
+          <Text
+            style={[styles.title, { color: isDark ? "#d0d0c0" : "#242c40" }]}
+          >
+            Notifications
+          </Text>
+          <Text
+            style={[styles.subtitle, { color: isDark ? "#8a8a8a" : "#666666" }]}
+          >
+            Manage your notifications
+          </Text>
+        </View>
+        <Ionicons
+          name="chevron-forward"
+          size={20}
+          color={isDark ? "#8a8a8a" : "#666666"}
+        />
+      </TouchableOpacity>
+
+      {/* Logout */}
+      <TouchableOpacity
+        style={[
+          styles.item,
+          { backgroundColor: isDark ? "#404040" : "#f0f0f0" },
+        ]}
+        onPress={handleLogout}
+      >
+        <Ionicons
+          name="log-out-outline"
+          size={24}
+          color="#ff4444"
+          style={styles.itemIcon}
+        />
+        <View style={styles.itemContent}>
+          <Text style={[styles.title, { color: "#ff4444" }]}>Sign Out</Text>
+          <Text
+            style={[styles.subtitle, { color: isDark ? "#8a8a8a" : "#666666" }]}
+          >
+            Sign out of your account
+          </Text>
+        </View>
+        <Ionicons name="chevron-forward" size={20} color="#ff4444" />
       </TouchableOpacity>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   titleContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -80,7 +272,15 @@ const styles = StyleSheet.create({
   itemIcon: {
     marginRight: 15,
   },
+  itemContent: {
+    flex: 1,
+  },
   title: {
-    fontSize: 20,
+    fontSize: 18,
+    fontWeight: "600",
+  },
+  subtitle: {
+    fontSize: 14,
+    marginTop: 2,
   },
 });
