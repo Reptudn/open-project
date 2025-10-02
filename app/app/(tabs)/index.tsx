@@ -1,12 +1,7 @@
 import React from "react";
-import { Button } from "@ui-kitten/components";
 import { StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
-
-const IconSettings = () => (
-  <Ionicons name="settings-outline" size={40} color="black" />
-);
 
 export default function HomeScreen() {
   return (
