@@ -1,22 +1,15 @@
 import React from "react";
-import { Button, List, ListItem } from "@ui-kitten/components";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { ThemeContext } from "../theme-context";
-
-function onPress() {
-  alert("Hilfeeee");
-}
 
 export default function HomeScreen() {
-  const themeContext = React.useContext(ThemeContext);
   return (
     <SafeAreaView>
       <Text style={styles.header}>Settings</Text>
-      <TouchableOpacity style={styles.item} onPress={themeContext.toggleTheme}>
+      <TouchableOpacity style={styles.item}>
         <Ionicons
-          name={themeContext.theme === "light" ? "sunny-sharp" : "moon-sharp"}
+          name="moon-sharp"
           size={24}
           color="#ffffffff"
           style={styles.itemIcon}
