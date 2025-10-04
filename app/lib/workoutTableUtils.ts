@@ -1,19 +1,19 @@
 import supabase from './supabase'
 
 interface Profile {
-	id: String;
-	username: String;
-	full_name: String;
-	gender: String;
+	id: string;
+	username: string;
+	full_name: string;
+	gender: string;
 	birth_data: Date;
 	height_cm: number;
 	weight_kg: number;
 }
 
 interface Workout {
-	user_id: String;
-	name: String;
-	description: String;
+	user_id: string;
+	name: string;
+	description: string;
 }
 
 interface WorkoutExercise {
