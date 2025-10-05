@@ -8,8 +8,10 @@ import { signUpUser } from "@/lib/authUser";
 
 export const unstable_settings = {
   anchor: "(tabs)",
+  anchor: "(tabs)",
 };
 
+function AppContent() {
 function AppContent() {
   const colorScheme = useColorScheme();
   // const { isAuthenticated, isLoading } = useAuth();
@@ -55,11 +57,22 @@ function AppContent() {
   // Show main app if authenticated
   return (
     <View style={[styles.container, themeContainerStyle]}>
+    <View style={[styles.container, themeContainerStyle]}>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         {/* <Stack.Screen name="login" options={{ headerShown: false }} /> */}
+        {/* <Stack.Screen name="login" options={{ headerShown: false }} /> */}
       </Stack>
       <StatusBar style="auto" />
+    </View>
+  );
+}
+
+export default function RootLayout() {
+  return (
+    // <AuthProvider>
+    <AppContent />
+    // </AuthProvider>
     </View>
   );
 }
