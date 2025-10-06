@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View, useColorScheme } from "react-native";
+import SignUpPage from "../components/auth/signUp";
 // import { AuthProvider, useAuth } from "../contexts/AuthContext";
 // import LoadingScreen from "../components/LoadingScreen";
 
@@ -22,14 +23,20 @@ function AppContent() {
   // // }
 
   // // Show main app if authenticated
+  // return <SignUpPage />;
+  // return (
+  //   <View style={[styles.container, themeContainerStyle]}>
+  //     <Stack>
+  //       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+  //       {/* <Stack.Screen name="login" options={{ headerShown: false }} /> */}
+  //       {/* <Stack.Screen name="login" options={{ headerShown: false }} /> */}
+  //     </Stack>
+  //     <StatusBar style="auto" />
+  //   </View>
+  // );
   return (
     <View style={[styles.container, themeContainerStyle]}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        {/* <Stack.Screen name="login" options={{ headerShown: false }} /> */}
-        {/* <Stack.Screen name="login" options={{ headerShown: false }} /> */}
-      </Stack>
-      <StatusBar style="auto" />
+      <SignUpPage />
     </View>
   );
 }
