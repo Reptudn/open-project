@@ -11,6 +11,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 // import { useAuth } from "../../contexts/AuthContext";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { ThemeColors } from "@/constants/theme";
 
 export default function SettingsScreen() {
   const colorScheme = useColorScheme();
@@ -61,7 +62,9 @@ export default function SettingsScreen() {
       <TouchableOpacity
         style={[
           styles.item,
-          { backgroundColor: isDark ? "#404040" : "#f0f0f0" },
+          {
+            backgroundColor: isDark ? ThemeColors.dark.button : ThemeColors.light.button,
+          },
         ]}
         onPress={() => {
           const newTheme = isDark ? "light" : "dark";
@@ -71,12 +74,12 @@ export default function SettingsScreen() {
         <Ionicons
           name="contrast-outline"
           size={24}
-          color={isDark ? "#d0d0c0" : "#242c40"}
+          color={isDark ? ThemeColors.dark.text : "#242c40"}
           style={styles.itemIcon}
         />
         <View style={styles.itemContent}>
           <Text
-            style={[styles.title, { color: isDark ? "#d0d0c0" : "#242c40" }]}
+            style={[styles.title, { color: isDark ? ThemeColors.dark.text : "#242c40" }]}
           >
             Quick Theme Toggle
           </Text>
@@ -100,18 +103,18 @@ export default function SettingsScreen() {
       <TouchableOpacity
         style={[
           styles.item,
-          { backgroundColor: isDark ? "#404040" : "#f0f0f0" },
+          { backgroundColor: isDark ? ThemeColors.dark.button : ThemeColors.light.button },
         ]}
       >
         <Ionicons
           name="person-circle-outline"
           size={24}
-          color={isDark ? "#d0d0c0" : "#242c40"}
+          color={isDark ? ThemeColors.dark.text : "#242c40"}
           style={styles.itemIcon}
         />
         <View style={styles.itemContent}>
           <Text
-            style={[styles.title, { color: isDark ? "#d0d0c0" : "#242c40" }]}
+            style={[styles.title, { color: isDark ? ThemeColors.dark.text : "#242c40" }]}
           >
             Profile
           </Text>
@@ -128,25 +131,25 @@ export default function SettingsScreen() {
         />
       </TouchableOpacity>
     );
-  }
+  };
 
   const NotificationsBtn = () => {
     return (
       <TouchableOpacity
         style={[
           styles.item,
-          { backgroundColor: isDark ? "#404040" : "#f0f0f0" },
+          { backgroundColor: isDark ? ThemeColors.dark.button : ThemeColors.light.button },
         ]}
       >
         <Ionicons
           name="notifications-outline"
           size={24}
-          color={isDark ? "#d0d0c0" : "#242c40"}
+          color={isDark ? ThemeColors.dark.text : "#242c40"}
           style={styles.itemIcon}
         />
         <View style={styles.itemContent}>
           <Text
-            style={[styles.title, { color: isDark ? "#d0d0c0" : "#242c40" }]}
+            style={[styles.title, { color: isDark ? ThemeColors.dark.text : ThemeColors.light.text }]}
           >
             Notifications
           </Text>
@@ -163,14 +166,14 @@ export default function SettingsScreen() {
         />
       </TouchableOpacity>
     );
-  }
+  };
 
   const LogoutBtn = () => {
     return (
       <TouchableOpacity
         style={[
           styles.item,
-          { backgroundColor: isDark ? "#404040" : "#f0f0f0" },
+          { backgroundColor: isDark ? ThemeColors.dark.button : ThemeColors.light.button },
         ]}
         onPress={handleLogout}
       >
@@ -191,15 +194,18 @@ export default function SettingsScreen() {
         <Ionicons name="chevron-forward" size={20} color="#ff4444" />
       </TouchableOpacity>
     );
-  }
+  };
 
-
-// Main settings page with components
+  // Main settings page with components
   return (
     <SafeAreaView
       style={[
         styles.container,
-        { backgroundColor: isDark ? "#242c40" : "#d0d0c0" },
+        {
+          backgroundColor: isDark
+            ? ThemeColors.dark.background
+            : ThemeColors.light.background,
+        },
       ]}
     >
       {/* Settings Section */}

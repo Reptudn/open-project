@@ -4,6 +4,7 @@ import { HapticTab } from "@/components/haptic-tab";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { View, TouchableOpacity } from "react-native";
+import { ThemeColors } from "@/constants/theme";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -12,18 +13,30 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: isDark ? "#d0d0c0" : "#242c40",
-        tabBarInactiveTintColor: isDark ? "#8a8a8a" : "#666666",
+        tabBarActiveTintColor: isDark
+          ? ThemeColors.dark.tabBarActiveTintColor
+          : ThemeColors.light.tabBarActiveTintColor,
+        tabBarInactiveTintColor: isDark
+          ? ThemeColors.dark.tabBarInactiveTintColor
+          : ThemeColors.light.tabBarInactiveTintColor,
         tabBarStyle: {
-          backgroundColor: isDark ? "#242c40" : "#d0d0c0",
-          borderTopColor: isDark ? "#404040" : "#b0b0a0",
+          backgroundColor: isDark
+            ? ThemeColors.dark.background
+            : ThemeColors.light.background,
+          borderTopColor: isDark
+            ? ThemeColors.dark.borderTopColor
+            : ThemeColors.light.borderTopColor,
         },
         headerShown: true,
         tabBarButton: HapticTab,
         headerStyle: {
-          backgroundColor: isDark ? "#242c40" : "#d0d0c0",
+          backgroundColor: isDark
+            ? ThemeColors.dark.background
+            : ThemeColors.light.background,
         },
-        headerTintColor: isDark ? "#d0d0c0" : "#242c40",
+        headerTintColor: isDark
+          ? ThemeColors.dark.headerTintColor
+          : ThemeColors.light.headerTintColor,
       }}
     >
       <Tabs.Screen
@@ -45,7 +58,7 @@ export default function TabLayout() {
               <Ionicons
                 name="notifications-outline"
                 size={24}
-                color={isDark ? "#d0d0c0" : "#242c40"}
+                color={isDark ? ThemeColors.dark.icon : ThemeColors.light.icon}
               />
             </TouchableOpacity>
           ),
@@ -64,7 +77,7 @@ export default function TabLayout() {
               <Ionicons
                 name="add-outline"
                 size={24}
-                color={isDark ? "#d0d0c0" : "#242c40"}
+                color={isDark ? ThemeColors.dark.icon : ThemeColors.light.icon}
               />
             </TouchableOpacity>
           ),
@@ -84,14 +97,14 @@ export default function TabLayout() {
                 <Ionicons
                   name="camera-outline"
                   size={24}
-                  color={isDark ? "#d0d0c0" : "#242c40"}
+                  color={isDark ? ThemeColors.dark.icon : ThemeColors.light.icon}
                 />
               </TouchableOpacity>
               <TouchableOpacity>
                 <Ionicons
                   name="add-outline"
                   size={24}
-                  color={isDark ? "#d0d0c0" : "#242c40"}
+                  color={isDark ? ThemeColors.dark.icon : ThemeColors.light.icon}
                 />
               </TouchableOpacity>
             </View>
@@ -111,7 +124,7 @@ export default function TabLayout() {
               <Ionicons
                 name="help-circle-outline"
                 size={24}
-                color={isDark ? "#d0d0c0" : "#242c40"}
+                color={isDark ? ThemeColors.dark.icon : ThemeColors.light.icon}
               />
             </TouchableOpacity>
           ),
