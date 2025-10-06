@@ -54,53 +54,10 @@ export default function SettingsScreen() {
     ]);
   };
 
-  const getThemeIcon = () => {
-    return isDark ? "moon-outline" : "sunny-outline";
-  };
+  //Settings Components
 
-  const getThemeText = () => {
-    return isDark ? "Dark Mode" : "Light Mode";
-  };
-
-  return (
-    <SafeAreaView
-      style={[
-        styles.container,
-        { backgroundColor: isDark ? "#242c40" : "#d0d0c0" },
-      ]}
-    >
-      <TouchableOpacity
-        style={[
-          styles.item,
-          { backgroundColor: isDark ? "#404040" : "#f0f0f0" },
-        ]}
-        onPress={showThemeSelector}
-      >
-        <Ionicons
-          name={getThemeIcon()}
-          size={24}
-          color={isDark ? "#d0d0c0" : "#242c40"}
-          style={styles.itemIcon}
-        />
-        <View style={styles.itemContent}>
-          <Text
-            style={[styles.title, { color: isDark ? "#d0d0c0" : "#242c40" }]}
-          >
-            Appearance
-          </Text>
-          <Text
-            style={[styles.subtitle, { color: isDark ? "#8a8a8a" : "#666666" }]}
-          >
-            {getThemeText()}
-          </Text>
-        </View>
-        <Ionicons
-          name="chevron-forward"
-          size={20}
-          color={isDark ? "#8a8a8a" : "#666666"}
-        />
-      </TouchableOpacity>
-
+  const ThemeBtn = () => {
+    return (
       <TouchableOpacity
         style={[
           styles.item,
@@ -135,7 +92,11 @@ export default function SettingsScreen() {
           color={isDark ? "#8a8a8a" : "#666666"}
         />
       </TouchableOpacity>
-      {/* Profile Section */}
+    );
+  };
+
+  const ProfileBtn = () => {
+    return (
       <TouchableOpacity
         style={[
           styles.item,
@@ -166,8 +127,11 @@ export default function SettingsScreen() {
           color={isDark ? "#8a8a8a" : "#666666"}
         />
       </TouchableOpacity>
+    );
+  }
 
-      {/* Notifications */}
+  const NotificationsBtn = () => {
+    return (
       <TouchableOpacity
         style={[
           styles.item,
@@ -198,8 +162,11 @@ export default function SettingsScreen() {
           color={isDark ? "#8a8a8a" : "#666666"}
         />
       </TouchableOpacity>
+    );
+  }
 
-      {/* Logout */}
+  const LogoutBtn = () => {
+    return (
       <TouchableOpacity
         style={[
           styles.item,
@@ -223,6 +190,29 @@ export default function SettingsScreen() {
         </View>
         <Ionicons name="chevron-forward" size={20} color="#ff4444" />
       </TouchableOpacity>
+    );
+  }
+
+
+// Main settings page with components
+  return (
+    <SafeAreaView
+      style={[
+        styles.container,
+        { backgroundColor: isDark ? "#242c40" : "#d0d0c0" },
+      ]}
+    >
+      {/* Settings Section */}
+      <ThemeBtn></ThemeBtn>
+
+      {/* Profile Section */}
+      <ProfileBtn></ProfileBtn>
+
+      {/* Notifications */}
+      <NotificationsBtn></NotificationsBtn>
+
+      {/* Logout */}
+      <LogoutBtn></LogoutBtn>
     </SafeAreaView>
   );
 }
