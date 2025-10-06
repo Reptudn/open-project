@@ -1,16 +1,14 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 export default function HomeScreen() {
   return (
-    <SafeAreaView>
-      <View style={styles.container}>
-        <Text style={styles.title}>Home</Text>
-        <Ionicons name="home" size={32} color="black" />
-      </View>
-    </SafeAreaView>
+    <View style={styles.container}>
+      <Text style={styles.title}>Home</Text>
+      <Ionicons name="home" size={32} color="black" />
+    </View>
   );
 }
 
@@ -23,5 +21,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: "bold",
+    color: "red",
   },
 });

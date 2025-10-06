@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, View, useColorScheme } from "react-native";
-import SignUpPage from "../components/auth/signUp";
-// import { AuthProvider, useAuth } from "../contexts/AuthContext";
-// import LoadingScreen from "../components/LoadingScreen";
+import { StyleSheet, View, useColorScheme, Text } from "react-native";
+import { Session } from "@supabase/supabase-js";
+import { supabase } from "@/lib/supabase";
+import Auth from "@/components/auth/Auth";
 
 export const unstable_settings = {
   anchor: "(tabs)",
@@ -12,33 +12,33 @@ export const unstable_settings = {
 
 function AppContent() {
   const colorScheme = useColorScheme();
-  // // const { isAuthenticated, isLoading } = useAuth();
 
   const themeContainerStyle =
     colorScheme === "light" ? styles.lightContainer : styles.darkContainer;
 
-  // // Show loading screen while checking authentication
-  // // if (isLoading) {
-  // //   return <LoadingScreen />;
-  // // }
+  const [session, setSession] = useState<Session | null>(null);
 
-  // // Show main app if authenticated
-  // return <SignUpPage />;
-  // return (
-  //   <View style={[styles.container, themeContainerStyle]}>
-  //     <Stack>
-  //       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-  //       {/* <Stack.Screen name="login" options={{ headerShown: false }} /> */}
-  //       {/* <Stack.Screen name="login" options={{ headerShown: false }} /> */}
-  //     </Stack>
-  //     <StatusBar style="auto" />
-  //   </View>
-  // );
-  return (
-    <View style={[styles.container, themeContainerStyle]}>
-      <SignUpPage />
-    </View>
-  );
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+  }, []);
+
+  if (session && session.user) {
+    return (
+      <View style={[styles.container, themeContainerStyle]}>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        </Stack>
+        <StatusBar style="auto" />
+      </View>
+    );
+  }
+  return <Auth />;
 }
 
 export default function RootLayout() {

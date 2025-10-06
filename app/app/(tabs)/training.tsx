@@ -22,6 +22,6 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   text: {
-    color: "white",
+    color: "red",
   },
 });
