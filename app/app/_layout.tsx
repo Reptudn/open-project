@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View, useColorScheme, Text } from "react-native";
-import { Session } from "@supabase/supabase-js";
-import { supabase } from "@/lib/supabase";
 import Auth from "@/components/auth/Auth";
+import AuthProvider from "@/providers/auth-provider";
+import { SplashScreenController } from "@/components/auth/splash-screen-controller";
+import { useAuthContext } from "@/hooks/use-auth-context";
 
 export const unstable_settings = {
   anchor: "(tabs)",
@@ -12,23 +12,12 @@ export const unstable_settings = {
 
 function AppContent() {
   const colorScheme = useColorScheme();
+  const { isLoggedIn } = useAuthContext();
 
   const themeContainerStyle =
     colorScheme === "light" ? styles.lightContainer : styles.darkContainer;
 
-  const [session, setSession] = useState<Session | null>(null);
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
-
-    supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-  }, []);
-
-  if (session && session.user) {
+  if (isLoggedIn) {
     return (
       <View style={[styles.container, themeContainerStyle]}>
         <Stack>
@@ -43,9 +32,10 @@ function AppContent() {
 
 export default function RootLayout() {
   return (
-    // <AuthProvider>
-    <AppContent />
-    // </AuthProvider>
+    <AuthProvider>
+      <SplashScreenController />
+      <AppContent />
+    </AuthProvider>
   );
 }
 

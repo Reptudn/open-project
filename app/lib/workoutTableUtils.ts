@@ -1,6 +1,6 @@
-import supabase from "./supabase";
+import { supabase } from "./supabase";
 
-interface Profile {
+export interface Profile {
   id: string;
   username: string;
   full_name: string;
@@ -43,14 +43,11 @@ interface WorkoutLog {
 
 // Getter Function
 
-export async function getUser(): Promise<Profile | null> {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+export async function getUser(id: string): Promise<Profile | null> {
   const { data, error } = await supabase
     .from("profiles")
     .select("*")
-    .eq("id", user?.id)
+    .eq("id", id)
     .single();
 
   if (error) {
