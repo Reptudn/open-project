@@ -1,0 +1,128 @@
+import supabase from './supabase'
+
+interface Profile {
+	id: string;
+	username: string;
+	full_name: string;
+	gender: string;
+	birth_data: Date;
+	height_cm: number;
+	weight_kg: number;
+}
+
+interface Workout {
+	user_id: string;
+	name: string;
+	description: string;
+}
+
+interface WorkoutExercise {
+	workout_id: number;
+	exercise_id: number;
+	sets: number;
+	reps: number;
+	rest_seconds: number;
+	order_index: number;
+}
+
+interface WorkoutLog {
+	workout_id: number;
+	exercise_id: number;
+	sets_completed: number;
+	reps_completed: number;
+	weight_kg: number;
+}
+
+// Getter Function
+
+export async function getUser() {
+	const { data: { user } } = await supabase.auth.getUser();
+	const { data, error } = await supabase.from('profiles').select('*').eq('id', user?.id).single();
+
+	if (error) {
+		console.error('Problem loading User Table', error);
+		return ([]);
+	}
+	return (data);
+}
+
+export async function getWorkouts() {
+	const { data: { user } } = await supabase.auth.getUser();
+	const { data, error } = await supabase.from('workouts').select('*').eq('user_id', user?.id);
+
+	if (error) {
+		console.log('Problem loading Workouts Table', error);
+		return ([]);
+	}
+	return (data);
+}
+
+export async function getExercise(id: number) {
+	const { data, error } = await supabase.from('exercises').select('*').eq('id', id).single();
+	
+	if (error) {
+		console.error('Problem loading Exercises', error);
+		return ([]);
+	}
+	return (data);
+}
+
+export async function getWorkoutExercises(workoutId: number) {
+	const { data: { user} } = await supabase.auth.getUser();
+	const { data, error } = await supabase.from('workout_exercises').select('*').eq('workout_id', workoutId);
+
+	if (error) {
+		console.error('Problem loading WorkoutExercises Table', error);
+		return ([]);
+	}
+	return (data);
+}
+
+export async function getWorkoutLogs(workoutId: number) {
+	const { data, error } = await supabase.from('workout_logs').select('*').eq('workout_id', workoutId);
+
+	if (error) {
+		console.error('Problem loading WorkoutLogs', error);
+		return ([]);
+	}
+	return (data);
+}
+
+// Setter Function
+
+export async function setUser(user: Profile) {
+	const { error } = await supabase.from('profiles').insert([user]);
+
+	if (error) {
+		console.error('Problem insert to User Table', error);
+		return ([]);
+	}
+}
+
+export async function setWorkout(workout: Workout) {
+	const { data: { user } } = await supabase.auth.getUser();
+	if (user)
+		workout.user_id = user.id;
+
+	const { error } = await supabase.from('workouts').insert([workout]);
+
+	if (error) {
+		console.error('Problem insert to Workouts Table', error);
+	}
+}
+
+export async function setWorkoutExercise(workoutExercises: WorkoutExercise) {
+	const { error } = await supabase.from('workout_exercises').insert([workoutExercises]);
+
+	if (error) {
+		console.error('Problem insert to WorkoutsExercises Table', error);
+	}
+}
+
+export async function setWorkoutLogs(workoutLog: WorkoutLog) {
+	const { error } = await supabase.from('workout_logs').insert([workoutLog]);
+
+	if (error) {
+		console.error('Problem insert to WorkoutLogs Table', error);
+	}
+}
