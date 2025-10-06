@@ -63,7 +63,9 @@ export default function SettingsScreen() {
         style={[
           styles.item,
           {
-            backgroundColor: isDark ? ThemeColors.dark.button : ThemeColors.light.button,
+            backgroundColor: isDark
+              ? ThemeColors.dark.button
+              : ThemeColors.light.button,
           },
         ]}
         onPress={() => {
@@ -79,7 +81,10 @@ export default function SettingsScreen() {
         />
         <View style={styles.itemContent}>
           <Text
-            style={[styles.title, { color: isDark ? ThemeColors.dark.text : "#242c40" }]}
+            style={[
+              styles.title,
+              { color: isDark ? ThemeColors.dark.text : "#242c40" },
+            ]}
           >
             Quick Theme Toggle
           </Text>
@@ -103,7 +108,11 @@ export default function SettingsScreen() {
       <TouchableOpacity
         style={[
           styles.item,
-          { backgroundColor: isDark ? ThemeColors.dark.button : ThemeColors.light.button },
+          {
+            backgroundColor: isDark
+              ? ThemeColors.dark.button
+              : ThemeColors.light.button,
+          },
         ]}
       >
         <Ionicons
@@ -114,7 +123,10 @@ export default function SettingsScreen() {
         />
         <View style={styles.itemContent}>
           <Text
-            style={[styles.title, { color: isDark ? ThemeColors.dark.text : "#242c40" }]}
+            style={[
+              styles.title,
+              { color: isDark ? ThemeColors.dark.text : "#242c40" },
+            ]}
           >
             Profile
           </Text>
@@ -138,7 +150,11 @@ export default function SettingsScreen() {
       <TouchableOpacity
         style={[
           styles.item,
-          { backgroundColor: isDark ? ThemeColors.dark.button : ThemeColors.light.button },
+          {
+            backgroundColor: isDark
+              ? ThemeColors.dark.button
+              : ThemeColors.light.button,
+          },
         ]}
       >
         <Ionicons
@@ -149,7 +165,12 @@ export default function SettingsScreen() {
         />
         <View style={styles.itemContent}>
           <Text
-            style={[styles.title, { color: isDark ? ThemeColors.dark.text : ThemeColors.light.text }]}
+            style={[
+              styles.title,
+              {
+                color: isDark ? ThemeColors.dark.text : ThemeColors.light.text,
+              },
+            ]}
           >
             Notifications
           </Text>
@@ -173,7 +194,11 @@ export default function SettingsScreen() {
       <TouchableOpacity
         style={[
           styles.item,
-          { backgroundColor: isDark ? ThemeColors.dark.button : ThemeColors.light.button },
+          {
+            backgroundColor: isDark
+              ? ThemeColors.dark.button
+              : ThemeColors.light.button,
+          },
         ]}
         onPress={handleLogout}
       >

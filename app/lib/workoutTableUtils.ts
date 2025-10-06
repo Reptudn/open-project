@@ -11,9 +11,11 @@ interface Profile {
 }
 
 interface Workout {
+	id: number;
 	user_id: string;
 	name: string;
 	description: string;
+	created_at: string;
 }
 
 interface WorkoutExercise {
@@ -46,13 +48,13 @@ export async function getUser() {
 	return (data);
 }
 
-export async function getWorkouts() {
+export async function getWorkouts(): Promise<Workout[] | null> {
 	const { data: { user } } = await supabase.auth.getUser();
-	const { data, error } = await supabase.from('workouts').select('*').eq('user_id', user?.id);
+	const { data , error } = await supabase.from('workouts').select('*').eq('user_id', user?.id);
 
 	if (error) {
 		console.log('Problem loading Workouts Table', error);
-		return ([]);
+		return (null);
 	}
 	return (data);
 }
