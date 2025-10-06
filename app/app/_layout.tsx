@@ -8,10 +8,8 @@ import { signUpUser } from "@/lib/authUser";
 
 export const unstable_settings = {
   anchor: "(tabs)",
-  anchor: "(tabs)",
 };
 
-function AppContent() {
 function AppContent() {
   const colorScheme = useColorScheme();
   // const { isAuthenticated, isLoading } = useAuth();
@@ -27,6 +25,7 @@ function AppContent() {
   // Login
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
+  const [confirmPass, setConfirm] = useState("");
 
   const checkSignUp = async () => {
     if (!email || !pass) {
@@ -37,44 +36,52 @@ function AppContent() {
       alert(data);
     }
   };
+  const googleSignUp = async () => {
+    
+  };
+  return (
+    <View style={[login.container, themeContainerStyle]}>
+      <TextInput 
+        style={login.input}
+        placeholder="Email"
+        value={email}
+        onChangeText={setEmail}/>
+      <TextInput 
+        style={login.input}
+        placeholder="Password"
+        value={pass}
+        onChangeText={setPass}/>
+      <TextInput 
+        style={login.input}
+        placeholder="Confirm Password"
+        value={confirmPass}
+        onChangeText={setConfirm}/>
+      <Button
+        title="Continue with Google"
+        onPress={googleSignUp}/>
+      <Button
+        title="Continue with Apple"
+        onPress={googleSignUp}/>
+      <Button
+        title="Continue with Facebook"
+        onPress={googleSignUp}/>
+      <Button
+        title="Sign Up"
+        onPress={checkSignUp}/>
+    </View>
+  );
+  // Show main app if authenticated
   // return (
-  //   <View style={[login.container, themeContainerStyle]}>
-  //     <TextInput 
-  //       style={login.input}
-  //       placeholder="Email"
-  //       value={email}
-  //       onChangeText={setEmail}/>
-  //     <TextInput 
-  //       style={login.input}
-  //       placeholder="Password"
-  //       value={pass}
-  //       onChangeText={setPass}/>
-  //     <Button
-  //       title="Login"
-  //       onPress={checkSignUp}/>
+  //   <View style={[styles.container, themeContainerStyle]}>
+  //   <View style={[styles.container, themeContainerStyle]}>
+  //     <Stack>
+  //       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+  //       {/* <Stack.Screen name="login" options={{ headerShown: false }} /> */}
+  //       {/* <Stack.Screen name="login" options={{ headerShown: false }} /> */}
+  //     </Stack>
+  //     <StatusBar style="auto" />
   //   </View>
   // );
-  // Show main app if authenticated
-  return (
-    <View style={[styles.container, themeContainerStyle]}>
-    <View style={[styles.container, themeContainerStyle]}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        {/* <Stack.Screen name="login" options={{ headerShown: false }} /> */}
-        {/* <Stack.Screen name="login" options={{ headerShown: false }} /> */}
-      </Stack>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
-
-export default function RootLayout() {
-  return (
-    // <AuthProvider>
-    <AppContent />
-    // </AuthProvider>
-    </View>
-  );
 }
 
 export default function RootLayout() {
