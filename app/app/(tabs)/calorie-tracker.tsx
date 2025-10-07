@@ -11,9 +11,14 @@ export default function CalorieTrackerScreen() {
     <SafeAreaView
       style={[
         styles.container,
-        { backgroundColor: isDark ? ThemeColors.dark.background : ThemeColors.light.background },
+        {
+          backgroundColor: isDark
+            ? ThemeColors.dark.background
+            : ThemeColors.light.background,
+        },
       ]}
-    ></SafeAreaView>
+    >
+    </SafeAreaView>
   );
 }
 
