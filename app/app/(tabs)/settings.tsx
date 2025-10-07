@@ -11,6 +11,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 // import { useAuth } from "../../contexts/AuthContext";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { logOut } from "@/components/auth/Auth";
 import { ThemeColors } from "@/constants/theme";
 
 export default function SettingsScreen() {
@@ -28,7 +29,7 @@ export default function SettingsScreen() {
         text: "Sign Out",
         style: "destructive",
         onPress: async () => {
-          // await logout();
+          await logOut();
         },
       },
     ]);
