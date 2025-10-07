@@ -1,19 +1,19 @@
 import React from "react";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { Text, StyleSheet, View } from "react-native";
-import { ThemeProvider, useTheme } from "../contexts/ThemeContext";
+import { Text, StyleSheet, View, useColorScheme } from "react-native";
 
 export const unstable_settings = {
   anchor: "(tabs)",
 };
 
-function RootLayoutContent() {
-  const { effectiveTheme } = useTheme();
+export default function RootLayout() {
+  const colorScheme = useColorScheme();
 
+  const themeTextStyle =
+    colorScheme === "light" ? styles.lightThemeText : styles.darkThemeText;
   const themeContainerStyle =
-    effectiveTheme === "light" ? styles.lightContainer : styles.darkContainer;
-
+    colorScheme === "light" ? styles.lightContainer : styles.darkContainer;
   return (
     <View style={[styles.container, themeContainerStyle]}>
       <Stack>
@@ -21,14 +21,6 @@ function RootLayoutContent() {
       </Stack>
       <StatusBar style="auto" />
     </View>
-  );
-}
-
-export default function RootLayout() {
-  return (
-    <ThemeProvider>
-      <RootLayoutContent />
-    </ThemeProvider>
   );
 }
 
