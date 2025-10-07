@@ -1,6 +1,7 @@
 import { supabase } from "@/lib/supabase";
 import { useState } from "react";
 import { Alert, StyleSheet, TextInput, Button, View } from "react-native";
+import GoogleSignInButton from "./social-auth-buttons/google/google-sign-in-button";
 
 export default function Auth() {
   const [email, setEmail] = useState("");
@@ -56,6 +57,7 @@ export default function Auth() {
       <View style={styles.verticallySpaced}>
         <Button title="Sign up" disabled={loading} onPress={signUpWithEmail} />
       </View>
+      <GoogleSignInButton />
     </View>
   );
 }
