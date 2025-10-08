@@ -3,7 +3,7 @@
 </p>
 
 # 42 Open Project
-[@jkauker](https://profile.intra.42.fr/users/jkauker) [@lbohm](https://profile.intra.42.fr/users/lbohm) [@lglauch](https://profile.intra.42.fr/users/lglauch)
+[@jkauker](https://profile.intra.42.fr/users/jkauker) [@lbohm](https://profile.intra.42.fr/users/lbohm) [@lglauch](https://profile.intra.42.fr/users/lglauch) [@ntalmon](https://profile.intra.42.fr/users/ntalmon)
 
 ## What we are trying to build
 We are trying to build the (in our minds) ultimate Gym App
