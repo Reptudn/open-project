@@ -1,71 +1,43 @@
-import React, { useState } from "react";
-import { StyleSheet, Text, TextInput, View, Button, ScrollView } from "react-native";
+import { StyleSheet, Text } from "react-native";
+import { useColorScheme } from "@/hooks/use-color-scheme";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { ThemeColors } from "@/constants/theme";
 
 export default function CalorieTrackerScreen() {
-  const [barcode, setBarcode] = useState("");
-  const [productInfo, setProductInfo] = useState(null);
-  const [error, setError] = useState("");
-
-  const fetchProductInfo = async () => {
-    setError("");
-    setProductInfo(null);
-    try {
-      const response = await fetch(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json`);
-      const data = await response.json();
-      if (data.status === 1) {
-        setProductInfo(data.product);
-      } else {
-        setError("Produkt nicht gefunden.");
-      }
-    } catch (err) {
-      setError("Fehler beim Abrufen der Daten.");
-    }
-  };
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Calorie Tracker</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Barcode eingeben"
-        value={barcode}
-        onChangeText={setBarcode}
-        keyboardType="numeric"
-      />
-      <Button title="Produkt suchen" onPress={fetchProductInfo} />
-      {error ? <Text style={styles.error}>{error}</Text> : null}
-      {productInfo && (
-        <View style={styles.productInfo}>
-          <Text style={styles.productName}>{productInfo.product_name}</Text>
-          <Text>Marke: {productInfo.brands}</Text>
-          <Text>Kategorie: {productInfo.categories}</Text>
-          <Text>Nährwerte: {productInfo.nutriments ? JSON.stringify(productInfo.nutriments, null, 2) : "Keine Daten"}</Text>
-        </View>
-      )}
-    </ScrollView>
+    <SafeAreaView
+      style={[
+        styles.container,
+        {
+          backgroundColor: isDark
+            ? ThemeColors.dark.background
+            : ThemeColors.light.background,
+        },
+      ]}
+    >
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,
-    padding: 16,
-    backgroundColor: "#f5f5f5",
+    flex: 1,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 16,
-    textAlign: "center",
+  titleContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
   },
-  input: {
-    height: 40,
-    borderColor: "#ccc",
-    borderWidth: 1,
-    borderRadius: 4,
-    paddingHorizontal: 8,
-    marginBottom: 16,
-    backgroundColor: "#fff",
+  icon: {
+    width: 32,
+    height: 32,
+  },
+  stepContainer: {
+    gap: 8,
+    marginBottom: 8,
   },
   error: {
     color: "red",
@@ -81,9 +53,36 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
   },
-  productName: {
-    fontSize: 18,
+  text: {
+    color: "black",
+  },
+  header: {
+    color: "black",
+    fontSize: 40,
     fontWeight: "bold",
-    marginBottom: 8,
+    margin: 20,
+  },
+  item: {
+    backgroundColor: "#dadadaff",
+    padding: 20,
+    marginVertical: 8,
+    marginHorizontal: 16,
+    borderRadius: 20,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  itemIcon: {
+    marginRight: 15,
+  },
+  itemContent: {
+    flex: 1,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: "600",
+  },
+  subtitle: {
+    fontSize: 14,
+    marginTop: 2,
   },
 });

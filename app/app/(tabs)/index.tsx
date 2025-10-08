@@ -1,17 +1,26 @@
-import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text } from "react-native";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Ionicons from "@expo/vector-icons/Ionicons";
+import { ThemeColors } from "@/constants/theme";
 
 export default function HomeScreen() {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
+
   return (
-    <SafeAreaView>
-      <Text>Kauker ist das Zentrum wie ein Schwarzes Loch</Text>
-    </SafeAreaView>
+    <SafeAreaView
+      style={[
+        styles.container,
+        { backgroundColor: isDark ? ThemeColors.dark.background : ThemeColors.light.background },
+      ]}
+    ></SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   titleContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -34,5 +43,34 @@ const styles = StyleSheet.create({
   },
   text: {
     color: "black",
+  },
+  header: {
+    color: "black",
+    fontSize: 40,
+    fontWeight: "bold",
+    margin: 20,
+  },
+  item: {
+    backgroundColor: "#dadadaff",
+    padding: 20,
+    marginVertical: 8,
+    marginHorizontal: 16,
+    borderRadius: 20,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  itemIcon: {
+    marginRight: 15,
+  },
+  itemContent: {
+    flex: 1,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: "600",
+  },
+  subtitle: {
+    fontSize: 14,
+    marginTop: 2,
   },
 });
