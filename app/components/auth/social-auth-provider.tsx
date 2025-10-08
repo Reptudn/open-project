@@ -1,17 +1,19 @@
 import { supabase } from "@/lib/supabase";
 import type { Provider } from "@supabase/supabase-js";
 import * as WebBrowser from "expo-web-browser";
-import * as Linking from "expo-linking";
+import { makeRedirectUri } from "expo-auth-session";
 
 export default async function signInWithProvider(provider: Provider) {
-  const redirectUri = Linking.createURL(`${provider}-auth`);
+  const redirectUri = makeRedirectUri({
+    scheme: "myapp",
+    path: "auth-callback",
+  });
 
   const res = await supabase.auth.signInWithOAuth({
     provider,
     options: {
       redirectTo: redirectUri,
       queryParams: { prompt: "consent" },
-      skipBrowserRedirect: true,
     },
   });
 
