@@ -1,4 +1,4 @@
-interface Excersize {
+interface Exercise {
   exerciseId: string;
   name: string;
   gifUrl: string;
@@ -9,4 +9,4 @@ interface Excersize {
   instructions: string[];
 }
 
-export type { Excersize };
+export type { Exercise };

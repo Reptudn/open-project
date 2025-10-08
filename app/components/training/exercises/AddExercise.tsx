@@ -1,7 +1,7 @@
 import { TouchableOpacity, useColorScheme, Text } from "react-native";
 import { ThemeColors } from "@/constants/theme";
 
-export default function AddExcersizeFull(props: { name: string }) {
+export default function AddExerciseFull(props: { name: string }) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
 
@@ -21,13 +21,13 @@ export default function AddExcersizeFull(props: { name: string }) {
           fontWeight: "bold",
         }}
       >
-        Add Excersize
+        Add Exercise
       </Text>
     </TouchableOpacity>
   );
 }
 
-export function AddExcersizeSmall(props: { excersizeId: string }) {
+export function AddExerciseSmall(props: { exerciseId: string }) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
 
@@ -47,7 +47,7 @@ export function AddExcersizeSmall(props: { excersizeId: string }) {
           fontWeight: "bold",
         }}
       >
-        + ({props.excersizeId})
+        + ({props.exerciseId})
       </Text>
     </TouchableOpacity>
   );

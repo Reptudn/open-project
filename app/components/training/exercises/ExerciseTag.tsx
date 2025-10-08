@@ -1,16 +1,16 @@
 import { StyleSheet, View, Text } from "react-native";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 
-export enum ExcersizeTagType {
+export enum ExerciseTagType {
   BODYPART = "#2becccff",
   EQUIPMENT = "#84f33aff",
   MUSCLE_PRIMARY = "#eb2630ff",
   MUSCLE_SECONDARY = "#f5a623ff",
 }
 
-export default function ExcersizeTag(props: {
+export default function ExerciseTag(props: {
   name: string;
-  type: ExcersizeTagType;
+  type: ExerciseTagType;
 }) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";

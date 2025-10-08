@@ -1,14 +1,14 @@
 import { ThemeColors } from "@/constants/theme";
 import { View, Text, useColorScheme, Image } from "react-native";
-import ExcersizeTag, { ExcersizeTagType } from "./ExcersizeTag";
-import AddExcersizeFull from "./AddExcersise";
-import { Excersize } from "@/types/Excersize";
+import AddExerciseFull from "./AddExercise";
+import ExerciseTag, { ExerciseTagType } from "./ExerciseTag";
+import { Exercise } from "@/types/Exercise";
 
-export default function ExcersizeFull(props: Excersize) {
+export default function ExerciseFull(props: Exercise) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
 
-  const excersize = {
+  const exercise = {
     exerciseId: "trmte8s",
     name: "band shrug",
     gifUrl: "https://static.exercisedb.dev/media/trmte8s.gif",
@@ -38,10 +38,10 @@ export default function ExcersizeFull(props: Excersize) {
           color: isDark ? ThemeColors.dark.text : ThemeColors.light.text,
         }}
       >
-        {excersize.name}
+        {exercise.name}
       </Text>
       <Image
-        source={{ uri: excersize.gifUrl }}
+        source={{ uri: exercise.gifUrl }}
         style={{
           width: "100%",
           height: 200,
@@ -60,37 +60,37 @@ export default function ExcersizeFull(props: Excersize) {
         >
           Tags:
         </Text>
-        {excersize.targetMuscles.map((muscle, index) => (
-          <ExcersizeTag
+        {exercise.targetMuscles.map((muscle, index) => (
+          <ExerciseTag
             key={index}
             name={muscle.toLocaleUpperCase()}
-            type={ExcersizeTagType.MUSCLE_PRIMARY}
+            type={ExerciseTagType.MUSCLE_PRIMARY}
           />
         ))}
-        {excersize.secondaryMuscles.map((muscle, index) => (
-          <ExcersizeTag
+        {exercise.secondaryMuscles.map((muscle, index) => (
+          <ExerciseTag
             key={index}
             name={muscle.toLocaleUpperCase()}
-            type={ExcersizeTagType.MUSCLE_SECONDARY}
+            type={ExerciseTagType.MUSCLE_SECONDARY}
           />
         ))}
-        {excersize.bodyParts.map((part, index) => (
-          <ExcersizeTag
+        {exercise.bodyParts.map((part, index) => (
+          <ExerciseTag
             key={index}
             name={part.toLocaleUpperCase()}
-            type={ExcersizeTagType.BODYPART}
+            type={ExerciseTagType.BODYPART}
           />
         ))}
-        {excersize.equipments.map((equipment, index) => (
-          <ExcersizeTag
+        {exercise.equipments.map((equipment, index) => (
+          <ExerciseTag
             key={index}
             name={equipment.toLocaleUpperCase()}
-            type={ExcersizeTagType.EQUIPMENT}
+            type={ExerciseTagType.EQUIPMENT}
           />
         ))}
       </View>
       <View>
-        {excersize.instructions.map((step, index) => (
+        {exercise.instructions.map((step, index) => (
           <Text
             key={index}
             style={{
@@ -102,7 +102,7 @@ export default function ExcersizeFull(props: Excersize) {
           </Text>
         ))}
       </View>
-      <AddExcersizeFull name={excersize.name} />
+      <AddExerciseFull name={exercise.name} />
     </View>
   );
 }

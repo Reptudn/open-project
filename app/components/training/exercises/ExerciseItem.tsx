@@ -1,6 +1,6 @@
 import { TouchableOpacity, Text, Image } from "react-native";
-import ExcersizeTag, { ExcersizeTagType } from "./ExcersizeTag";
-import { AddExcersizeSmall } from "./AddExcersise";
+import ExcersizeTag, { ExcersizeTagType } from "./ExerciseTag";
+import { AddExcersizeSmall } from "./AddExercise";
 
 export interface ExcersizeItemProps {
   excersizeId: string;

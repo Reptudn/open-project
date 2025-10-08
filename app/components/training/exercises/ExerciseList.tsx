@@ -1,9 +1,9 @@
 import { TextInput, View } from "react-native";
-import ExcersizeItem from "./ExcersizeItem";
-import { ExcersizeTagType } from "./ExcersizeTag";
+import ExerciseItem from "./ExerciseItem";
+import { ExerciseTagType } from "./ExerciseTag";
 
-export default function ExcersiseList() {
-  const excersizes = [
+export default function ExerciseList() {
+  const exercises = [
     {
       exerciseId: "trmte8s",
       name: "band shrug",
@@ -102,27 +102,27 @@ export default function ExcersiseList() {
         placeholder="Search Excersizes..."
         onChangeText={handleSearch}
       />
-      {excersizes.map((ex) => (
-        <ExcersizeItem
+      {exercises.map((ex) => (
+        <ExerciseItem
           key={ex.exerciseId}
           excersizeId={ex.exerciseId}
           name={ex.name}
           gifUrl={ex.gifUrl}
           tags={[
             ...ex.bodyParts.map((part) => ({
-              type: ExcersizeTagType.BODYPART,
+              type: ExerciseTagType.BODYPART,
               name: part,
             })),
             ...ex.equipments.map((equip) => ({
-              type: ExcersizeTagType.EQUIPMENT,
+              type: ExerciseTagType.EQUIPMENT,
               name: equip,
             })),
             ...ex.targetMuscles.map((muscle) => ({
-              type: ExcersizeTagType.MUSCLE_PRIMARY,
+              type: ExerciseTagType.MUSCLE_PRIMARY,
               name: muscle,
             })),
             ...ex.secondaryMuscles.map((muscle) => ({
-              type: ExcersizeTagType.MUSCLE_SECONDARY,
+              type: ExerciseTagType.MUSCLE_SECONDARY,
               name: muscle,
             })),
           ]}
