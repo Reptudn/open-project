@@ -4,6 +4,8 @@ import { StyleSheet, View, useColorScheme } from "react-native";
 import AuthProvider from "@/providers/auth-provider";
 import { SplashScreenController } from "@/components/auth/splash-screen-controller";
 import { useAuthContext } from "@/hooks/use-auth-context";
+import Registration from "./registration";
+import Profile from "./profile";
 
 export const unstable_settings = {
   anchor: "(tabs)",
@@ -31,12 +33,9 @@ function AppContent() {
     );
   }
   return (
-    <>
-      <Stack>
-        <Stack.Screen name="registration" />
-        <Stack.Screen name="login" />
-      </Stack>
-    </>
+    <View style={[styles.container, themeContainerStyle]}>
+      <Profile />
+    </View>
   );
 }
 
