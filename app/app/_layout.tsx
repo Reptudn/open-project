@@ -1,7 +1,6 @@
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, View, useColorScheme, Text } from "react-native";
-import Auth from "@/components/auth/Auth";
+import { StyleSheet, View, useColorScheme } from "react-native";
 import AuthProvider from "@/providers/auth-provider";
 import { SplashScreenController } from "@/components/auth/splash-screen-controller";
 import { useAuthContext } from "@/hooks/use-auth-context";
@@ -13,6 +12,8 @@ export const unstable_settings = {
 function AppContent() {
   const colorScheme = useColorScheme();
   const { isLoggedIn } = useAuthContext();
+
+  console.log(isLoggedIn);
 
   const themeTextStyle =
     colorScheme === "light" ? styles.lightThemeText : styles.darkThemeText;
@@ -29,7 +30,14 @@ function AppContent() {
       </View>
     );
   }
-  return <Auth />;
+  return (
+    <>
+      <Stack>
+        <Stack.Screen name="registration" />
+        <Stack.Screen name="login" />
+      </Stack>
+    </>
+  );
 }
 
 export default function RootLayout() {

@@ -25,12 +25,14 @@ export default function GoogleSignInButton() {
 
 const styles = StyleSheet.create({
   button: {
+    width: 352,
+    height: 56.32,
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#ffffff",
     borderWidth: 1,
     borderColor: "#dbdbdb",
-    borderRadius: 4,
+    borderRadius: 17.6,
     paddingVertical: 10,
     paddingHorizontal: 15,
     justifyContent: "center",
