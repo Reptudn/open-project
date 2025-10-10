@@ -10,31 +10,62 @@ export default function AuthProvider({ children }: PropsWithChildren) {
   const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
-    setLoading(true);
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
-    setLoading(false);
+    let mounted = true;
+
+    const init = async () => {
+      setLoading(true);
+      try {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        if (!mounted) return;
+        setSession(session ?? null);
+      } catch (err) {
+        console.error("AuthProvider getSession error", err);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+
+    init();
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
+      if (!mounted) return;
+      setSession(session ?? null);
     });
 
     return () => {
+      mounted = false;
       subscription.unsubscribe();
     };
   }, []);
 
   useEffect(() => {
-    setLoading(true);
-    if (session) {
-      getUser(session.user.id).then((profile) => {
-        setProfile(profile);
-      });
-    } else setProfile(null);
-    setLoading(false);
+    let cancelled = false;
+
+    const loadProfile = async () => {
+      setLoading(true);
+      try {
+        if (session) {
+          const prof = await getUser(session.user.id);
+          if (!cancelled) setProfile(prof);
+        } else {
+          if (!cancelled) setProfile(null);
+        }
+      } catch (err) {
+        console.error("AuthProvider getUser error", err);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    loadProfile();
+
+    return () => {
+      cancelled = true;
+    };
   }, [session]);
 
   return (

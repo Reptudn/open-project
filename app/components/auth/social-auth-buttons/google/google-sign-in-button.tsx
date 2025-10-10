@@ -1,10 +1,17 @@
 import { TouchableOpacity, StyleSheet } from "react-native";
 import { Image } from "expo-image";
 import { Text } from "@react-navigation/elements";
+import signInWithProvider from "../../social-auth-provider";
 
 export default function GoogleSignInButton() {
   return (
-    <TouchableOpacity style={styles.button} activeOpacity={0.8}>
+    <TouchableOpacity
+      onPress={async () => {
+        await signInWithProvider("google");
+      }}
+      style={styles.button}
+      activeOpacity={0.8}
+    >
       <Image
         source={{
           uri: "https://developers.google.com/identity/images/g-logo.png",
@@ -18,12 +25,14 @@ export default function GoogleSignInButton() {
 
 const styles = StyleSheet.create({
   button: {
+    width: 352,
+    height: 56.32,
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#ffffff",
     borderWidth: 1,
     borderColor: "#dbdbdb",
-    borderRadius: 4,
+    borderRadius: 17.6,
     paddingVertical: 10,
     paddingHorizontal: 15,
     justifyContent: "center",
