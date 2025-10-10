@@ -4,6 +4,10 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ThemeColors } from "@/constants/theme";
 
+interface Product {
+  name: string,
+}
+
 export default function CalorieTrackerScreen() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
@@ -12,6 +16,7 @@ export default function CalorieTrackerScreen() {
   const [gramm, setGramm] = useState("100");
   const [productInfo, setProductInfo] = useState(null);
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const fetchProductInfo = async () => {
     setError("");
@@ -26,6 +31,46 @@ export default function CalorieTrackerScreen() {
       }
     } catch (err) {
       setError("Fehler beim Abrufen der Daten.");
+    }
+  };
+
+  const saveProductToDatabase = async () => {
+    if (!productInfo) {
+      setError("Keine Produktinformationen verfügbar.");
+      return;
+    }
+
+    const productData = {
+      barcode: productInfo.code,
+      name: productInfo.product_name,
+      brand: productInfo.brands,
+      nutriments: {
+        energy: productInfo.nutriments.energy_value,
+        proteins: productInfo.nutriments.proteins_100g,
+        fat: productInfo.nutriments.fat_100g,
+        carbohydrates: productInfo.nutriments.carbohydrates_100g,
+      },
+    };
+
+    try {
+      const response = await fetch("https://tegfwlejpnjfcyyppogf.supabase.co/functions/v1/food", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRlZ2Z3bGVqcG5qZmN5eXBwb2dmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk4ODAwNzcsImV4cCI6MjA3NTQ1NjA3N30.8irNDJq0x6sYUYusnyfWpj4puv59utsikJoOsdK3SwA`, // Ersetze mit deinem API-Schlüssel
+        },
+        body: JSON.stringify(productData),
+      });
+
+      if (response.ok) {
+        setSuccessMessage("Produkt erfolgreich gespeichert!");
+        setError("");
+      } else {
+        const errorData = await response.json();
+        setError(`Fehler beim Speichern: ${errorData.message}`);
+      }
+    } catch (err) {
+      setError("Netzwerkfehler beim Speichern des Produkts.");
     }
   };
 
@@ -45,16 +90,15 @@ export default function CalorieTrackerScreen() {
           style={[
             styles.input,
             {
-              backgroundColor: isDark ? "#333" : "#fff",
-              color: isDark ? "#fff" : "#000",
-              borderColor: isDark ? "#555" : "#ccc",
+              backgroundColor: isDark
+                ? ThemeColors.dark.inputBackground
+                : ThemeColors.light.inputBackground,
+              color: isDark ? "#fff" : "#000", // Changed text color to white for dark mode
             },
           ]}
           placeholder="Barcode eingeben"
-          placeholderTextColor={isDark ? "#aaa" : "#888"}
           value={barcode}
           onChangeText={setBarcode}
-          keyboardType="numeric"
         />
         <Button title="Produkt suchen" onPress={fetchProductInfo} />
         <TextInput
@@ -62,7 +106,7 @@ export default function CalorieTrackerScreen() {
             styles.input,
             {
               backgroundColor: isDark ? "#333" : "#fff",
-              color: isDark ? "#fff" : "#000",
+              color: isDark ? "#fff" : "#000", // Changed text color to white for dark mode
               borderColor: isDark ? "#555" : "#ccc",
             },
           ]}
@@ -72,28 +116,30 @@ export default function CalorieTrackerScreen() {
           onChangeText={setGramm}
           keyboardType="numeric"
         />
-        {error ? <Text style={styles.error}>{error}</Text> : null}
+        {error ? <Text style={[styles.error, { color: isDark ? "#fff" : "red" }]}>{error}</Text> : null}
+        {successMessage ? <Text style={[styles.success, { color: isDark ? "#fff" : "green" }]}>{successMessage}</Text> : null}
         {productInfo && (
           <View style={styles.productInfo}>
-            <Text style={styles.productName}>{productInfo.product_name}</Text>
-            <Text>
+            <Text style={[styles.productName, { color: isDark ? "#fff" : "#000" }]}>{productInfo.product_name} pro 100g</Text>
+            <Text style={{ color: isDark ? "#fff" : "#000" }}>Marke: {productInfo.brands}</Text>
+            <Text style={{ color: isDark ? "#fff" : "#000" }}>Kalorien: {productInfo.nutriments.energy_value} kcal</Text>
+            <Text style={{ color: isDark ? "#fff" : "#000" }}>Proteine: {productInfo.nutriments.proteins_100g} g</Text>
+            <Text style={{ color: isDark ? "#fff" : "#000" }}>Fett: {productInfo.nutriments.fat_100g} g</Text>
+            <Text style={{ color: isDark ? "#fff" : "#000" }}>Kohlenhydrate: {productInfo.nutriments.carbohydrates_100g} g</Text>
+            <Text style={[styles.productName, { color: isDark ? "#fff" : "#000" }]}>{productInfo.product_name} pro {gramm}g</Text>
+            <Text style={{ color: isDark ? "#fff" : "#000" }}>
               Kalorien (pro {gramm}g): {productInfo.nutriments.energy_value ? (productInfo.nutriments.energy_value / 100 * (parseFloat(gramm) || 0)) : "Keine Daten"}
             </Text>
-            <Text>
+            <Text style={{ color: isDark ? "#fff" : "#000" }}>
               Proteine (pro {gramm}g): {productInfo.nutriments.proteins_100g ? (productInfo.nutriments.proteins_100g / 100 * (parseFloat(gramm) || 0)).toFixed(1) : "Keine Daten"}
             </Text>
-            <Text>
+            <Text style={{ color: isDark ? "#fff" : "#000" }}>
               Fette (pro {gramm}g): {productInfo.nutriments.fat_100g ? (productInfo.nutriments.fat_100g / 100 * (parseFloat(gramm) || 0)).toFixed(1) : "Keine Daten"}
             </Text>
-            <Text>
+            <Text style={{ color: isDark ? "#fff" : "#000" }}>
               Kohlenhydrate (pro {gramm}g): {productInfo.nutriments.carbohydrates_100g ? (productInfo.nutriments.carbohydrates_100g / 100 * (parseFloat(gramm) || 0)).toFixed(1) : "Keine Daten"}
             </Text>
-            {/* <Text>
-              Nährwerte:{" "}
-              {productInfo.nutriments
-                ? JSON.stringify(productInfo.nutriments, null, 2)
-                : "Keine Daten"}
-            </Text> */}
+            <Button title="Produkt speichern" onPress={saveProductToDatabase} />
           </View>
         )}
       </ScrollView>
@@ -106,39 +152,28 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   innerContainer: {
-    flexGrow: 1,
     padding: 16,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 16,
-    textAlign: "center",
-  },
   input: {
-    height: 40,
     borderWidth: 1,
-    borderRadius: 4,
-    paddingHorizontal: 8,
+    borderRadius: 8,
+    padding: 8,
     marginBottom: 16,
-  },
-  error: {
-    color: "red",
-    marginTop: 8,
   },
   productInfo: {
     marginTop: 16,
-    padding: 16,
-    backgroundColor: "#fff",
-    borderRadius: 4,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
   },
   productName: {
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 8,
+  },
+  error: {
+    color: "red",
+    marginTop: 8,
+  },
+  success: {
+    color: "green",
+    marginTop: 8,
   },
 });
