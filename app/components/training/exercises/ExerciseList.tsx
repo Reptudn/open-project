@@ -206,12 +206,12 @@ export default function ExerciseList() {
           style={{ flex: 1, padding: 10 }}
           showsVerticalScrollIndicator={true}
         >
-          {displayExercises.map((ex) => (
+          {displayExercises.map((ex, index) => (
             <ExerciseItem
-              key={ex.exerciseId}
-              exerciseId={ex.exerciseId}
-              name={ex.name.toLocaleUpperCase()}
-              gifUrl={ex.gifUrl}
+              key={ex.exerciseId || `exercise-${index}`}
+              exerciseId={ex.exerciseId || `exercise-${index}`}
+              name={ex.name?.toLocaleUpperCase() || "Unknown Exercise"}
+              gifUrl={ex.gifUrl || ""}
               tags={[
                 ...(ex.bodyParts || []).map((part) => ({
                   type: ExerciseTagType.BODYPART,

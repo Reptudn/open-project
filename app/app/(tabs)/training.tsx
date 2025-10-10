@@ -78,7 +78,7 @@ export default function TrainingScreen() {
                 <View
                   style={[
                     styles.modalView,
-                    { width: width, height: height * 0.8 },
+                    { width: width, height: height * 0.9 },
                     {
                       backgroundColor: isDark
                         ? ThemeColors.dark.button
