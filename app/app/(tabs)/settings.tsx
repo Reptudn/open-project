@@ -235,16 +235,16 @@ export default function SettingsScreen() {
       ]}
     >
       {/* Settings Section */}
-      <ThemeBtn></ThemeBtn>
+      <ThemeBtn />
 
       {/* Profile Section */}
-      <ProfileBtn></ProfileBtn>
+      <ProfileBtn />
 
       {/* Notifications */}
-      <NotificationsBtn></NotificationsBtn>
+      <NotificationsBtn />
 
       {/* Logout */}
-      <LogoutBtn></LogoutBtn>
+      <LogoutBtn />
     </SafeAreaView>
   );
 }

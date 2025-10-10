@@ -1,4 +1,4 @@
-import { supabase } from "./supabase";
+import { supabase } from "../supabase";
 
 export interface Profile {
   id: string;
@@ -51,6 +51,7 @@ export async function getUser(id: string): Promise<Profile | null> {
     .single();
 
   if (error) {
+    console.error(data);
     console.error("Problem loading User Table", error);
     return null;
   }

@@ -9,10 +9,11 @@ import {
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ThemeColors } from "@/constants/theme";
-import { getWorkouts } from "@/lib/workoutTableUtils";
+import { getWorkouts } from "@/lib/api/workoutTableUtils";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { SelectList } from "react-native-dropdown-select-list";
 import React from "react";
+import ExerciseList from "@/components/training/exercises/ExerciseList";
 
 export default function TrainingScreen() {
   const colorScheme = useColorScheme();
@@ -77,12 +78,13 @@ export default function TrainingScreen() {
                 <View
                   style={[
                     styles.modalView,
-                    { width: width * 0.8, height: height * 0.8 },
+                    { width: width, height: height * 0.8 },
                     {
                       backgroundColor: isDark
                         ? ThemeColors.dark.button
                         : ThemeColors.light.button,
                     },
+                    { bottom: -(height * 0.1) },
                   ]}
                 >
                   <Text
@@ -90,30 +92,43 @@ export default function TrainingScreen() {
                       color: isDark
                         ? ThemeColors.dark.text
                         : ThemeColors.light.text,
-                        fontWeight: "bold"
+                      fontWeight: "bold",
                     }}
                   >
                     Build your workout
                   </Text>
-                  <SelectList
+                  {/* <SelectList
                     setSelected={(val: string) => setSelected(val)}
                     data={data}
                     save="value"
                     boxStyles={{
-                      borderColor: isDark ? ThemeColors.dark.text : ThemeColors.light.text,
-                      backgroundColor: isDark ? ThemeColors.dark.background : ThemeColors.light.background,
+                      borderColor: isDark
+                        ? ThemeColors.dark.text
+                        : ThemeColors.light.text,
+                      backgroundColor: isDark
+                        ? ThemeColors.dark.background
+                        : ThemeColors.light.background,
                     }}
                     inputStyles={{
-                      color: isDark ? ThemeColors.dark.text : ThemeColors.light.text,
+                      color: isDark
+                        ? ThemeColors.dark.text
+                        : ThemeColors.light.text,
                     }}
                     dropdownTextStyles={{
-                      color: isDark ? ThemeColors.dark.text : ThemeColors.light.text,
+                      color: isDark
+                        ? ThemeColors.dark.text
+                        : ThemeColors.light.text,
                     }}
                     dropdownStyles={{
-                      backgroundColor: isDark ? ThemeColors.dark.background : ThemeColors.light.background,
-                      borderColor: isDark ? ThemeColors.dark.text : ThemeColors.light.text,
+                      backgroundColor: isDark
+                        ? ThemeColors.dark.background
+                        : ThemeColors.light.background,
+                      borderColor: isDark
+                        ? ThemeColors.dark.text
+                        : ThemeColors.light.text,
                     }}
-                  />
+                  /> */}
+                  <ExerciseList />
 
                   <TouchableOpacity
                     style={styles.closeButton}
@@ -154,7 +169,7 @@ export default function TrainingScreen() {
         },
       ]}
     >
-      <Training></Training>
+      <Training />
     </SafeAreaView>
   );
 }
@@ -242,7 +257,7 @@ const styles = StyleSheet.create({
   },
   modalView: {
     borderRadius: 20,
-    padding: 20,
+    paddingTop: 20,
     alignItems: "center",
     elevation: 5, // Shadow for Android
     shadowColor: "#000", // Shadow for iOS

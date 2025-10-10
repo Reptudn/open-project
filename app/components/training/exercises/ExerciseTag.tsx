@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 
 export enum ExerciseTagType {
@@ -16,7 +16,7 @@ export default function ExerciseTag(props: {
   const isDark = colorScheme === "dark";
 
   return (
-    <View
+    <TouchableOpacity
       style={[
         styles.container,
         {
@@ -25,10 +25,10 @@ export default function ExerciseTag(props: {
         },
       ]}
     >
-      <Text style={[styles.text, { color: isDark ? "#d0d0c0" : "#242c40" }]}>
+      <Text style={[styles.text, { color: isDark ? "#ffffffff" : "#242c40" }]}>
         {props.name}
       </Text>
-    </View>
+    </TouchableOpacity>
   );
 }
 

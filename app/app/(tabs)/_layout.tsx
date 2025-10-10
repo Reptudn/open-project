@@ -3,7 +3,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { HapticTab } from "@/components/haptic-tab";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { View, TouchableOpacity } from "react-native";
+import { View, TouchableOpacity, Text } from "react-native";
 import { ThemeColors } from "@/constants/theme";
 
 export default function TabLayout() {
@@ -73,7 +73,7 @@ export default function TabLayout() {
           title: "Training",
           headerTitle: "Workout Training",
           headerRight: () => (
-            <TouchableOpacity style={{ marginRight: 15 }}>
+            <TouchableOpacity style={{ marginRight: 15 }} onPress={() => {}}>
               <Ionicons
                 name="add-outline"
                 size={24}
@@ -97,14 +97,18 @@ export default function TabLayout() {
                 <Ionicons
                   name="camera-outline"
                   size={24}
-                  color={isDark ? ThemeColors.dark.icon : ThemeColors.light.icon}
+                  color={
+                    isDark ? ThemeColors.dark.icon : ThemeColors.light.icon
+                  }
                 />
               </TouchableOpacity>
               <TouchableOpacity>
                 <Ionicons
                   name="add-outline"
                   size={24}
-                  color={isDark ? ThemeColors.dark.icon : ThemeColors.light.icon}
+                  color={
+                    isDark ? ThemeColors.dark.icon : ThemeColors.light.icon
+                  }
                 />
               </TouchableOpacity>
             </View>

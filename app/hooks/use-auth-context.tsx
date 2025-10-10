@@ -1,4 +1,4 @@
-import { Profile } from "@/lib/workoutTableUtils";
+import { Profile } from "@/lib/api/workoutTableUtils";
 import { Session } from "@supabase/supabase-js";
 import { createContext, useContext } from "react";
 

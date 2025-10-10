@@ -1,23 +1,71 @@
-import { TouchableOpacity, Text, Image } from "react-native";
-import ExcersizeTag, { ExcersizeTagType } from "./ExerciseTag";
-import { AddExcersizeSmall } from "./AddExercise";
+import { TouchableOpacity, Text, Image, View } from "react-native";
+import ExerciseTag, { ExerciseTagType } from "./ExerciseTag";
+import { AddExerciseSmall } from "./AddExercise";
 
-export interface ExcersizeItemProps {
-  excersizeId: string;
+export interface ExerciseItemProps {
+  exerciseId: string;
   name: string;
   gifUrl: string;
-  tags: { type: ExcersizeTagType; name: string }[];
+  tags: { type: ExerciseTagType; name: string }[];
 }
 
-export default function ExcersizeItem(props: ExcersizeItemProps) {
+export default function ExerciseItem(props: ExerciseItemProps) {
   return (
-    <TouchableOpacity>
-      <Text>{props.name}</Text>
-      <Image source={{ uri: props.gifUrl }} />
-      {props.tags.map((tag, index) => (
-        <ExcersizeTag key={index} name={tag.name} type={tag.type} />
-      ))}
-      <AddExcersizeSmall excersizeId={props.excersizeId} />
+    <TouchableOpacity
+      style={{
+        marginBottom: 20,
+        backgroundColor: "#555555ff",
+        padding: 10,
+        borderRadius: 10,
+        flexDirection: "row",
+        alignItems: "flex-start",
+        gap: 15,
+        width: "100%",
+      }}
+    >
+      <Image
+        source={{ uri: props.gifUrl }}
+        style={{
+          width: 80,
+          height: 80,
+          borderRadius: 5,
+        }}
+        resizeMode="contain"
+        onError={(error) =>
+          console.log("Image load error:", error.nativeEvent.error)
+        }
+        alt="Exercise GIF"
+      />
+
+      <View style={{ flex: 1, justifyContent: "space-between" }}>
+        <Text
+          style={{
+            fontWeight: "bold",
+            color: "white",
+            fontSize: 16,
+            marginBottom: 8,
+          }}
+        >
+          {props.name}
+        </Text>
+
+        <View
+          style={{
+            flexDirection: "row",
+            flexWrap: "wrap",
+            alignItems: "center",
+            gap: 5,
+            marginBottom: 10,
+          }}
+        >
+          {props.tags.map((tag, index) => (
+            <ExerciseTag key={index} name={tag.name} type={tag.type} />
+          ))}
+        </View>
+      </View>
+      <View style={{ alignItems: "flex-end" }}>
+        <AddExerciseSmall exerciseId={props.exerciseId} />
+      </View>
     </TouchableOpacity>
   );
 }
