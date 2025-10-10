@@ -1,50 +1,37 @@
-import { Stack } from "expo-router";
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, View, useColorScheme } from "react-native";
-import AuthProvider from "@/providers/auth-provider";
-import { SplashScreenController } from "@/components/auth/splash-screen-controller";
 import { useAuthContext } from "@/hooks/use-auth-context";
-import Registration from "./registration";
-import Profile from "./profile";
+import AuthProvider from "@/providers/auth-provider";
+import { router, Slot } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import { ReactNode, useEffect } from "react";
+import { StyleSheet, View, useColorScheme } from "react-native";
 
-export const unstable_settings = {
-  anchor: "(tabs)",
-};
-
-function AppContent() {
+export default function RootLayout({ children }: { children: ReactNode }) {
   const colorScheme = useColorScheme();
-  const { isLoggedIn } = useAuthContext();
 
-  console.log(isLoggedIn);
-
-  const themeTextStyle =
-    colorScheme === "light" ? styles.lightThemeText : styles.darkThemeText;
   const themeContainerStyle =
     colorScheme === "light" ? styles.lightContainer : styles.darkContainer;
 
-  if (isLoggedIn) {
-    return (
-      <View style={[styles.container, themeContainerStyle]}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        </Stack>
-        <StatusBar style="auto" />
-      </View>
-    );
-  }
   return (
-    <View style={[styles.container, themeContainerStyle]}>
-      <Profile />
-    </View>
+    <AuthProvider>
+      <InnerLayout themeContainerStyle={themeContainerStyle} />
+      <StatusBar style="auto" />
+    </AuthProvider>
   );
 }
 
-export default function RootLayout() {
+function InnerLayout({ themeContainerStyle }: { themeContainerStyle: any }) {
+  const { isLoggedIn, isLoading } = useAuthContext();
+
+  useEffect(() => {
+    if (!isLoading) {
+      router.replace(isLoggedIn ? "/(tabs)" : "/(auth)/registration");
+    }
+  }, [isLoading, isLoggedIn]);
+
   return (
-    <AuthProvider>
-      <SplashScreenController />
-      <AppContent />
-    </AuthProvider>
+    <View style={[styles.container, themeContainerStyle]}>
+      <Slot />
+    </View>
   );
 }
 

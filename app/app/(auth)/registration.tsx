@@ -7,15 +7,19 @@ import {
   TouchableOpacity,
   Alert,
   Text,
+  useColorScheme,
 } from "react-native";
-import GoogleSignInButton from "../components/auth/social-auth-buttons/google/google-sign-in-button";
+import GoogleSignInButton from "@/components/auth/social-auth-buttons/google/google-sign-in-button";
 import { setUser } from "@/lib/workoutTableUtils";
 import { router } from "expo-router";
+import { ThemeColors } from "@/constants/theme";
 
 export default function Registration() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
 
   async function signUpWithEmail() {
     setLoading(true);
@@ -73,7 +77,9 @@ export default function Registration() {
       <View style={styles.bottomContainer}>
         <Text
           style={[styles.infoText, { alignSelf: "center" }]}
-          onPress={() => {router.push("/login")}}
+          onPress={() => {
+            router.push("/login");
+          }}
         >
           Have already an account? Sign In
         </Text>

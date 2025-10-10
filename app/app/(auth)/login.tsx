@@ -8,7 +8,7 @@ import {
   Alert,
   Text,
 } from "react-native";
-import GoogleSignInButton from "../components/auth/social-auth-buttons/google/google-sign-in-button";
+import GoogleSignInButton from "@/components/auth/social-auth-buttons/google/google-sign-in-button";
 import { router } from "expo-router";
 
 export default function Login() {
@@ -27,6 +27,7 @@ export default function Login() {
     });
 
     if (error) Alert.alert(error.message);
+
     setLoading(false);
   }
 

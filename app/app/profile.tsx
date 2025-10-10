@@ -8,18 +8,12 @@ import {
   Text,
 } from "react-native";
 
-import { Picker } from "@react-native-picker/picker";
-import { RadioButton } from "react-native-paper";
 
 export default function Profile() {
   const [gender, setGender] = useState("");
   return (
     <View style={styles.topContainer}>
       <Text style={styles.infoText}>Enter your gender</Text>
-      <RadioButton.Group onValueChange={value => setGender(value)} value={gender}>
-        <RadioButton.Item label="Männlich" value="male" />
-        <RadioButton.Item label="Weiblich" value="female" />
-      </RadioButton.Group>
     </View>
   );
 }
