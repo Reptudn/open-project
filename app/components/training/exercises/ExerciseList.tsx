@@ -23,7 +23,6 @@ export default function ExerciseList() {
     setLoading(true);
     const exercises = await getExerciseEdge(query);
     setExercises(exercises);
-    console.log(exercises);
     setLoading(false);
   }, []);
 
@@ -44,13 +43,12 @@ export default function ExerciseList() {
     loadExercises();
   }, []);
 
-  // Real-time search as user types
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (searchQuery.trim()) {
         handleSearch(searchQuery);
       }
-    }, 300); // Debounce search by 300ms
+    }, 300);
 
     return () => clearTimeout(timeoutId);
   }, [searchQuery, handleSearch]);

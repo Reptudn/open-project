@@ -12,17 +12,14 @@ export default function ExerciseFull({ exercise }: { exercise: Exercise }) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
 
-  // State for related exercises
   const [relatedExercises, setRelatedExercises] = useState<Exercise[]>([]);
   const [loadingRelated, setLoadingRelated] = useState(false);
 
-  // Create video player instance (use empty string as fallback to avoid conditional hooks)
   const player = useVideoPlayer(exercise.videoUrl || "", (player) => {
     player.loop = true;
     player.muted = false;
   });
 
-  // Auto-play when component mounts (optional)
   useEffect(() => {
     if (exercise.videoUrl) {
       player.play();
