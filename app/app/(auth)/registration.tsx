@@ -23,16 +23,20 @@ export default function Registration() {
 
   async function signUpWithEmail() {
     setLoading(true);
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.signUp({
-      email: email,
-      password: password,
-    });
+    if (!email || !password)
+      Alert.alert("You need to enter a Email and Password");
+    else {
+      const {
+        data: { user },
+        error,
+      } = await supabase.auth.signUp({
+        email: email,
+        password: password,
+      });
 
-    if (error) Alert.alert(error.message);
-    else await registerProfile(user?.id);
+      if (error) Alert.alert(error.message);
+      // else await registerProfile(user?.id);
+    }
     setLoading(false);
   }
 
@@ -78,7 +82,7 @@ export default function Registration() {
         <Text
           style={[styles.infoText, { alignSelf: "center" }]}
           onPress={() => {
-            router.push("/login");
+            router.push("./login");
           }}
         >
           Have already an account? Sign In

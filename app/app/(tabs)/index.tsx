@@ -1,11 +1,24 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Text } from "react-native";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ThemeColors } from "@/constants/theme";
+import { useCallback, useState } from "react";
+import { supabase } from "@/lib/supabase";
 
 export default function HomeScreen() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
+
+  const [name, setName] = useState("");
+  const [username, setusername] = useState("");
+  const [height, setHeight] = useState(0);
+  const [weight, setWeight] = useState(0);
+  const [gender, setGender] = useState("");
+
+  useCallback(async () => {
+    const user = await supabase.auth.getUser();
+    user.data.user?.id;
+  }, []);
 
   return (
     <SafeAreaView
@@ -17,7 +30,13 @@ export default function HomeScreen() {
             : ThemeColors.light.background,
         },
       ]}
-    ></SafeAreaView>
+    >
+      <Text>Name: {name}</Text>
+      <Text>Username: {username}</Text>
+      <Text>Height: {height}cm</Text>
+      <Text>Weight: {weight}kg</Text>
+      <Text>Gender: {gender}</Text>
+    </SafeAreaView>
   );
 }
 

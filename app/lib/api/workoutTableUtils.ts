@@ -1,4 +1,4 @@
-import { Alert } from "react-native";
+import { Alert, TouchableWithoutFeedback } from "react-native";
 import { supabase } from "../supabase";
 
 export interface Profile {
@@ -6,7 +6,7 @@ export interface Profile {
   username?: string;
   full_name?: string;
   gender?: string;
-  birth_data?: string;
+  birth_date?: Date;
   height_cm?: number;
   weight_kg?: number;
   created_at?: string;
@@ -121,7 +121,7 @@ export async function getWorkoutLogs(
 
 // Setter Function
 
-export async function registerProfile(id?: string) {
+export async function registerProfile(profile: Profile) {
   const response = await fetch(
     "https://tegfwlejpnjfcyyppogf.supabase.co/functions/v1/setProfile",
     {
@@ -131,11 +131,19 @@ export async function registerProfile(id?: string) {
         Authorization: `Bearer ${process.env.EXPO_PUBLIC_KEY || "default"}`,
       },
       body: JSON.stringify({
-        id: id,
+        id: profile.id,
+        username: profile.username,
+        full_name: profile.full_name,
+        gender: profile.gender,
+        birth_data: profile.birth_date,
+        height_cm: profile.height_cm,
+        weight_kg: profile.weight_kg,
       }),
     }
   );
 
+  if (!response.ok)
+    throw new DOMException;
   const data = await response.json();
 
   if (data.message) {

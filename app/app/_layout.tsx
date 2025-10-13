@@ -16,16 +16,23 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 }
 
 function InnerLayout() {
-  const { isLoggedIn, isLoading } = useAuthContext();
+  const { isLoggedIn, isLoading, profile } = useAuthContext();
   const colorScheme = useColorScheme();
   const styles = setStyles(colorScheme === "dark");
 
   useEffect(() => {
-    if (!isLoading) {
-      router.replace(isLoggedIn ? "/(tabs)" : "/(auth)/registration");
-    }
-  }, [isLoading, isLoggedIn]);
+    if (isLoading) return;
 
+    if (!isLoggedIn) {
+      router.replace("/(auth)/registration");
+    } else {
+      if (profile) {
+        router.replace("/(tabs)");
+      } else {
+        router.replace("/(auth)/profile");
+      }
+    }
+  }, [isLoading, isLoggedIn, profile]);
   return (
     <View style={styles.container}>
       <Slot />
@@ -37,7 +44,9 @@ const setStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: isDark ? ThemeColors.dark.background : ThemeColors.light.background,
+      backgroundColor: isDark
+        ? ThemeColors.dark.background
+        : ThemeColors.light.background,
     },
     text: {
       fontSize: 20,
