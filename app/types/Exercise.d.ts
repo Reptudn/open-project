@@ -31,13 +31,18 @@ interface Exercise {
   exerciseId: string;
   name: string;
   imageUrl: string;
-  bodyParts: string[];
-  equipments: string[];
-  exerciseType: string;
-  targetMuscles: string[];
-  secondaryMuscles: string[];
+  bodyParts?: string[];
+  equipments?: string[];
+  exerciseType?: string;
+  targetMuscles?: string[];
+  secondaryMuscles?: string[];
   instructions?: string[];
-  keywords: string[];
+  keywords?: string[];
+  variations?: string[];
+  exerciseTips?: string[];
+  videoUrl?: string;
+  relatedExerciseIds?: string[];
+  overview?: string;
 }
 
 export type { Exercise };
