@@ -6,7 +6,6 @@ import {
   Text,
 } from "react-native";
 import ExerciseItem from "./ExerciseItem";
-import { ExerciseTagType } from "./ExerciseTag";
 import { useState, useEffect, useCallback } from "react";
 import { Exercise } from "@/types/Exercise";
 import { getExerciseEdge } from "@/lib/api/workout";
@@ -98,27 +97,7 @@ export default function ExerciseList() {
             displayExercises.map((ex, index) => (
               <ExerciseItem
                 key={ex.exerciseId || `exercise-${index}`}
-                exerciseId={ex.exerciseId || `exercise-${index}`}
-                name={ex.name?.toLocaleUpperCase() || "Unknown Exercise"}
-                imageUrl={ex.imageUrl || ""}
-                tags={[
-                  ...(ex.bodyParts || []).map((part) => ({
-                    type: ExerciseTagType.BODYPART,
-                    name: part,
-                  })),
-                  ...(ex.equipments || []).map((equip) => ({
-                    type: ExerciseTagType.EQUIPMENT,
-                    name: equip,
-                  })),
-                  ...(ex.targetMuscles || []).map((muscle) => ({
-                    type: ExerciseTagType.MUSCLE_PRIMARY,
-                    name: muscle,
-                  })),
-                  ...(ex.secondaryMuscles || []).map((muscle) => ({
-                    type: ExerciseTagType.MUSCLE_SECONDARY,
-                    name: muscle,
-                  })),
-                ].filter((tag) => tag.name && tag.name.trim() !== "")}
+                exercise={ex}
               />
             ))
           ) : (
