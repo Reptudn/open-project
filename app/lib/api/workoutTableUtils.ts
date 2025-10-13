@@ -2,14 +2,14 @@ import { supabase } from "../supabase";
 
 export interface Profile {
   id: string;
-  username: string;
-  full_name: string;
-  gender: string;
-  birth_data: Date;
-  height_cm: number;
-  weight_kg: number;
-  created_at: string;
-  updated_at: string;
+  username?: string;
+  full_name?: string;
+  gender?: string;
+  birth_data?: string;
+  height_cm?: number;
+  weight_kg?: number;
+  created_at?: string;
+  updated_at?: string;
 }
 
 interface Workout {
@@ -48,7 +48,7 @@ export async function getUser(id: string): Promise<Profile | null> {
     .from("profiles")
     .select("*")
     .eq("id", id)
-    .single();
+    .maybeSingle();
 
   if (error) {
     console.error(data);
@@ -79,7 +79,7 @@ export async function getExercise(id: number) {
     .from("exercises")
     .select("*")
     .eq("id", id)
-    .single();
+    .maybeSingle();
 
   if (error) {
     console.error("Problem loading Exercises", error);
@@ -125,7 +125,6 @@ export async function setUser(user: Profile) {
 
   if (error) {
     console.error("Problem insert to User Table", error);
-    return [];
   }
 }
 

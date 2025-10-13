@@ -1,7 +1,13 @@
 import { supabase } from "@/lib/supabase";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Alert, StyleSheet, TextInput, Button, View } from "react-native";
+import { setUser } from "@/lib/api/workoutTableUtils";
 import GoogleSignInButton from "./social-auth-buttons/google/google-sign-in-button";
+import AppleSignInButton from "./social-auth-buttons/apple/apple-sign-in-button";
+import * as WebBrowser from "expo-web-browser";
+import FacebookSignInButton from "./social-auth-buttons/facebook/facebook-sign-in-button";
+
+WebBrowser.maybeCompleteAuthSession();
 
 export default function Auth() {
   const [email, setEmail] = useState("");
@@ -21,14 +27,25 @@ export default function Auth() {
 
   async function signUpWithEmail() {
     setLoading(true);
-    const { error } = await supabase.auth.signUp({
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.signUp({
       email: email,
       password: password,
     });
 
     if (error) Alert.alert(error.message);
+    if (user) await setUser({ id: user.id });
     setLoading(false);
   }
+
+  useEffect(() => {
+    WebBrowser.warmUpAsync();
+    return () => {
+      WebBrowser.coolDownAsync();
+    };
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -58,6 +75,8 @@ export default function Auth() {
         <Button title="Sign up" disabled={loading} onPress={signUpWithEmail} />
       </View>
       <GoogleSignInButton />
+      <AppleSignInButton />
+      <FacebookSignInButton />
     </View>
   );
 }
@@ -76,7 +95,7 @@ const styles = StyleSheet.create({
   verticallySpaced: {
     paddingTop: 4,
     paddingBottom: 4,
-    alignSelf: 'stretch',
+    alignSelf: "stretch",
   },
   mt20: {
     marginTop: 20,

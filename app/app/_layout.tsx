@@ -1,25 +1,36 @@
-import React from "react";
-import { Stack } from "expo-router";
+import { useAuthContext } from "@/hooks/use-auth-context";
+import AuthProvider from "@/providers/auth-provider";
+import { router, Slot } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { Text, StyleSheet, View, useColorScheme } from "react-native";
+import { ReactNode, useEffect } from "react";
+import { StyleSheet, View, useColorScheme } from "react-native";
 
-export const unstable_settings = {
-  anchor: "(tabs)",
-};
-
-export default function RootLayout() {
+export default function RootLayout({ children }: { children: ReactNode }) {
   const colorScheme = useColorScheme();
 
-  const themeTextStyle =
-    colorScheme === "light" ? styles.lightThemeText : styles.darkThemeText;
   const themeContainerStyle =
     colorScheme === "light" ? styles.lightContainer : styles.darkContainer;
+
+  return (
+    <AuthProvider>
+      <InnerLayout themeContainerStyle={themeContainerStyle} />
+      <StatusBar style="auto" />
+    </AuthProvider>
+  );
+}
+
+function InnerLayout({ themeContainerStyle }: { themeContainerStyle: any }) {
+  const { isLoggedIn, isLoading } = useAuthContext();
+
+  useEffect(() => {
+    if (!isLoading) {
+      router.replace(isLoggedIn ? "/(tabs)" : "/(auth)/registration");
+    }
+  }, [isLoading, isLoggedIn]);
+
   return (
     <View style={[styles.container, themeContainerStyle]}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      </Stack>
-      <StatusBar style="auto" />
+      <Slot />
     </View>
   );
 }
