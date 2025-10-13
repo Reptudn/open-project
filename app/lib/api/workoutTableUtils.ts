@@ -135,15 +135,13 @@ export async function registerProfile(profile: Profile) {
         username: profile.username,
         full_name: profile.full_name,
         gender: profile.gender,
-        birth_data: profile.birth_date,
+        birth_date: profile.birth_date,
         height_cm: profile.height_cm,
         weight_kg: profile.weight_kg,
       }),
     }
   );
 
-  if (!response.ok)
-    throw new DOMException;
   const data = await response.json();
 
   if (data.message) {
