@@ -24,39 +24,6 @@ export default function ExerciseList() {
     setLoading(true);
     setExercises(await getExerciseEdge({ name: query }));
     setLoading(false);
-    // if (!query.trim()) {
-    //   try {
-    //     setLoading(true);
-    //     const data = await getAllExercises();
-    //     setExercises(data || fallbackExercises);
-    //   } catch (error) {
-    //     console.error("Failed to load exercises:", error);
-    //     setExercises(fallbackExercises);
-    //   } finally {
-    //     setLoading(false);
-    //   }
-    // } else {
-    //   try {
-    //     setLoading(true);
-    //     const results = await searchExercises(query);
-    //     setExercises(results.length > 0 ? results : fallbackExercises);
-    //   } catch (error) {
-    //     console.error("Search failed:", error);
-    //     const filtered = fallbackExercises.filter(
-    //       (ex) =>
-    //         ex.name.toLowerCase().includes(query.toLowerCase()) ||
-    //         ex.targetMuscles.some((muscle) =>
-    //           muscle.toLowerCase().includes(query.toLowerCase())
-    //         ) ||
-    //         ex.equipments.some((equipment) =>
-    //           equipment.toLowerCase().includes(query.toLowerCase())
-    //         )
-    //     );
-    //     setExercises(filtered);
-    //   } finally {
-    //     setLoading(false);
-    //   }
-    // }
   }, []);
 
   useEffect(() => {
