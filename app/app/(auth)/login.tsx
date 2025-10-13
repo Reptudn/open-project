@@ -7,26 +7,31 @@ import {
   TouchableOpacity,
   Alert,
   Text,
+  useColorScheme,
 } from "react-native";
 import GoogleSignInButton from "@/components/auth/social-auth-buttons/google/google-sign-in-button";
 import { router } from "expo-router";
+import { ThemeColors } from "@/constants/theme";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const colorScheme = useColorScheme();
+  const styles = getStyles(colorScheme === "dark");
 
   async function signInWithEmail() {
     setLoading(true);
     if (!email || !password)
       Alert.alert("You need to fill in a Email and a Password");
+    else {
+      const { error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: password,
+      });
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email: email,
-      password: password,
-    });
-
-    if (error) Alert.alert(error.message);
+      if (error) Alert.alert(error.message);
+    }
 
     setLoading(false);
   }
@@ -82,42 +87,49 @@ export default function Login() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    gap: 10,
-  },
-  topContainer: {
-    marginTop: "50%",
-    gap: 10,
-  },
-  bottomContainer: {
-    gap: 10,
-  },
-  input: {
-    width: 352,
-    height: 56.32,
-    borderRadius: 17.6,
-    borderWidth: 1,
-    textAlign: "center",
-    borderColor: "#d0d0c0",
-    color: "#d0d0c0",
-  },
-  button: {
-    backgroundColor: "#d0d0c0",
-    width: 352,
-    height: 56.32,
-    borderRadius: 17.6,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  infoText: {
-    color: "#d0d0c0",
-  },
-  loginText: {
-    color: "#242c40",
-    fontWeight: "bold",
-    fontSize: 16,
-  },
-});
+const getStyles = (isDark: boolean) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      alignItems: "center",
+      gap: 10,
+    },
+    topContainer: {
+      marginTop: "50%",
+      gap: 10,
+    },
+    bottomContainer: {
+      gap: 10,
+    },
+    input: {
+      width: 352,
+      height: 56.32,
+      borderRadius: 17.6,
+      borderWidth: 1,
+      textAlign: "center",
+      borderColor: isDark
+        ? ThemeColors.dark.borderTopColor
+        : ThemeColors.light.borderTopColor,
+      color: isDark
+        ? ThemeColors.dark.borderTopColor
+        : ThemeColors.light.borderTopColor,
+    },
+    button: {
+      backgroundColor: isDark
+        ? ThemeColors.dark.button
+        : ThemeColors.light.button,
+      width: 352,
+      height: 56.32,
+      borderRadius: 17.6,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    infoText: {
+      color: isDark ? ThemeColors.dark.text : ThemeColors.light.text,
+    },
+    loginText: {
+      color: isDark ? ThemeColors.dark.text : ThemeColors.light.text,
+      fontWeight: "bold",
+      fontSize: 16,
+    },
+  });

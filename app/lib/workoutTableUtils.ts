@@ -1,3 +1,4 @@
+import { Alert } from "react-native";
 import { supabase } from "./supabase";
 
 export interface Profile {
@@ -119,11 +120,25 @@ export async function getWorkoutLogs(
 
 // Setter Function
 
-export async function setUser(user: Profile) {
-  const { error } = await supabase.from("profiles").insert([user]);
+export async function registerProfile(id?: string) {
+  const response = await fetch(
+    "https://tegfwlejpnjfcyyppogf.supabase.co/functions/v1/setProfile",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.EXPO_PUBLIC_KEY || "default"}`,
+      },
+      body: JSON.stringify({
+        id: id,
+      }),
+    }
+  );
 
-  if (error) {
-    console.error("Problem insert to User Table", error);
+  const data = await response.json();
+
+  if (data.message) {
+    Alert.alert(data.message);
   }
 }
 
