@@ -5,19 +5,17 @@ const EDGE_API_URL =
   process.env.EDGE_API_URL ||
   "https://tegfwlejpnjfcyyppogf.supabase.co/functions/v1";
 
-interface ExerciseEdgeQuery {
-  name?: string;
-  keywords?: string[];
-  targetMuscle?: string[];
-  secondaryMuscle?: string[];
-  exerciseType?: string[];
-  bodyPart?: string[];
-  equipment?: string[];
-}
+// interface ExerciseEdgeQueryExact {
+//   name?: string;
+//   keywords?: string[];
+//   targetMuscle?: string[];
+//   secondaryMuscle?: string[];
+//   exerciseType?: string[];
+//   bodyPart?: string[];
+//   equipment?: string[];
+// }
 
-export async function getExerciseEdge(
-  queries: ExerciseEdgeQuery
-): Promise<Exercise[]> {
+export async function getExerciseEdge(queries: string): Promise<Exercise[]> {
   try {
     const req = await fetch(`${EDGE_API_URL}/exercise`, {
       method: "POST",
@@ -26,7 +24,7 @@ export async function getExerciseEdge(
         apikey: process.env.EXPO_PUBLIC_KEY || "",
         Authorization: `Bearer ${process.env.EXPO_PUBLIC_KEY || ""}`,
       },
-      body: JSON.stringify(queries),
+      body: JSON.stringify({ query: queries }),
     });
 
     const data = await req.json();

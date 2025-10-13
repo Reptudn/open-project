@@ -22,7 +22,7 @@ export default function ExerciseList() {
 
   const handleSearch = useCallback(async (query: string) => {
     setLoading(true);
-    setExercises(await getExerciseEdge({ name: query }));
+    setExercises(await getExerciseEdge(query));
     setLoading(false);
     // if (!query.trim()) {
     //   try {
@@ -63,7 +63,7 @@ export default function ExerciseList() {
     const loadExercises = async () => {
       try {
         setLoading(true);
-        const data = await getExerciseEdge({ keywords: ["strength"] });
+        const data = await getExerciseEdge("bench press");
         setExercises(data || []);
       } catch (error) {
         console.error("Failed to load exercises:", error);
