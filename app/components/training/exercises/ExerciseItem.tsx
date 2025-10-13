@@ -3,32 +3,36 @@ import ExerciseTag, { ExerciseTagType } from "./ExerciseTag";
 import { AddExerciseSmall } from "./AddExercise";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { ThemeColors } from "@/constants/theme";
+import { Exercise } from "@/types/Exercise";
 
-export interface ExerciseItemProps {
-  exerciseId: string;
-  name: string;
-  imageUrl: string;
-  tags: { type: ExerciseTagType; name: string }[];
-}
-
-export default function ExerciseItem(props: ExerciseItemProps) {
+export default function ExerciseItem({ exercise }: { exercise: Exercise }) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   return (
     <TouchableOpacity
       style={{
         marginBottom: 20,
-        backgroundColor: isDark ? ThemeColors.dark.background : ThemeColors.light.background,
+        backgroundColor: isDark
+          ? ThemeColors.dark.background
+          : ThemeColors.light.background,
         padding: 10,
         borderRadius: 10,
         flexDirection: "row",
         alignItems: "flex-start",
         gap: 15,
         width: "100%",
+        borderColor: isDark ? "#444" : "#ddd",
+        borderWidth: 1,
       }}
+      onPress={() => {}}
     >
       <Image
-        source={{ uri: props.imageUrl }}
+        source={{
+          uri:
+            exercise.imageUrl && exercise.imageUrl.trim()
+              ? exercise.imageUrl
+              : "https://via.placeholder.com/80x80/cccccc/666666?text=No+Image",
+        }}
         style={{
           width: 80,
           height: 80,
@@ -50,7 +54,7 @@ export default function ExerciseItem(props: ExerciseItemProps) {
             marginBottom: 8,
           }}
         >
-          {props.name}
+          {exercise.name}
         </Text>
 
         <View
@@ -62,13 +66,51 @@ export default function ExerciseItem(props: ExerciseItemProps) {
             marginBottom: 10,
           }}
         >
-          {props.tags.map((tag, index) => (
-            <ExerciseTag key={index} name={tag.name} type={tag.type} />
-          ))}
+          {exercise.targetMuscles &&
+            exercise.targetMuscles.map((ex) => (
+              <ExerciseTag
+                key={ex}
+                name={ex}
+                type={ExerciseTagType.MUSCLE_PRIMARY}
+              />
+            ))}
+          {exercise.secondaryMuscles &&
+            exercise.secondaryMuscles.map((ex) => (
+              <ExerciseTag
+                key={ex}
+                name={ex}
+                type={ExerciseTagType.MUSCLE_SECONDARY}
+              />
+            ))}
+          {exercise.equipments &&
+            exercise.equipments.map((ex) => (
+              <ExerciseTag
+                key={ex}
+                name={ex}
+                type={ExerciseTagType.EQUIPMENT}
+              />
+            ))}
+          {exercise.bodyParts &&
+            exercise.bodyParts.map((ex) => (
+              <ExerciseTag key={ex} name={ex} type={ExerciseTagType.BODYPART} />
+            ))}
+        </View>
+        <View>
+          {exercise.overview && (
+            <Text
+              style={{
+                color: isDark ? ThemeColors.dark.text : ThemeColors.light.text,
+                fontSize: 14,
+              }}
+              numberOfLines={3}
+            >
+              {exercise.overview}
+            </Text>
+          )}
         </View>
       </View>
       <View style={{ alignItems: "flex-end" }}>
-        <AddExerciseSmall exerciseId={props.exerciseId} />
+        <AddExerciseSmall exerciseId={exercise.exerciseId} />
       </View>
     </TouchableOpacity>
   );
