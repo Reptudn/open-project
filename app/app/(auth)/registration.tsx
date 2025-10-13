@@ -10,7 +10,7 @@ import {
   useColorScheme,
 } from "react-native";
 import GoogleSignInButton from "@/components/auth/social-auth-buttons/google/google-sign-in-button";
-import { setUser } from "@/lib/workoutTableUtils";
+import { setUser } from "@/lib/api/workoutTableUtils";
 import { router } from "expo-router";
 import { ThemeColors } from "@/constants/theme";
 

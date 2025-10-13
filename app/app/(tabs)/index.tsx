@@ -1,4 +1,4 @@
-import { StyleSheet, Text } from "react-native";
+import { StyleSheet } from "react-native";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ThemeColors } from "@/constants/theme";
@@ -11,7 +11,11 @@ export default function HomeScreen() {
     <SafeAreaView
       style={[
         styles.container,
-        { backgroundColor: isDark ? ThemeColors.dark.background : ThemeColors.light.background },
+        {
+          backgroundColor: isDark
+            ? ThemeColors.dark.background
+            : ThemeColors.light.background,
+        },
       ]}
     ></SafeAreaView>
   );

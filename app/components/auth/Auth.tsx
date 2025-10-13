@@ -1,7 +1,7 @@
 import { supabase } from "@/lib/supabase";
 import { useState, useEffect } from "react";
 import { Alert, StyleSheet, TextInput, Button, View } from "react-native";
-import { setUser } from "@/lib/workoutTableUtils";
+import { setUser } from "@/lib/api/workoutTableUtils";
 import GoogleSignInButton from "./social-auth-buttons/google/google-sign-in-button";
 import AppleSignInButton from "./social-auth-buttons/apple/apple-sign-in-button";
 import * as WebBrowser from "expo-web-browser";
