@@ -1,6 +1,8 @@
 import { TouchableOpacity, Text, Image, View } from "react-native";
 import ExerciseTag, { ExerciseTagType } from "./ExerciseTag";
 import { AddExerciseSmall } from "./AddExercise";
+import { useColorScheme } from "@/hooks/use-color-scheme";
+import { ThemeColors } from "@/constants/theme";
 
 export interface ExerciseItemProps {
   exerciseId: string;
@@ -10,11 +12,13 @@ export interface ExerciseItemProps {
 }
 
 export default function ExerciseItem(props: ExerciseItemProps) {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
   return (
     <TouchableOpacity
       style={{
         marginBottom: 20,
-        backgroundColor: "#555555ff",
+        backgroundColor: isDark ? ThemeColors.dark.background : ThemeColors.light.background,
         padding: 10,
         borderRadius: 10,
         flexDirection: "row",

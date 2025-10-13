@@ -35,27 +35,6 @@ export default function SettingsScreen() {
     ]);
   };
 
-  const showThemeSelector = () => {
-    Alert.alert("Choose Theme", "Select your preferred color scheme", [
-      {
-        text: "Light Mode",
-        onPress: () => Appearance.setColorScheme("light"),
-      },
-      {
-        text: "Dark Mode",
-        onPress: () => Appearance.setColorScheme("dark"),
-      },
-      {
-        text: "Auto (System)",
-        onPress: () => Appearance.setColorScheme(null), // null means follow system
-      },
-      {
-        text: "Cancel",
-        style: "cancel",
-      },
-    ]);
-  };
-
   //Settings Components
 
   const ThemeBtn = () => {
@@ -235,16 +214,16 @@ export default function SettingsScreen() {
       ]}
     >
       {/* Settings Section */}
-      <ThemeBtn />
+      <ThemeBtn></ThemeBtn>
 
       {/* Profile Section */}
-      <ProfileBtn />
+      <ProfileBtn></ProfileBtn>
 
       {/* Notifications */}
-      <NotificationsBtn />
+      <NotificationsBtn></NotificationsBtn>
 
       {/* Logout */}
-      <LogoutBtn />
+      <LogoutBtn></LogoutBtn>
     </SafeAreaView>
   );
 }

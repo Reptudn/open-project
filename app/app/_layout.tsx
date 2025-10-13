@@ -1,43 +1,26 @@
+import React from "react";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, View, useColorScheme, Text } from "react-native";
-import Auth from "@/components/auth/Auth";
-import AuthProvider from "@/providers/auth-provider";
-import { SplashScreenController } from "@/components/auth/splash-screen-controller";
-import { useAuthContext } from "@/hooks/use-auth-context";
+import { Text, StyleSheet, View, useColorScheme } from "react-native";
 
 export const unstable_settings = {
   anchor: "(tabs)",
 };
 
-function AppContent() {
+export default function RootLayout() {
   const colorScheme = useColorScheme();
-  const { isLoggedIn } = useAuthContext();
 
   const themeTextStyle =
     colorScheme === "light" ? styles.lightThemeText : styles.darkThemeText;
   const themeContainerStyle =
     colorScheme === "light" ? styles.lightContainer : styles.darkContainer;
-
-  if (isLoggedIn) {
-    return (
-      <View style={[styles.container, themeContainerStyle]}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        </Stack>
-        <StatusBar style="auto" />
-      </View>
-    );
-  }
-  return <Auth />;
-}
-
-export default function RootLayout() {
   return (
-    <AuthProvider>
-      <SplashScreenController />
-      <AppContent />
-    </AuthProvider>
+    <View style={[styles.container, themeContainerStyle]}>
+      <Stack>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      </Stack>
+      <StatusBar style="auto" />
+    </View>
   );
 }
 

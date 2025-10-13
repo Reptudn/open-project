@@ -11,9 +11,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { ThemeColors } from "@/constants/theme";
 import { getWorkouts } from "@/lib/api/workoutTableUtils";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { SelectList } from "react-native-dropdown-select-list";
 import React from "react";
 import ExerciseList from "@/components/training/exercises/ExerciseList";
+import { red } from "react-native-reanimated/lib/typescript/Colors";
 
 export default function TrainingScreen() {
   const colorScheme = useColorScheme();
@@ -24,19 +24,9 @@ export default function TrainingScreen() {
   };
 
   const Training = () => {
-    const [selected, setSelected] = React.useState("");
     const [modalVisible, setModalVisible] = React.useState(false);
 
     const { width, height } = Dimensions.get("window");
-    const data = [
-      { key: "1", value: "Lucas Arsch" },
-      { key: "2", value: "Appliances" },
-      { key: "3", value: "Cameras" },
-      { key: "4", value: "Computers" },
-      { key: "5", value: "Vegetables" },
-      { key: "6", value: "Diary Products" },
-      { key: "7", value: "Drinks" },
-    ];
     if (Workouts.length === 0) {
       return (
         <SafeAreaView>
@@ -84,58 +74,40 @@ export default function TrainingScreen() {
                         ? ThemeColors.dark.button
                         : ThemeColors.light.button,
                     },
-                    { bottom: -(height * 0.1) },
                   ]}
                 >
+                  <TouchableOpacity
+                    style={{
+                      position: "absolute",
+                      right: 15,
+                      marginTop: 20,
+                      zIndex: 1000,
+                      width: 30,
+                      height: 30,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                    onPress={() => setModalVisible(false)}
+                  >
+                    <Ionicons
+                      name={isDark ? "close-circle-outline" : "close-circle"}
+                      size={30}
+                      color="red"
+                    />
+                  </TouchableOpacity>
                   <Text
                     style={{
                       color: isDark
                         ? ThemeColors.dark.text
                         : ThemeColors.light.text,
                       fontWeight: "bold",
+                      paddingHorizontal: 15,
+                      fontSize: 20,
                     }}
                   >
                     Build your workout
                   </Text>
-                  {/* <SelectList
-                    setSelected={(val: string) => setSelected(val)}
-                    data={data}
-                    save="value"
-                    boxStyles={{
-                      borderColor: isDark
-                        ? ThemeColors.dark.text
-                        : ThemeColors.light.text,
-                      backgroundColor: isDark
-                        ? ThemeColors.dark.background
-                        : ThemeColors.light.background,
-                    }}
-                    inputStyles={{
-                      color: isDark
-                        ? ThemeColors.dark.text
-                        : ThemeColors.light.text,
-                    }}
-                    dropdownTextStyles={{
-                      color: isDark
-                        ? ThemeColors.dark.text
-                        : ThemeColors.light.text,
-                    }}
-                    dropdownStyles={{
-                      backgroundColor: isDark
-                        ? ThemeColors.dark.background
-                        : ThemeColors.light.background,
-                      borderColor: isDark
-                        ? ThemeColors.dark.text
-                        : ThemeColors.light.text,
-                    }}
-                  /> */}
                   <ExerciseList />
-
-                  <TouchableOpacity
-                    style={styles.closeButton}
-                    onPress={() => setModalVisible(false)}
-                  >
-                    <Text style={styles.textStyle}>Close</Text>
-                  </TouchableOpacity>
                 </View>
               </View>
             </Modal>
@@ -239,12 +211,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 2,
   },
-  closeButton: {
-    marginTop: 20,
-    backgroundColor: "#f44336",
-    padding: 10,
-    borderRadius: 10,
-  },
   textStyle: {
     color: "white",
     textAlign: "center",
@@ -258,7 +224,6 @@ const styles = StyleSheet.create({
   modalView: {
     borderRadius: 20,
     paddingTop: 20,
-    alignItems: "center",
     elevation: 5, // Shadow for Android
     shadowColor: "#000", // Shadow for iOS
     shadowOffset: { width: 0, height: 2 },
