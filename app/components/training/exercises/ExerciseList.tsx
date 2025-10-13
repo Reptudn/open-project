@@ -7,9 +7,9 @@ import {
 } from "react-native";
 import ExerciseItem from "./ExerciseItem";
 import { ExerciseTagType } from "./ExerciseTag";
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Exercise } from "@/types/Exercise";
-import { getAllExercises, searchExercises } from "@/lib/api/workout";
+import { getExerciseEdge } from "@/lib/api/workout";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { ThemeColors } from "@/constants/theme";
 
@@ -20,53 +20,50 @@ export default function ExerciseList() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const handleSearch = useCallback(
-    async (query: string) => {
-      setLoading(true);
-      setExercises(await getAllExercises());
-      setLoading(false);
-      // if (!query.trim()) {
-      //   try {
-      //     setLoading(true);
-      //     const data = await getAllExercises();
-      //     setExercises(data || fallbackExercises);
-      //   } catch (error) {
-      //     console.error("Failed to load exercises:", error);
-      //     setExercises(fallbackExercises);
-      //   } finally {
-      //     setLoading(false);
-      //   }
-      // } else {
-      //   try {
-      //     setLoading(true);
-      //     const results = await searchExercises(query);
-      //     setExercises(results.length > 0 ? results : fallbackExercises);
-      //   } catch (error) {
-      //     console.error("Search failed:", error);
-      //     const filtered = fallbackExercises.filter(
-      //       (ex) =>
-      //         ex.name.toLowerCase().includes(query.toLowerCase()) ||
-      //         ex.targetMuscles.some((muscle) =>
-      //           muscle.toLowerCase().includes(query.toLowerCase())
-      //         ) ||
-      //         ex.equipments.some((equipment) =>
-      //           equipment.toLowerCase().includes(query.toLowerCase())
-      //         )
-      //     );
-      //     setExercises(filtered);
-      //   } finally {
-      //     setLoading(false);
-      //   }
-      // }
-    },
-    []
-  );
+  const handleSearch = useCallback(async (query: string) => {
+    setLoading(true);
+    setExercises(await getExerciseEdge({ name: query }));
+    setLoading(false);
+    // if (!query.trim()) {
+    //   try {
+    //     setLoading(true);
+    //     const data = await getAllExercises();
+    //     setExercises(data || fallbackExercises);
+    //   } catch (error) {
+    //     console.error("Failed to load exercises:", error);
+    //     setExercises(fallbackExercises);
+    //   } finally {
+    //     setLoading(false);
+    //   }
+    // } else {
+    //   try {
+    //     setLoading(true);
+    //     const results = await searchExercises(query);
+    //     setExercises(results.length > 0 ? results : fallbackExercises);
+    //   } catch (error) {
+    //     console.error("Search failed:", error);
+    //     const filtered = fallbackExercises.filter(
+    //       (ex) =>
+    //         ex.name.toLowerCase().includes(query.toLowerCase()) ||
+    //         ex.targetMuscles.some((muscle) =>
+    //           muscle.toLowerCase().includes(query.toLowerCase())
+    //         ) ||
+    //         ex.equipments.some((equipment) =>
+    //           equipment.toLowerCase().includes(query.toLowerCase())
+    //         )
+    //     );
+    //     setExercises(filtered);
+    //   } finally {
+    //     setLoading(false);
+    //   }
+    // }
+  }, []);
 
   useEffect(() => {
     const loadExercises = async () => {
       try {
         setLoading(true);
-        const data = await getAllExercises();
+        const data = await getExerciseEdge({ keywords: ["strength"] });
         setExercises(data || []);
       } catch (error) {
         console.error("Failed to load exercises:", error);
@@ -90,8 +87,7 @@ export default function ExerciseList() {
     return () => clearTimeout(timeoutId);
   }, [searchQuery, handleSearch]);
 
-  const displayExercises =
-    exercises.length > 0 ? exercises : [];
+  const displayExercises = exercises.length > 0 ? exercises : [];
 
   return (
     <>
@@ -103,7 +99,9 @@ export default function ExerciseList() {
         style={{
           color: isDark ? ThemeColors.dark.text : ThemeColors.light.text,
           margin: 10,
-          backgroundColor: isDark ? ThemeColors.dark.background : ThemeColors.light.background,
+          backgroundColor: isDark
+            ? ThemeColors.dark.background
+            : ThemeColors.light.background,
           borderRadius: 5,
           height: 45,
           paddingHorizontal: 15,
@@ -113,9 +111,13 @@ export default function ExerciseList() {
         <View
           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
         >
-          <Text style={
-            {color: isDark ? ThemeColors.dark.text : ThemeColors.light.text }
-          }>Loading exercises...</Text>
+          <Text
+            style={{
+              color: isDark ? ThemeColors.dark.text : ThemeColors.light.text,
+            }}
+          >
+            Loading exercises...
+          </Text>
           <ActivityIndicator size="large" />
         </View>
       ) : (
@@ -123,35 +125,36 @@ export default function ExerciseList() {
           style={{ flex: 1, padding: 10 }}
           showsVerticalScrollIndicator={true}
         >
-          {displayExercises.map((ex, index) => (
-            <ExerciseItem
-              key={ex.exerciseId || `exercise-${index}`}
-              exerciseId={ex.exerciseId || `exercise-${index}`}
-              name={ex.name?.toLocaleUpperCase() || "Unknown Exercise"}
-              gifUrl={
-                ex.gifUrl ||
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0L5WtAUEeaPREUq-lox8iaIJ_WYifYXCnVA&s"
-              }
-              tags={[
-                ...(ex.bodyParts || []).map((part) => ({
-                  type: ExerciseTagType.BODYPART,
-                  name: part,
-                })),
-                ...(ex.equipments || []).map((equip) => ({
-                  type: ExerciseTagType.EQUIPMENT,
-                  name: equip,
-                })),
-                ...(ex.targetMuscles || []).map((muscle) => ({
-                  type: ExerciseTagType.MUSCLE_PRIMARY,
-                  name: muscle,
-                })),
-                ...(ex.secondaryMuscles || []).map((muscle) => ({
-                  type: ExerciseTagType.MUSCLE_SECONDARY,
-                  name: muscle,
-                })),
-              ].filter((tag) => tag.name && tag.name.trim() !== "")}
-            />
-          ))}
+          {displayExercises.length > 0 ? (
+            displayExercises.map((ex, index) => (
+              <ExerciseItem
+                key={ex.exerciseId || `exercise-${index}`}
+                exerciseId={ex.exerciseId || `exercise-${index}`}
+                name={ex.name?.toLocaleUpperCase() || "Unknown Exercise"}
+                imageUrl={ex.imageUrl || ""}
+                tags={[
+                  ...(ex.bodyParts || []).map((part) => ({
+                    type: ExerciseTagType.BODYPART,
+                    name: part,
+                  })),
+                  ...(ex.equipments || []).map((equip) => ({
+                    type: ExerciseTagType.EQUIPMENT,
+                    name: equip,
+                  })),
+                  ...(ex.targetMuscles || []).map((muscle) => ({
+                    type: ExerciseTagType.MUSCLE_PRIMARY,
+                    name: muscle,
+                  })),
+                  ...(ex.secondaryMuscles || []).map((muscle) => ({
+                    type: ExerciseTagType.MUSCLE_SECONDARY,
+                    name: muscle,
+                  })),
+                ].filter((tag) => tag.name && tag.name.trim() !== "")}
+              />
+            ))
+          ) : (
+            <Text>No exercises found.</Text>
+          )}
         </ScrollView>
       )}
     </>
