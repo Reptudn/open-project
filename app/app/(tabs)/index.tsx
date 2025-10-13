@@ -1,8 +1,7 @@
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet } from "react-native";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ThemeColors } from "@/constants/theme";
-import { SwipeDownClose } from "@/components/ui/SwipeDownClose";
 
 export default function HomeScreen() {
   const colorScheme = useColorScheme();
@@ -18,13 +17,7 @@ export default function HomeScreen() {
             : ThemeColors.light.background,
         },
       ]}
-    >
-      <SwipeDownClose defaultState={true}>
-        <Text style={{
-          color: isDark ? ThemeColors.dark.text : ThemeColors.light.text,
-        }}>Hello</Text>
-      </SwipeDownClose>
-    </SafeAreaView>
+    ></SafeAreaView>
   );
 }
 
