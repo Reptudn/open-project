@@ -1,6 +1,60 @@
 import { Exercise } from "@/types/Exercise";
 import { supabase } from "../supabase";
 
+const EDGE_API_URL =
+  process.env.EDGE_API_URL ||
+  "https://tegfwlejpnjfcyyppogf.supabase.co/functions/v1";
+
+interface ExerciseEdgeQuery {
+  name?: string;
+  keywords?: string[];
+  targetMuscle?: string;
+  secondaryMuscle?: string;
+  exerciseType?: string;
+  bodyPart?: string;
+  equipment?: string;
+}
+
+export async function getExerciseEdge(
+  queries: ExerciseEdgeQuery
+): Promise<Exercise[] | null> {
+  try {
+    const req = await fetch(`${EDGE_API_URL}/exercise`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        apikey: process.env.EXPO_PUBLIC_KEY || "",
+        Authorization: `Bearer ${process.env.EXPO_PUBLIC_KEY || ""}`,
+      },
+      body: JSON.stringify(queries),
+    });
+
+    console.log(`${EDGE_API_URL}/exercise`);
+    const contentType = req.headers.get("content-type");
+
+    let data: unknown = null;
+    if (contentType && contentType.includes("application/json")) {
+      data = await req.json();
+    } else {
+      const text = await req.text();
+      console.error("❌ Non-JSON response:", text);
+      return null;
+    }
+
+    console.log("✅ API response:", data);
+
+    if (req.ok) {
+      return data as Exercise[];
+    } else {
+      console.error("⚠️ Edge function error:", req.status, req.statusText);
+      return null;
+    }
+  } catch (err) {
+    console.error("💣 Fetch or parse error:", err);
+    return null;
+  }
+}
+
 export async function getExerciseByKey(key: string): Promise<Exercise | null> {
   const { data, error } = await supabase
     .from("exercises")

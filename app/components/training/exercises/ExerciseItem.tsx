@@ -5,7 +5,7 @@ import { AddExerciseSmall } from "./AddExercise";
 export interface ExerciseItemProps {
   exerciseId: string;
   name: string;
-  gifUrl: string;
+  imageUrl: string;
   tags: { type: ExerciseTagType; name: string }[];
 }
 
@@ -24,7 +24,7 @@ export default function ExerciseItem(props: ExerciseItemProps) {
       }}
     >
       <Image
-        source={{ uri: props.gifUrl }}
+        source={{ uri: props.imageUrl }}
         style={{
           width: 80,
           height: 80,
