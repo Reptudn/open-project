@@ -1,5 +1,5 @@
 import { Exercise } from "@/types/Exercise";
-import { supabase } from "../supabase";
+// import { supabase } from "../supabase";
 
 const EDGE_API_URL =
   process.env.EDGE_API_URL ||
@@ -17,7 +17,7 @@ interface ExerciseEdgeQuery {
 
 export async function getExerciseEdge(
   queries: ExerciseEdgeQuery
-): Promise<Exercise[] | null> {
+): Promise<Exercise[]> {
   try {
     const req = await fetch(`${EDGE_API_URL}/exercise`, {
       method: "POST",
@@ -29,170 +29,158 @@ export async function getExerciseEdge(
       body: JSON.stringify(queries),
     });
 
-    console.log(`${EDGE_API_URL}/exercise`);
-    const contentType = req.headers.get("content-type");
-
-    let data: unknown = null;
-    if (contentType && contentType.includes("application/json")) {
-      data = await req.json();
-    } else {
-      const text = await req.text();
-      console.error("❌ Non-JSON response:", text);
-      return null;
-    }
-
-    console.log("✅ API response:", data);
+    const data = await req.json();
 
     if (req.ok) {
       return data as Exercise[];
     } else {
-      console.error("⚠️ Edge function error:", req.status, req.statusText);
-      return null;
+      console.error("Edge function error:", req.status, req.statusText);
+      return [];
     }
   } catch (err) {
-    console.error("💣 Fetch or parse error:", err);
-    return null;
-  }
-}
-
-export async function getExerciseByKey(key: string): Promise<Exercise | null> {
-  const { data, error } = await supabase
-    .from("exercises")
-    .select("*")
-    .eq("id", key)
-    .single();
-
-  if (error) {
-    console.error(error);
-    return null;
-  }
-
-  return data as Exercise;
-}
-
-export async function getAllExercises(): Promise<Exercise[]> {
-  const { data, error } = await supabase
-    .from("exercises")
-    .select("*")
-    .limit(50);
-
-  if (error) {
-    console.error(error);
+    console.error("Fetch or parse error:", err);
     return [];
   }
-
-  return data as Exercise[];
 }
 
-export async function searchExercises(query: string): Promise<Exercise[]> {
-  if (!query || query.trim().length === 0) {
-    return getAllExercises();
-  }
+// export async function getExerciseByKey(key: string): Promise<Exercise | null> {
+//   const { data, error } = await supabase
+//     .from("exercises")
+//     .select("*")
+//     .eq("id", key)
+//     .single();
 
-  const searchTerms = query
-    .trim()
-    .toLowerCase()
-    .split(/\s+/)
-    .filter((term) => term.length > 0);
+//   if (error) {
+//     console.error(error);
+//     return null;
+//   }
 
-  const { data, error } = await supabase
-    .from("exercises")
-    .select("*")
-    .limit(200);
+//   return data as Exercise;
+// }
 
-  if (error) {
-    console.error(error);
-    return [];
-  }
+// export async function getAllExercises(): Promise<Exercise[]> {
+//   const { data, error } = await supabase
+//     .from("exercises")
+//     .select("*")
+//     .limit(50);
 
-  const results = (data as Exercise[]).filter((exercise) => {
-    return searchTerms.every((term) => {
-      const nameMatch = exercise.name.toLowerCase().includes(term);
-      const targetMuscleMatch = exercise.targetMuscles.some((muscle) =>
-        muscle.toLowerCase().includes(term)
-      );
-      const secondaryMuscleMatch = exercise.secondaryMuscles.some((muscle) =>
-        muscle.toLowerCase().includes(term)
-      );
-      const equipmentMatch = exercise.equipments.some((equipment) =>
-        equipment.toLowerCase().includes(term)
-      );
-      const bodyPartMatch = exercise.bodyParts.some((bodyPart) =>
-        bodyPart.toLowerCase().includes(term)
-      );
+//   if (error) {
+//     console.error(error);
+//     return [];
+//   }
 
-      return (
-        nameMatch ||
-        targetMuscleMatch ||
-        secondaryMuscleMatch ||
-        equipmentMatch ||
-        bodyPartMatch
-      );
-    });
-  });
+//   return data as Exercise[];
+// }
 
-  // Sort results by relevance (exercises matching more fields first)
-  const sortedResults = results.sort((a, b) => {
-    const aScore = calculateRelevanceScore(a, searchTerms);
-    const bScore = calculateRelevanceScore(b, searchTerms);
-    return bScore - aScore;
-  });
+// export async function searchExercises(query: string): Promise<Exercise[]> {
+//   if (!query || query.trim().length === 0) {
+//     return getAllExercises();
+//   }
 
-  return sortedResults.slice(0, 50); // Limit final results
-}
+//   const searchTerms = query
+//     .trim()
+//     .toLowerCase()
+//     .split(/\s+/)
+//     .filter((term) => term.length > 0);
 
-function calculateRelevanceScore(
-  exercise: Exercise,
-  searchTerms: string[]
-): number {
-  let score = 0;
+//   const { data, error } = await supabase
+//     .from("exercises")
+//     .select("*")
+//     .limit(200);
 
-  searchTerms.forEach((term) => {
-    // Name matches get highest score
-    if (exercise.name.toLowerCase().includes(term)) {
-      score += 10;
-      // Exact name match gets bonus
-      if (exercise.name.toLowerCase() === term) {
-        score += 20;
-      }
-    }
+//   if (error) {
+//     console.error(error);
+//     return [];
+//   }
 
-    // Target muscle matches
-    if (
-      exercise.targetMuscles.some((muscle) =>
-        muscle.toLowerCase().includes(term)
-      )
-    ) {
-      score += 5;
-    }
+//   const results = (data as Exercise[]).filter((exercise) => {
+//     return searchTerms.every((term) => {
+//       const nameMatch = exercise.name.toLowerCase().includes(term);
+//       const targetMuscleMatch = exercise.targetMuscles.some((muscle) =>
+//         muscle.toLowerCase().includes(term)
+//       );
+//       const secondaryMuscleMatch = exercise.secondaryMuscles.some((muscle) =>
+//         muscle.toLowerCase().includes(term)
+//       );
+//       const equipmentMatch = exercise.equipments.some((equipment) =>
+//         equipment.toLowerCase().includes(term)
+//       );
+//       const bodyPartMatch = exercise.bodyParts.some((bodyPart) =>
+//         bodyPart.toLowerCase().includes(term)
+//       );
 
-    // Secondary muscle matches
-    if (
-      exercise.secondaryMuscles.some((muscle) =>
-        muscle.toLowerCase().includes(term)
-      )
-    ) {
-      score += 3;
-    }
+//       return (
+//         nameMatch ||
+//         targetMuscleMatch ||
+//         secondaryMuscleMatch ||
+//         equipmentMatch ||
+//         bodyPartMatch
+//       );
+//     });
+//   });
 
-    // Equipment matches
-    if (
-      exercise.equipments.some((equipment) =>
-        equipment.toLowerCase().includes(term)
-      )
-    ) {
-      score += 4;
-    }
+//   // Sort results by relevance (exercises matching more fields first)
+//   const sortedResults = results.sort((a, b) => {
+//     const aScore = calculateRelevanceScore(a, searchTerms);
+//     const bScore = calculateRelevanceScore(b, searchTerms);
+//     return bScore - aScore;
+//   });
 
-    // Body part matches
-    if (
-      exercise.bodyParts.some((bodyPart) =>
-        bodyPart.toLowerCase().includes(term)
-      )
-    ) {
-      score += 4;
-    }
-  });
+//   return sortedResults.slice(0, 50); // Limit final results
+// }
 
-  return score;
-}
+// function calculateRelevanceScore(
+//   exercise: Exercise,
+//   searchTerms: string[]
+// ): number {
+//   let score = 0;
+
+//   searchTerms.forEach((term) => {
+//     // Name matches get highest score
+//     if (exercise.name.toLowerCase().includes(term)) {
+//       score += 10;
+//       // Exact name match gets bonus
+//       if (exercise.name.toLowerCase() === term) {
+//         score += 20;
+//       }
+//     }
+
+//     // Target muscle matches
+//     if (
+//       exercise.targetMuscles.some((muscle) =>
+//         muscle.toLowerCase().includes(term)
+//       )
+//     ) {
+//       score += 5;
+//     }
+
+//     // Secondary muscle matches
+//     if (
+//       exercise.secondaryMuscles.some((muscle) =>
+//         muscle.toLowerCase().includes(term)
+//       )
+//     ) {
+//       score += 3;
+//     }
+
+//     // Equipment matches
+//     if (
+//       exercise.equipments.some((equipment) =>
+//         equipment.toLowerCase().includes(term)
+//       )
+//     ) {
+//       score += 4;
+//     }
+
+//     // Body part matches
+//     if (
+//       exercise.bodyParts.some((bodyPart) =>
+//         bodyPart.toLowerCase().includes(term)
+//       )
+//     ) {
+//       score += 4;
+//     }
+//   });
+
+//   return score;
+// }

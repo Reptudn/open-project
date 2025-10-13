@@ -9,7 +9,7 @@ import ExerciseItem from "./ExerciseItem";
 import { ExerciseTagType } from "./ExerciseTag";
 import { useState, useEffect, useCallback } from "react";
 import { Exercise } from "@/types/Exercise";
-import { getAllExercises, getExerciseEdge } from "@/lib/api/workout";
+import { getExerciseEdge } from "@/lib/api/workout";
 
 export default function ExerciseList() {
   const [exercises, setExercises] = useState<Exercise[]>([]);
@@ -18,7 +18,7 @@ export default function ExerciseList() {
 
   const handleSearch = useCallback(async (query: string) => {
     setLoading(true);
-    setExercises(await getAllExercises());
+    setExercises(await getExerciseEdge({ keywords: [query] }));
     setLoading(false);
     // if (!query.trim()) {
     //   try {
