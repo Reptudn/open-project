@@ -16,7 +16,7 @@ import { ThemeColors } from "@/constants/theme";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useState } from "react";
 import BarcodeScanner from "@/components/calorie-tracking/BarcodeScanner";
-import { getFoodDataByBarcode } from "@/lib/api/calories";
+import { getFoodDataByBarcode, searchFood } from "@/lib/api/calories_tracking";
 import { Product } from "@/types/FoodData";
 
 export default function CalorieTrackerScreen() {
@@ -25,14 +25,15 @@ export default function CalorieTrackerScreen() {
   const [showScanner, setShowScanner] = useState(false);
   const [searchText, setSearchText] = useState("");
 
-  const [products, setProducts] = useState<Product | null>(null);
+  const [products, setProducts] = useState<Product[] | null>(null);
 
   const handleBarcodeScanned = async (barcode: string) => {
     console.log("Barcode scanned:", barcode);
     setSearchText(barcode);
     setShowScanner(false);
 
-    setProducts(await getFoodDataByBarcode(barcode));
+    const product = await getFoodDataByBarcode(barcode);
+    setProducts(product ? [product] : []);
   };
 
   const openScanner = () => {
@@ -50,8 +51,37 @@ export default function CalorieTrackerScreen() {
         },
       ]}
     >
-      <ScrollView>
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 10 }}>
         {products ? (
+          products.map((product) => (
+            <Text
+              key={product.code}
+              style={{
+                color: isDark ? ThemeColors.dark.text : ThemeColors.light.text,
+                fontSize: 18,
+                fontWeight: "bold",
+                margin: 10,
+                borderBottomColor: isDark ? "#444" : "#ddd",
+                borderBottomWidth: 1,
+                paddingBottom: 10,
+              }}
+            >
+              Name: {product.product_name || "Unknown Product"}
+              {"\n"}
+              Brand: {product.brands || "Unknown Brand"}
+              {"\n"}
+              Quantity: {product.quantity || "Unknown Quantity"}
+              {"\n"}
+              Nutri-Score: {product.nutriscore_grade || "N/A"}
+              {"\n"}
+              Calories per 100g:{" "}
+              {product.nutriments?.["energy-kcal_100g"] || "N/A"}kcal
+              {"\n"}
+              Categories:{" "}
+              {product.categories_tags?.join(", ") || "Unknown Category"}
+            </Text>
+          ))
+        ) : (
           <Text
             style={{
               color: isDark ? ThemeColors.dark.text : ThemeColors.light.text,
@@ -60,10 +90,8 @@ export default function CalorieTrackerScreen() {
               margin: 10,
             }}
           >
-            {products.product_name || "Unknown Product"}
+            No products found
           </Text>
-        ) : (
-          <Text>No products found</Text>
         )}
       </ScrollView>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -101,7 +129,15 @@ export default function CalorieTrackerScreen() {
                     ? ThemeColors.dark.text
                     : ThemeColors.light.text,
                 }}
-                onSubmitEditing={() => handleBarcodeScanned(searchText)}
+                onSubmitEditing={async () => {
+                  if (!searchText.trim()) {
+                    setProducts(null);
+                    return;
+                  }
+                  // do loading on
+                  setProducts(await searchFood(searchText));
+                  // do loading off
+                }}
               />
               <TouchableOpacity onPress={openScanner}>
                 <Ionicons

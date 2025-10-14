@@ -536,3 +536,13 @@ export interface FoodData {
   product?: Product;
   code: string;
 }
+
+// Search response interface
+export interface SearchResponse {
+  count: number;
+  page: number;
+  page_count: number;
+  page_size: number;
+  products: Product[];
+  skip: number;
+}
