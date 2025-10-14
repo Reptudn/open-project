@@ -87,7 +87,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="calorie-tracker"
+        name="calorie_tracker"
         options={{
           title: "Calories",
           headerTitle: "Calorie Tracker",
