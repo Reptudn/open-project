@@ -8,7 +8,7 @@ import {
 import ExerciseItem from "./ExerciseItem";
 import { useState, useEffect, useCallback } from "react";
 import { Exercise } from "@/types/Exercise";
-import { getExerciseEdge } from "@/lib/api/workout";
+import { getExerciseEdge } from "@/lib/api/exercise";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { ThemeColors } from "@/constants/theme";
 
