@@ -24,7 +24,7 @@ export default function ExerciseItem({ exercise }: { exercise: Exercise }) {
         borderColor: isDark ? "#444" : "#ddd",
         borderWidth: 1,
       }}
-      onPress={() => {}}
+      onPress={() => {alert('test')}}
     >
       <Image
         source={{

@@ -55,6 +55,10 @@ export default function ExerciseList() {
 
   const displayExercises = exercises.length > 0 ? exercises : [];
 
+  function loadExercise(ex: Exercise){
+    alert('test');
+  }
+
   return (
     <>
       <TextInput
@@ -93,6 +97,7 @@ export default function ExerciseList() {
         >
           {displayExercises.length > 0 ? (
             displayExercises.map((ex, index) => (
+              
               <ExerciseItem
                 key={ex.exerciseId || `exercise-${index}`}
                 exercise={ex}
