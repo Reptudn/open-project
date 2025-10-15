@@ -3,7 +3,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { HapticTab } from "@/components/haptic-tab";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { View, TouchableOpacity } from "react-native";
+import { TouchableOpacity } from "react-native";
 import { ThemeColors } from "@/constants/theme";
 
 export default function TabLayout() {
@@ -91,28 +91,29 @@ export default function TabLayout() {
         options={{
           title: "Calories",
           headerTitle: "Calorie Tracker",
-          headerRight: () => (
-            <View style={{ flexDirection: "row", marginRight: 15, gap: 15 }}>
-              <TouchableOpacity>
-                <Ionicons
-                  name="camera-outline"
-                  size={24}
-                  color={
-                    isDark ? ThemeColors.dark.icon : ThemeColors.light.icon
-                  }
-                />
-              </TouchableOpacity>
-              <TouchableOpacity>
-                <Ionicons
-                  name="add-outline"
-                  size={24}
-                  color={
-                    isDark ? ThemeColors.dark.icon : ThemeColors.light.icon
-                  }
-                />
-              </TouchableOpacity>
-            </View>
-          ),
+          headerShown: false,
+          // headerRight: () => (
+          //   <View style={{ flexDirection: "row", marginRight: 15, gap: 15 }}>
+          //     <TouchableOpacity>
+          //       <Ionicons
+          //         name="camera-outline"
+          //         size={24}
+          //         color={
+          //           isDark ? ThemeColors.dark.icon : ThemeColors.light.icon
+          //         }
+          //       />
+          //     </TouchableOpacity>
+          //     <TouchableOpacity>
+          //       <Ionicons
+          //         name="add-outline"
+          //         size={24}
+          //         color={
+          //           isDark ? ThemeColors.dark.icon : ThemeColors.light.icon
+          //         }
+          //       />
+          //     </TouchableOpacity>
+          //   </View>
+          // ),
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="fork.knife" color={color} />
           ),
