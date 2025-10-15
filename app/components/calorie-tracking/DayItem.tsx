@@ -18,6 +18,7 @@ import BarcodeScanner from "./BarcodeScanner";
 import ProductItem from "./ProductItem";
 import { Product } from "@/types/FoodData";
 import { useState, useEffect } from "react";
+import DayNutritionOverview from "./DayNutritionOverview";
 
 export default function DayItem({
   date,
@@ -88,24 +89,42 @@ export default function DayItem({
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
         >
-          <Text
-            style={[
-              styles.dateText,
-              {
-                color: isDark ? ThemeColors.dark.text : ThemeColors.light.text,
-                fontWeight: "bold",
-                fontSize: 18,
-              },
-            ]}
-          >
-            {date.getDate() === currDate.getDate()
-              ? "Today"
-              : date.getDate() === currDate.getDate() - 1
-              ? "Yesterday"
-              : date.getDate() === currDate.getDate() + 1
-              ? "Tomorrow"
-              : date.toDateString()}
-          </Text>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+            <TouchableOpacity onPress={() => goToDayOffset(-1)}>
+              <Ionicons
+                name="chevron-back-outline"
+                size={28}
+                color={isDark ? ThemeColors.dark.text : ThemeColors.light.text}
+              />
+            </TouchableOpacity>
+            <Text
+              style={[
+                styles.dateText,
+                {
+                  color: isDark
+                    ? ThemeColors.dark.text
+                    : ThemeColors.light.text,
+                  fontWeight: "bold",
+                  fontSize: 18,
+                },
+              ]}
+            >
+              {date.getDate() === currDate.getDate()
+                ? "Today"
+                : date.getDate() === currDate.getDate() - 1
+                ? "Yesterday"
+                : date.getDate() === currDate.getDate() + 1
+                ? "Tomorrow"
+                : date.toDateString()}
+            </Text>
+            <TouchableOpacity onPress={() => goToDayOffset(1)}>
+              <Ionicons
+                name="chevron-forward-outline"
+                size={28}
+                color={isDark ? ThemeColors.dark.text : ThemeColors.light.text}
+              />
+            </TouchableOpacity>
+          </View>
           {date.getDate() !== currDate.getDate() && (
             <TouchableOpacity
               onPress={goToToday}
@@ -137,6 +156,7 @@ export default function DayItem({
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}
           >
+            <DayNutritionOverview eaten={631} burnt={200} toGo={1923} />
             {products && products.length > 0 ? (
               products.map((product) => (
                 <ProductItem key={product.code} product={product} />
@@ -251,7 +271,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: 10,
+    padding: 1,
     width: "100%",
   },
   dateText: {
@@ -292,6 +312,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 12,
     paddingRight: 12,
+    justifyContent: "flex-end",
   },
   searchInput: {
     flex: 1,

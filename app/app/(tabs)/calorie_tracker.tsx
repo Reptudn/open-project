@@ -27,7 +27,12 @@ export default function CalorieTrackerScreen() {
   };
 
   const goToDayOffset = (offset: number) => {
-    setSelectedPageIndex(selectedPageIndex + offset);
+    const newPageIndex = selectedPageIndex + offset;
+
+    if (newPageIndex >= 0 && newPageIndex < maxDays) {
+      setSelectedPageIndex(newPageIndex);
+      pagerRef.current?.setPage(newPageIndex);
+    }
   };
 
   useFocusEffect(
