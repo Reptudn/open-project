@@ -7,6 +7,7 @@ export type AuthData = {
   profile: Profile | null;
   isLoading: boolean;
   isLoggedIn: boolean;
+  updateProfile: (updates: Profile) => Promise<void>
 };
 
 export const AuthContext = createContext<AuthData>({
@@ -14,6 +15,9 @@ export const AuthContext = createContext<AuthData>({
   profile: null,
   isLoading: true,
   isLoggedIn: false,
+  updateProfile: async () => {
+    throw new Error("updateProfile not implemented");
+  },
 });
 
 export const useAuthContext = () => useContext(AuthContext);

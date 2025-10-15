@@ -8,10 +8,12 @@ import {
   Alert,
   Text,
   useColorScheme,
+  TouchableWithoutFeedback,
+  Keyboard,
+  KeyboardAvoidingView,
 } from "react-native";
 import GoogleSignInButton from "@/components/auth/social-auth-buttons/google/google-sign-in-button";
 import { router } from "expo-router";
-import { registerProfile } from "@/lib/api/workoutTableUtils";
 import { ThemeColors } from "@/constants/theme";
 
 export default function Registration() {
@@ -35,49 +37,56 @@ export default function Registration() {
       });
 
       if (error) Alert.alert(error.message);
-      // else await registerProfile(user?.id);
     }
     setLoading(false);
   }
 
   return (
     <View style={styles.container}>
-      <View style={styles.topContainer}>
-        <Text style={styles.infoText}>Enter your Email</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="example@wtf.com"
-          value={email}
-          onChangeText={setEmail}
-          autoCapitalize={"none"}
-        />
-        <Text style={styles.infoText}>Enter your Password</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="starwars"
-          value={password}
-          onChangeText={setPassword}
-          autoCapitalize={"none"}
-          secureTextEntry={true}
-        />
-        <Text style={styles.infoText}>Confirm your Password</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="starwars"
-          value={password}
-          onChangeText={setPassword}
-          autoCapitalize={"none"}
-          secureTextEntry={true}
-        />
-        <TouchableOpacity
-          style={styles.button}
-          disabled={loading}
-          onPress={signUpWithEmail}
-          activeOpacity={0.7}
-        >
-          <Text style={styles.loginText}>Sign Up</Text>
-        </TouchableOpacity>
-      </View>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={styles.topContainer}>
+          <KeyboardAvoidingView style={{gap: 10}}>
+            <Text style={styles.infoText}>Enter your Email</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="example@wtf.com"
+              value={email}
+              onChangeText={setEmail}
+              autoCapitalize={"none"}
+            />
+          </KeyboardAvoidingView>
+          <KeyboardAvoidingView style={{gap: 10}}>
+            <Text style={styles.infoText}>Enter your Password</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="starwars"
+              value={password}
+              onChangeText={setPassword}
+              autoCapitalize={"none"}
+              secureTextEntry={true}
+            />
+          </KeyboardAvoidingView>
+          <KeyboardAvoidingView style={{gap: 10}}>
+            <Text style={styles.infoText}>Confirm your Password</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="starwars"
+              value={password}
+              onChangeText={setPassword}
+              autoCapitalize={"none"}
+              secureTextEntry={true}
+            />
+          </KeyboardAvoidingView>
+          <TouchableOpacity
+            style={styles.button}
+            disabled={loading}
+            onPress={signUpWithEmail}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.loginText}>Sign Up</Text>
+          </TouchableOpacity>
+        </View>
+      </TouchableWithoutFeedback>
       <View style={styles.bottomContainer}>
         <Text
           style={[styles.infoText, { alignSelf: "center" }]}

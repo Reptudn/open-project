@@ -1,3 +1,4 @@
+import { SplashScreenController } from "@/components/auth/splash-screen-controller";
 import { ThemeColors } from "@/constants/theme";
 import { useAuthContext } from "@/hooks/use-auth-context";
 import AuthProvider from "@/providers/auth-provider";
@@ -9,6 +10,7 @@ import { StyleSheet, View, useColorScheme } from "react-native";
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <AuthProvider>
+      <SplashScreenController />
       <InnerLayout />
       <StatusBar style="auto" />
     </AuthProvider>
@@ -25,12 +27,10 @@ function InnerLayout() {
 
     if (!isLoggedIn) {
       router.replace("/(auth)/registration");
+    } else if (!profile) {
+      router.replace("/(auth)/profile");
     } else {
-      if (profile) {
-        router.replace("/(tabs)");
-      } else {
-        router.replace("/(auth)/profile");
-      }
+      router.replace("/(tabs)");
     }
   }, [isLoading, isLoggedIn, profile]);
   return (

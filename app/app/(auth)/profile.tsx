@@ -11,9 +11,8 @@ import {
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { registerProfile } from "@/lib/api/workoutTableUtils";
+import { useAuthContext } from "@/hooks/use-auth-context";
 import { supabase } from "@/lib/supabase";
-import { router } from "expo-router";
 
 export default function Profile() {
   const [gender, setGender] = useState("");
@@ -29,9 +28,10 @@ export default function Profile() {
   const [show, setShow] = useState(false);
   const colorScheme = useColorScheme();
   const styles = getStyles(colorScheme === "dark");
+  const { updateProfile } = useAuthContext();
 
-  const onChange = (event, selectedDate) => {
-    setShow(Platform.OS === "ios"); // auf iOS bleibt es offen, auf Android schließt es
+  const onChange = (_event, selectedDate: Date) => {
+    setShow(Platform.OS === "ios");
     if (selectedDate) {
       setDate(selectedDate);
     }
@@ -41,8 +41,14 @@ export default function Profile() {
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    if (user) await registerProfile({ id: user?.id, gender: gender, weight_kg: Number.parseInt(weight), height_cm: Number.parseInt(height), birth_date: date });
-    router.replace('/(tabs)');
+    if (user)
+      await updateProfile({
+        id: user?.id,
+        gender: gender,
+        weight_kg: Number.parseInt(weight),
+        height_cm: Number.parseInt(height),
+        birth_date: date,
+      });
   }
   return (
     <View style={styles.container}>

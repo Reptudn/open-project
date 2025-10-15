@@ -1,5 +1,6 @@
-import { Alert, TouchableWithoutFeedback } from "react-native";
+import { Alert } from "react-native";
 import { supabase } from "../supabase";
+import { PropsFilter } from "react-native-reanimated/lib/typescript/createAnimatedComponent/PropsFilter";
 
 export interface Profile {
   id: string;
@@ -52,8 +53,7 @@ export async function getUser(id: string): Promise<Profile | null> {
     .maybeSingle();
 
   if (error) {
-    console.error(data);
-    console.error("Problem loading User Table", error);
+    console.error("Problem loading User Table", error.message);
     return null;
   }
   return data;
@@ -121,7 +121,7 @@ export async function getWorkoutLogs(
 
 // Setter Function
 
-export async function registerProfile(profile: Profile) {
+export async function registerProfile(profile: Profile): Promise<Profile | null> {
   const response = await fetch(
     "https://tegfwlejpnjfcyyppogf.supabase.co/functions/v1/setProfile",
     {
@@ -146,7 +146,9 @@ export async function registerProfile(profile: Profile) {
 
   if (data.message) {
     Alert.alert(data.message);
+    return null;
   }
+  return data;
 }
 
 export async function setWorkout(workout: Workout) {
