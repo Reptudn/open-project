@@ -18,6 +18,7 @@ import { useState } from "react";
 import BarcodeScanner from "@/components/calorie-tracking/BarcodeScanner";
 import { getFoodDataByBarcode, searchFood } from "@/lib/api/calories_tracking";
 import { Product } from "@/types/FoodData";
+import ProductItem from "@/components/calorie-tracking/ProductItem";
 
 export default function CalorieTrackerScreen() {
   const colorScheme = useColorScheme();
@@ -25,15 +26,24 @@ export default function CalorieTrackerScreen() {
   const [showScanner, setShowScanner] = useState(false);
   const [searchText, setSearchText] = useState("");
 
-  const [products, setProducts] = useState<Product[] | null>(null);
+  const [products, setProducts] = useState<Product[]>([]);
 
   const handleBarcodeScanned = async (barcode: string) => {
     console.log("Barcode scanned:", barcode);
     setSearchText(barcode);
     setShowScanner(false);
 
-    const product = await getFoodDataByBarcode(barcode);
-    setProducts(product ? [product] : []);
+    try {
+      const result = await getFoodDataByBarcode(barcode);
+      if (result) {
+        setProducts([result]);
+      } else {
+        setProducts([]);
+      }
+    } catch (error) {
+      console.error("Barcode scan failed:", error);
+      setProducts([]);
+    }
   };
 
   const openScanner = () => {
@@ -51,95 +61,105 @@ export default function CalorieTrackerScreen() {
         },
       ]}
     >
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 10 }}>
-        {products ? (
-          products.map((product) => (
-            <Text
-              key={product.code}
-              style={{
-                color: isDark ? ThemeColors.dark.text : ThemeColors.light.text,
-                fontSize: 18,
-                fontWeight: "bold",
-                margin: 10,
-                borderBottomColor: isDark ? "#444" : "#ddd",
-                borderBottomWidth: 1,
-                paddingBottom: 10,
-              }}
-            >
-              Name: {product.product_name || "Unknown Product"}
-              {"\n"}
-              Brand: {product.brands || "Unknown Brand"}
-              {"\n"}
-              Quantity: {product.quantity || "Unknown Quantity"}
-              {"\n"}
-              Nutri-Score: {product.nutriscore_grade || "N/A"}
-              {"\n"}
-              Calories per 100g:{" "}
-              {product.nutriments?.["energy-kcal_100g"] || "N/A"}kcal
-              {"\n"}
-              Categories:{" "}
-              {product.categories_tags?.join(", ") || "Unknown Category"}
-            </Text>
-          ))
-        ) : (
-          <Text
-            style={{
-              color: isDark ? ThemeColors.dark.text : ThemeColors.light.text,
-              fontSize: 18,
-              fontWeight: "bold",
-              margin: 10,
-            }}
-          >
-            No products found
-          </Text>
-        )}
-      </ScrollView>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <KeyboardAvoidingView
-          style={{ flex: 1 }}
+          style={styles.container}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
-          keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
         >
-          <KeyboardAvoidingView
-            style={{
-              flex: 1,
-              padding: 20,
-              justifyContent: "flex-end",
-            }}
+          <ScrollView
+            style={styles.contentContainer}
+            contentContainerStyle={styles.scrollContent}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+          >
+            {products && products.length > 0 ? (
+              products.map((product) => (
+                <ProductItem key={product.code} product={product} />
+              ))
+            ) : (
+              <View style={styles.emptyState}>
+                <Ionicons
+                  name="search-outline"
+                  size={48}
+                  color={
+                    isDark ? ThemeColors.dark.text : ThemeColors.light.text
+                  }
+                  style={{ opacity: 0.5 }}
+                />
+                <Text
+                  style={[
+                    styles.emptyText,
+                    {
+                      color: isDark
+                        ? ThemeColors.dark.text
+                        : ThemeColors.light.text,
+                    },
+                  ]}
+                >
+                  {searchText
+                    ? "No products found"
+                    : "Search for food products or scan a barcode"}
+                </Text>
+              </View>
+            )}
+          </ScrollView>
+
+          <View
+            style={[
+              styles.searchContainer,
+              {
+                backgroundColor: isDark
+                  ? ThemeColors.dark.background
+                  : ThemeColors.light.background,
+              },
+            ]}
           >
             <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                backgroundColor: isDark
-                  ? ThemeColors.dark.button
-                  : ThemeColors.light.button,
-                borderRadius: 10,
-                paddingRight: 15,
-              }}
+              style={[
+                styles.searchInputContainer,
+                {
+                  backgroundColor: isDark
+                    ? ThemeColors.dark.button
+                    : ThemeColors.light.button,
+                },
+              ]}
             >
               <TextInput
                 placeholder="Search food or enter barcode"
+                placeholderTextColor={
+                  isDark
+                    ? ThemeColors.dark.text + "80"
+                    : ThemeColors.light.text + "80"
+                }
                 value={searchText}
                 onChangeText={setSearchText}
-                style={{
-                  flex: 1,
-                  padding: 15,
-                  color: isDark
-                    ? ThemeColors.dark.text
-                    : ThemeColors.light.text,
-                }}
+                style={[
+                  styles.searchInput,
+                  {
+                    color: isDark
+                      ? ThemeColors.dark.text
+                      : ThemeColors.light.text,
+                  },
+                ]}
                 onSubmitEditing={async () => {
                   if (!searchText.trim()) {
-                    setProducts(null);
+                    setProducts([]);
                     return;
                   }
-                  // do loading on
-                  setProducts(await searchFood(searchText));
-                  // do loading off
+                  try {
+                    const result = await searchFood(searchText);
+                    setProducts(result || []);
+                  } catch (error) {
+                    console.error("Search failed:", error);
+                    setProducts([]);
+                  }
                 }}
               />
-              <TouchableOpacity onPress={openScanner}>
+              <TouchableOpacity
+                onPress={openScanner}
+                style={styles.barcodeButton}
+              >
                 <Ionicons
                   name="barcode-outline"
                   size={24}
@@ -149,13 +169,13 @@ export default function CalorieTrackerScreen() {
                 />
               </TouchableOpacity>
             </View>
+          </View>
 
-            <BarcodeScanner
-              isVisible={showScanner}
-              onClose={() => setShowScanner(false)}
-              onBarcodeScanned={handleBarcodeScanned}
-            />
-          </KeyboardAvoidingView>
+          <BarcodeScanner
+            isVisible={showScanner}
+            onClose={() => setShowScanner(false)}
+            onBarcodeScanned={handleBarcodeScanned}
+          />
         </KeyboardAvoidingView>
       </TouchableWithoutFeedback>
     </SafeAreaView>
@@ -165,5 +185,45 @@ export default function CalorieTrackerScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  contentContainer: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    padding: 16,
+    paddingBottom: 20,
+  },
+  emptyState: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 60,
+  },
+  emptyText: {
+    fontSize: 16,
+    textAlign: "center",
+    marginTop: 16,
+    opacity: 0.7,
+  },
+  searchContainer: {
+    padding: 16,
+    paddingBottom: 8,
+    borderTopWidth: 1,
+    borderTopColor: "#00000010",
+  },
+  searchInputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 12,
+    paddingRight: 12,
+  },
+  searchInput: {
+    flex: 1,
+    padding: 16,
+    fontSize: 16,
+  },
+  barcodeButton: {
+    padding: 8,
   },
 });
