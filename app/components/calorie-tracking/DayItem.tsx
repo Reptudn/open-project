@@ -19,6 +19,7 @@ import ProductItem from "./ProductItem";
 import { Product } from "@/types/FoodData";
 import { useState, useEffect } from "react";
 import DayNutritionOverview from "./DayNutritionOverview";
+import { getDayData } from "@/lib/api/calorie_day_tracking";
 
 export default function DayItem({
   date,
@@ -41,6 +42,7 @@ export default function DayItem({
   const [searchText, setSearchText] = useState("");
 
   const [products, setProducts] = useState<Product[]>([]);
+  const [dayData, setDayData] = useState({});
 
   const handleBarcodeScanned = async (barcode: string) => {
     console.log("Barcode scanned:", barcode);
@@ -65,8 +67,14 @@ export default function DayItem({
   };
 
   useEffect(() => {
+    const fetchData = async () => {
+      const data = await getDayData(date);
+      setDayData(data);
+    };
+    fetchData();
+
     if (isSelected) {
-      // load data from that day here
+      // load some data here
     } else {
       // unload stuff here
     }
@@ -182,7 +190,7 @@ export default function DayItem({
                   ]}
                 >
                   {searchText
-                    ? "No products found"
+                    ? "No products found or loading..."
                     : "Nothing added for that day!\nSearch for food products or scan a barcode."}
                 </Text>
               </View>
@@ -212,9 +220,7 @@ export default function DayItem({
               <TextInput
                 placeholder="Search food or enter barcode"
                 placeholderTextColor={
-                  isDark
-                    ? ThemeColors.dark.text + "80"
-                    : ThemeColors.light.text + "80"
+                  isDark ? ThemeColors.dark.text : ThemeColors.light.text
                 }
                 value={searchText}
                 onChangeText={setSearchText}
