@@ -1,9 +1,10 @@
-import { TouchableOpacity, Text, Image, View } from "react-native";
+import { TouchableOpacity, Text, Image, View, StyleSheet, Dimensions } from "react-native";
 import ExerciseTag, { ExerciseTagType } from "./ExerciseTag";
 import { AddExerciseSmall } from "./AddExercise";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { ThemeColors } from "@/constants/theme";
 import { Exercise } from "@/types/Exercise";
+import { router } from "expo-router";
 
 export default function ExerciseItem({ exercise }: { exercise: Exercise }) {
   const colorScheme = useColorScheme();
@@ -24,7 +25,13 @@ export default function ExerciseItem({ exercise }: { exercise: Exercise }) {
         borderColor: isDark ? "#444" : "#ddd",
         borderWidth: 1,
       }}
-      onPress={() => {alert('test')}}
+      onPress={
+        () =>
+          router.navigate({
+            pathname: "/(training)/exerciseInfo",
+            params:  {exercise: JSON.stringify(exercise)},
+          })
+      }
     >
       <Image
         source={{
@@ -115,3 +122,4 @@ export default function ExerciseItem({ exercise }: { exercise: Exercise }) {
     </TouchableOpacity>
   );
 }
+
