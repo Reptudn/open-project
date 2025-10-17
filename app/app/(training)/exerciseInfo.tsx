@@ -14,14 +14,22 @@ import { router, useLocalSearchParams } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Modalize } from "react-native-modalize";
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 
 export default function ExerciseInfo() {
   const modalizeRef = useRef<Modalize>(null);
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const { width, height } = Dimensions.get("window");
-  const exercise = useLocalSearchParams();
+  const { name, overview, imageUrl } = useLocalSearchParams();
+  console.log(name);
+  console.log(overview);
+  console.log(imageUrl);
+
+useEffect(() => {
+  modalizeRef.current?.open();
+}, []);
+
   return (
     <SafeAreaView>
       <Modalize ref={modalizeRef}>
@@ -44,9 +52,32 @@ export default function ExerciseInfo() {
                 fontSize: 20,
               }}
             >
-              {exercise.name}
+               {name}
             </Text>
-            <Text>Testtttttt</Text>
+            <Image
+                    source={{
+                      uri: imageUrl
+                    }}
+                    style={{
+                      width: 400,
+                      height: 400,
+                      borderRadius: 5,
+                    }}
+                    resizeMode="contain"
+                    onError={(error) =>
+                      console.log("Image load error:", error.nativeEvent.error)
+                    }
+                    alt="Exercise GIF"
+                  />
+            <Text
+                          style={{
+                            color: isDark ? ThemeColors.dark.text : ThemeColors.light.text,
+                            paddingHorizontal: 15,
+                            fontSize: 20,
+                          }}
+                        >
+                          {overview}
+                        </Text>
           </View>
         </View>
       </Modalize>

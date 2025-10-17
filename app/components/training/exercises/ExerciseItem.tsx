@@ -29,7 +29,11 @@ export default function ExerciseItem({ exercise }: { exercise: Exercise }) {
         () =>
           router.navigate({
             pathname: "/(training)/exerciseInfo",
-            params:  {exercise: JSON.stringify(exercise)},
+            params:  {
+                         name: exercise.name,
+                         overview: exercise.overview,
+                         imageUrl: exercise.imageUrl,
+                       },
           })
       }
     >
@@ -56,7 +60,7 @@ export default function ExerciseItem({ exercise }: { exercise: Exercise }) {
         <Text
           style={{
             fontWeight: "bold",
-            color: "white",
+            color: isDark ? ThemeColors.dark.text : ThemeColors.light.text,
             fontSize: 16,
             marginBottom: 8,
           }}
