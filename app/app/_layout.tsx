@@ -5,13 +5,16 @@ import { router, Slot } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { ReactNode, useEffect } from "react";
 import { StyleSheet, View, useColorScheme } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <AuthProvider>
-      <InnerLayout />
-      <StatusBar style="auto" />
-    </AuthProvider>
+    <GestureHandlerRootView style={{flex: 1}}>
+      <AuthProvider>
+        <InnerLayout />
+        <StatusBar style="auto" />
+      </AuthProvider>
+    </GestureHandlerRootView>
   );
 }
 
