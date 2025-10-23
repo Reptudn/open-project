@@ -1,12 +1,13 @@
 import { Alert } from "react-native";
 import { supabase } from "../supabase";
+import { PropsFilter } from "react-native-reanimated/lib/typescript/createAnimatedComponent/PropsFilter";
 
 export interface Profile {
   id: string;
   username?: string;
   full_name?: string;
   gender?: string;
-  birth_data?: string;
+  birth_date?: Date;
   height_cm?: number;
   weight_kg?: number;
   created_at?: string;
@@ -52,8 +53,7 @@ export async function getUser(id: string): Promise<Profile | null> {
     .maybeSingle();
 
   if (error) {
-    console.error(data);
-    console.error("Problem loading User Table", error);
+    console.error("Problem loading User Table", error.message);
     return null;
   }
   return data;
@@ -121,7 +121,7 @@ export async function getWorkoutLogs(
 
 // Setter Function
 
-export async function registerProfile(id?: string) {
+export async function registerProfile(profile: Profile): Promise<Profile | null> {
   const response = await fetch(
     "https://tegfwlejpnjfcyyppogf.supabase.co/functions/v1/setProfile",
     {
@@ -131,7 +131,13 @@ export async function registerProfile(id?: string) {
         Authorization: `Bearer ${process.env.EXPO_PUBLIC_KEY || "default"}`,
       },
       body: JSON.stringify({
-        id: id,
+        id: profile.id,
+        username: profile.username,
+        full_name: profile.full_name,
+        gender: profile.gender,
+        birth_date: profile.birth_date,
+        height_cm: profile.height_cm,
+        weight_kg: profile.weight_kg,
       }),
     }
   );
@@ -140,7 +146,9 @@ export async function registerProfile(id?: string) {
 
   if (data.message) {
     Alert.alert(data.message);
+    return null;
   }
+  return data;
 }
 
 export async function setWorkout(workout: Workout) {

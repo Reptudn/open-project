@@ -1,45 +1,40 @@
+import { ThemeColors } from "@/constants/theme";
 import { supabase } from "@/lib/supabase";
+import { router } from "expo-router";
 import { useState } from "react";
 import {
   View,
   StyleSheet,
+  useColorScheme,
+  Text,
   TextInput,
   TouchableOpacity,
   Alert,
-  Text,
-  useColorScheme,
 } from "react-native";
-import GoogleSignInButton from "@/components/auth/social-auth-buttons/google/google-sign-in-button";
-import { router } from "expo-router";
-import { ThemeColors } from "@/constants/theme";
 
-export default function Login() {
+export default function ForgotPass() {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const colorScheme = useColorScheme();
   const styles = getStyles(colorScheme === "dark");
-
-  async function signInWithEmail() {
+  async function resetPassword() {
     setLoading(true);
-    if (!email || !password)
-      Alert.alert("You need to fill in a Email and a Password");
+    if (!email) Alert.alert("You need to enter a Email");
     else {
-      const { error } = await supabase.auth.signInWithPassword({
-        email: email,
-        password: password,
-      });
-
+      const { error } = await supabase.auth.resetPasswordForEmail(email);
       if (error) Alert.alert(error.message);
+      else Alert.alert(email);
     }
-
     setLoading(false);
   }
 
   return (
     <View style={styles.container}>
-      <View style={styles.topContainer}>
-        <Text style={styles.infoText}>Enter your Email</Text>
+      <View style={styles.innerContainer}>
+        <Text style={styles.infoText}>
+          Please enter your email to reset the password
+        </Text>
+        <Text style={styles.infoText}>Your Email</Text>
         <TextInput
           style={styles.input}
           placeholder="example@wtf.com"
@@ -47,43 +42,22 @@ export default function Login() {
           onChangeText={setEmail}
           autoCapitalize={"none"}
         />
-        <Text style={styles.infoText}>Enter your Password</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="starwars"
-          value={password}
-          onChangeText={setPassword}
-          autoCapitalize={"none"}
-          secureTextEntry={true}
-        />
-        <Text
-          style={[styles.infoText, { alignSelf: "flex-end" }]}
-          onPress={() => {
-            router.push("./forgotPass");
-          }}
-        >
-          forgot Password?
-        </Text>
         <TouchableOpacity
           style={styles.button}
           disabled={loading}
-          onPress={signInWithEmail}
+          onPress={resetPassword}
           activeOpacity={0.7}
         >
-          <Text style={styles.loginText}>Sign In</Text>
+          <Text style={styles.loginText}>Reset Password</Text>
         </TouchableOpacity>
-      </View>
-      <View style={styles.bottomContainer}>
         <Text
           style={[styles.infoText, { alignSelf: "center" }]}
           onPress={() => {
             router.back();
           }}
         >
-          Don’t have an account? Sign Up
+          Go back to SignIn
         </Text>
-        <Text style={[styles.infoText, { alignSelf: "center" }]}>or</Text>
-        <GoogleSignInButton />
       </View>
     </View>
   );
@@ -94,14 +68,13 @@ const getStyles = (isDark: boolean) =>
     container: {
       flex: 1,
       alignItems: "center",
-      gap: 10,
     },
-    topContainer: {
+    innerContainer: {
       marginTop: "50%",
       gap: 10,
     },
-    bottomContainer: {
-      gap: 10,
+    infoText: {
+      color: isDark ? ThemeColors.dark.text : ThemeColors.light.text,
     },
     input: {
       width: 352,
@@ -125,9 +98,6 @@ const getStyles = (isDark: boolean) =>
       borderRadius: 17.6,
       alignItems: "center",
       justifyContent: "center",
-    },
-    infoText: {
-      color: isDark ? ThemeColors.dark.text : ThemeColors.light.text,
     },
     loginText: {
       color: isDark ? ThemeColors.dark.text : ThemeColors.light.text,
