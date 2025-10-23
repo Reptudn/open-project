@@ -20,6 +20,7 @@ import { Product } from "@/types/FoodData";
 import { useState, useEffect } from "react";
 import DayNutritionOverview from "./DayNutritionOverview";
 import { getDayData } from "@/lib/api/calorie_day_tracking";
+import Meals from "./Meal";
 
 export default function DayItem({
   date,
@@ -165,6 +166,7 @@ export default function DayItem({
             showsVerticalScrollIndicator={false}
           >
             <DayNutritionOverview eaten={631} burnt={200} toGo={1923} />
+            <Meals />
             {products && products.length > 0 ? (
               products.map((product) => (
                 <ProductItem key={product.code} product={product} />
