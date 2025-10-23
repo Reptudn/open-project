@@ -41,6 +41,14 @@
             "backgroundColor": "#000000"
           }
         }
+      ],
+      "expo-video",
+      "expo-barcode-scanner",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera"
+        }
       ]
     ],
     "experiments": {
