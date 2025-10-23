@@ -11,27 +11,31 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { ThemeColors } from "@/constants/theme";
 import { getWorkouts } from "@/lib/api/workoutTableUtils";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import React from "react";
+import React, { useRef } from "react";
 import ExerciseList from "@/components/training/exercises/ExerciseList";
-import { red } from "react-native-reanimated/lib/typescript/Colors";
+import { Modalize } from "react-native-modalize";
 
 export default function TrainingScreen() {
+  const modalizeRef = useRef<Modalize>(null);
+  const exerciseInfo = useRef<Modalize>(null);
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
+
+  const onOpen = () => {
+    modalizeRef.current?.open();
+  };
 
   const Workouts = async () => {
     return await getWorkouts();
   };
 
   const Training = () => {
-    const [modalVisible, setModalVisible] = React.useState(false);
-
     const { width, height } = Dimensions.get("window");
     if (Workouts.length === 0) {
       return (
         <SafeAreaView>
           <TouchableOpacity
-            onPress={() => setModalVisible(true)}
+            onPress={() => onOpen()}
             style={[
               styles.itemsingle,
               {
@@ -58,60 +62,35 @@ export default function TrainingScreen() {
             >
               Workout
             </Text>
-            <Modal
-              animationType="slide"
-              transparent={true}
-              visible={modalVisible}
-              onRequestClose={() => setModalVisible(false)}
-            >
-              <View style={styles.modalBackground}>
-                <View
-                  style={[
-                    styles.modalView,
-                    { width: width, height: height * 0.9 },
-                    {
-                      backgroundColor: isDark
-                        ? ThemeColors.dark.button
-                        : ThemeColors.light.button,
-                    },
-                  ]}
-                >
-                  <TouchableOpacity
-                    style={{
-                      position: "absolute",
-                      right: 15,
-                      marginTop: 20,
-                      zIndex: 1000,
-                      width: 30,
-                      height: 30,
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                    onPress={() => setModalVisible(false)}
-                  >
-                    <Ionicons
-                      name={isDark ? "close-circle-outline" : "close-circle"}
-                      size={30}
-                      color="red"
-                    />
-                  </TouchableOpacity>
-                  <Text
-                    style={{
-                      color: isDark
-                        ? ThemeColors.dark.text
-                        : ThemeColors.light.text,
-                      fontWeight: "bold",
-                      paddingHorizontal: 15,
-                      fontSize: 20,
-                    }}
-                  >
-                    Build your workout
-                  </Text>
-                  <ExerciseList />
-                </View>
-              </View>
-            </Modal>
           </TouchableOpacity>
+          <Modalize ref={modalizeRef}>
+            <View style={styles.modalBackground}>
+              <View
+                style={[
+                  { width: width, height: height * 0.9 },
+                  {
+                    backgroundColor: isDark
+                      ? ThemeColors.dark.button
+                      : ThemeColors.light.button,
+                  },
+                ]}
+              >
+                <Text
+                  style={{
+                    color: isDark
+                      ? ThemeColors.dark.text
+                      : ThemeColors.light.text,
+                    fontWeight: "bold",
+                    paddingHorizontal: 15,
+                    fontSize: 20,
+                  }}
+                >
+                  Build your workout
+                </Text>
+                <ExerciseList />
+              </View>
+            </View>
+          </Modalize>
         </SafeAreaView>
       );
     }
@@ -220,15 +199,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(0,0,0,0.5)", // Semi-transparent background
-  },
-  modalView: {
-    borderRadius: 20,
-    paddingTop: 20,
-    elevation: 5, // Shadow for Android
-    shadowColor: "#000", // Shadow for iOS
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
   },
   modalText: {
     fontSize: 18,

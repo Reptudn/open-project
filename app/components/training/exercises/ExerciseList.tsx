@@ -55,6 +55,10 @@ export default function ExerciseList() {
 
   const displayExercises = exercises.length > 0 ? exercises : [];
 
+  function loadExercise(ex: Exercise) {
+    alert("test");
+  }
+
   return (
     <>
       <TextInput
