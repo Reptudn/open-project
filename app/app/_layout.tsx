@@ -5,17 +5,18 @@ import AuthProvider from "@/providers/auth-provider";
 import { router, Slot } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { ReactNode, useEffect } from "react";
-import { StyleSheet, View, useColorScheme, Text } from "react-native";
+import { StyleSheet, View, useColorScheme } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "../global.css";
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <View className="flex-1 items-center justify-center bg-white">
-      <Text className="text-xl font-bold text-blue-500">
-        Welcome to Nativewind!
-      </Text>
-    </View>
+    <GestureHandlerRootView style={{flex: 1}}>
+      <AuthProvider>
+        <InnerLayout />
+        <StatusBar style="auto" />
+      </AuthProvider>
+    </GestureHandlerRootView>
   );
 }
 
