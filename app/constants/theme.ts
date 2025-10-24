@@ -4,6 +4,7 @@
  */
 
 import { Platform } from "react-native";
+import { useColorScheme } from "react-native";
 
 const tintColorLight = "#0a7ea4";
 const tintColorDark = "#fff";
@@ -119,24 +120,24 @@ export const ThemeColors = {
   success: "#4BB543",
 };
 
-export function getThemeColor(
-  colorScheme: "light" | "dark" | "red" | "blue" | "green" | "yellow" | "orange"
-) {
+export function getThemeColor(colorScheme = useColorScheme()) {
   switch (colorScheme) {
     case "light":
       return ThemeColors.light;
     case "dark":
       return ThemeColors.dark;
-    case "red":
-      return ThemeColors.red;
-    case "blue":
-      return ThemeColors.blue;
-    case "green":
-      return ThemeColors.green;
-    case "yellow":
-      return ThemeColors.yellow;
-    case "orange":
-      return ThemeColors.orange;
+    // case "red":
+    //   return ThemeColors.red;
+    // case "blue":
+    //   return ThemeColors.blue;
+    // case "green":
+    //   return ThemeColors.green;
+    // case "yellow":
+    //   return ThemeColors.yellow;
+    // case "orange":
+    //   return ThemeColors.orange;
+    default:
+      return ThemeColors.dark;
   }
 }
 

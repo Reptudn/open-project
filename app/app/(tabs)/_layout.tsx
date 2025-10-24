@@ -138,6 +138,34 @@ export default function TabLayout() {
           ),
         }}
       />
+      {process.env.NODE_ENV == 'development' && (<Tabs.Screen
+        name="TestComponents"
+        options={{
+          title: "TestComponents",
+          headerTitle: "Components",
+          headerLeft: () => (
+            <TouchableOpacity style={{ marginLeft: 15 }}>
+              <Ionicons
+                name="help-circle"
+                size={24}
+                color={isDark ? "#d0d0c0" : "#242c40"}
+              />
+            </TouchableOpacity>
+          ),
+          headerRight: () => (
+            <TouchableOpacity style={{ marginRight: 15 }}>
+              <Ionicons
+                name="notifications-outline"
+                size={24}
+                color={isDark ? ThemeColors.dark.icon : ThemeColors.light.icon}
+              />
+            </TouchableOpacity>
+          ),
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name="house.fill" color={color} />
+          ),
+        }}
+      />)}
     </Tabs>
   );
 }
