@@ -37,12 +37,108 @@ export const ThemeColors = {
     headerTintColor: "#d0d0c0",
     dark: "#4a5568",
   },
+  red: {
+    // accent red theme — light background with red accents
+    text: "#2a0b0b",
+    background: "#fff",
+    button: "#fff2f2",
+    tint: "#FF3333",
+    icon: "#8a1f1f",
+    tabIconDefault: "#8a1f1f",
+    tabIconSelected: "#FF3333",
+    tabBarActiveTintColor: "#2a0b0b",
+    tabBarInactiveTintColor: "#8a8a8a",
+    borderTopColor: "#f2b7b7",
+    headerTintColor: "#2a0b0b",
+    dark: "#7a1a1a",
+  },
+  blue: {
+    // accent blue theme
+    text: "#062533",
+    background: "#fff",
+    button: "#eaf6ff",
+    tint: "#3399FF",
+    icon: "#0a628f",
+    tabIconDefault: "#0a628f",
+    tabIconSelected: "#3399FF",
+    tabBarActiveTintColor: "#062533",
+    tabBarInactiveTintColor: "#8a8a8a",
+    borderTopColor: "#bfe6ff",
+    headerTintColor: "#062533",
+    dark: "#0f567a",
+  },
+  green: {
+    // accent green theme
+    text: "#08321a",
+    background: "#fff",
+    button: "#f2fff4",
+    tint: "#4BB543",
+    icon: "#2e7a3d",
+    tabIconDefault: "#2e7a3d",
+    tabIconSelected: "#4BB543",
+    tabBarActiveTintColor: "#08321a",
+    tabBarInactiveTintColor: "#8a8a8a",
+    borderTopColor: "#cfefd7",
+    headerTintColor: "#08321a",
+    dark: "#256534",
+  },
+  yellow: {
+    // accent yellow theme
+    text: "#3a2a00",
+    background: "#fff",
+    button: "#fff9e6",
+    tint: "#FFAA00",
+    icon: "#8a6a00",
+    tabIconDefault: "#8a6a00",
+    tabIconSelected: "#FFAA00",
+    tabBarActiveTintColor: "#3a2a00",
+    tabBarInactiveTintColor: "#8a8a8a",
+    borderTopColor: "#ffe7b3",
+    headerTintColor: "#3a2a00",
+    dark: "#a06f00",
+  },
+  orange: {
+    // accent orange theme
+    text: "#3a1200",
+    background: "#fff",
+    button: "#fff4ea",
+    tint: "#FF8800",
+    icon: "#8a3f00",
+    tabIconDefault: "#8a3f00",
+    tabIconSelected: "#FF8800",
+    tabBarActiveTintColor: "#3a1200",
+    tabBarInactiveTintColor: "#8a8a8a",
+    borderTopColor: "#ffd6b3",
+    headerTintColor: "#3a1200",
+    dark: "#9a4f00",
+  },
   ok: "#4BB543",
   error: "#FF3333",
   warning: "#FFAA00",
   info: "#3399FF",
   success: "#4BB543",
 };
+
+export function getThemeColor(
+  colorScheme: "light" | "dark" | "red" | "blue" | "green" | "yellow" | "orange"
+) {
+  switch (colorScheme) {
+    case "light":
+      return ThemeColors.light;
+    case "dark":
+      return ThemeColors.dark;
+    case "red":
+      return ThemeColors.red;
+    case "blue":
+      return ThemeColors.blue;
+    case "green":
+      return ThemeColors.green;
+    case "yellow":
+      return ThemeColors.yellow;
+    case "orange":
+      return ThemeColors.orange;
+  }
+}
 
 export const Fonts = Platform.select({
   ios: {

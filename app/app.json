@@ -4,7 +4,7 @@
     "slug": "gym",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/cr.png",
     "scheme": "myapp",
     "platforms": ["ios", "android"],
     "userInterfaceStyle": "automatic",
@@ -33,7 +33,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./cr.png",
+          "image": "./assets/images/cr.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff",
@@ -56,7 +56,7 @@
       "reactCompiler": true
     },
     "splash": {
-      "image": "./cr.png",
+      "image": "./assets/images/cr.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     }

@@ -73,6 +73,11 @@ export default function ProductItem({ product }: { product: Product }) {
   );
 }
 
+// this is going to be the full page of the product if you want more information
+export function ProductItemFull({ product }: { product: Product }) {
+  return <ProductItem product={product} />;
+}
+
 const styles = StyleSheet.create({
   container: {
     padding: 15,
