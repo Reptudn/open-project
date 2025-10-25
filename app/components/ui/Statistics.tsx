@@ -29,6 +29,7 @@ interface IHomeStats {
   value: number;
   type: string;
   backgroundColor: string;
+  onPress: () => void;
 }
 
 export function GymHomeStats({

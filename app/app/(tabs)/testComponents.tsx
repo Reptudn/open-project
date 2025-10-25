@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { GymBr } from "@/components/ui/Br";
 import {
   GymButtonFullLarge,
@@ -10,10 +11,15 @@ import { GymTitle, GymHeader, GymText } from "@/components/ui/Text";
 import { getThemeColor } from "@/constants/theme";
 import { useColorScheme } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import { red } from "react-native-reanimated/lib/typescript/Colors";
 
 export default function TestComponentsScreen() {
   const theme = getThemeColor(useColorScheme());
+  const [height, setHeight] = useState<number>(170);
+
+  const onValueChange = (val: number) => {
+    setHeight(val);
+  };
+
   // Main testing page with components
   return (
     <ScrollView
@@ -26,13 +32,21 @@ export default function TestComponentsScreen() {
       <GymBr />
       <GymText>Text</GymText>
       <GymBr />
-      <GymButtonFullWidth>ButtonFullWidth</GymButtonFullWidth>
+      <GymButtonFullWidth onPress={() => alert("add function")}>
+        ButtonFullWidth
+      </GymButtonFullWidth>
       <GymBr />
-      <GymButtonSmall>Small</GymButtonSmall>
+      <GymButtonSmall onPress={() => alert("add function")}>
+        Small
+      </GymButtonSmall>
       <GymBr />
-      <GymButtonFullMedium>Medium</GymButtonFullMedium>
+      <GymButtonFullMedium onPress={() => alert("add function")}>
+        Medium
+      </GymButtonFullMedium>
       <GymBr />
-      <GymButtonFullLarge>Large</GymButtonFullLarge>
+      <GymButtonFullLarge onPress={() => alert("add function")}>
+        Large
+      </GymButtonFullLarge>
       <GymBr />
       <GymHomeStats
         header="Calories"
@@ -40,7 +54,9 @@ export default function TestComponentsScreen() {
         value={799}
         type="kcal"
         backgroundColor="#38B6FF"
+        onPress={() => alert("add function")}
       ></GymHomeStats>
+      <GymBr />
     </ScrollView>
   );
 }
