@@ -1,6 +1,7 @@
 import { Alert } from "react-native";
 import { supabase } from "../supabase";
 import { PropsFilter } from "react-native-reanimated/lib/typescript/createAnimatedComponent/PropsFilter";
+import { useAuthContext } from "@/hooks/use-auth-context";
 
 export interface Profile {
   id: string;
@@ -121,14 +122,18 @@ export async function getWorkoutLogs(
 
 // Setter Function
 
-export async function registerProfile(profile: Profile): Promise<Profile | null> {
+export async function registerProfile(
+  profile: Profile
+): Promise<Profile | null> {
+  const { session } = useAuthContext();
+  if (!session) return null;
   const response = await fetch(
     "https://tegfwlejpnjfcyyppogf.supabase.co/functions/v1/setProfile",
     {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.EXPO_PUBLIC_KEY || "default"}`,
+        Authorization: `Bearer ${session.access_token}`,
       },
       body: JSON.stringify({
         id: profile.id,
@@ -149,35 +154,4 @@ export async function registerProfile(profile: Profile): Promise<Profile | null>
     return null;
   }
   return data;
-}
-
-export async function setWorkout(workout: Workout) {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (user) workout.user_id = user.id;
-
-  const { error } = await supabase.from("workouts").insert([workout]);
-
-  if (error) {
-    console.error("Problem insert to Workouts Table", error);
-  }
-}
-
-export async function setWorkoutExercise(workoutExercises: WorkoutExercise) {
-  const { error } = await supabase
-    .from("workout_exercises")
-    .insert([workoutExercises]);
-
-  if (error) {
-    console.error("Problem insert to WorkoutsExercises Table", error);
-  }
-}
-
-export async function setWorkoutLogs(workoutLog: WorkoutLog) {
-  const { error } = await supabase.from("workout_logs").insert([workoutLog]);
-
-  if (error) {
-    console.error("Problem insert to WorkoutLogs Table", error);
-  }
 }
