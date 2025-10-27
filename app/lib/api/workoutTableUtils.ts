@@ -2,9 +2,11 @@ import { Alert } from "react-native";
 import { supabase } from "../supabase";
 import { PropsFilter } from "react-native-reanimated/lib/typescript/createAnimatedComponent/PropsFilter";
 import { useAuthContext } from "@/hooks/use-auth-context";
+import { Session } from "@supabase/supabase-js";
+import { Exercise } from "@/types/Exercise";
 
 export interface Profile {
-  id: string;
+  id?: string;
   username?: string;
   full_name?: string;
   gender?: string;
@@ -16,32 +18,32 @@ export interface Profile {
 }
 
 interface Workout {
-  id: number;
+  id?: number;
   user_id: string;
   name: string;
-  description: string;
-  created_at: string;
+  description?: string;
+  created_at?: string;
 }
 
 interface WorkoutExercise {
-  id: number;
+  id?: number;
   workout_id: number;
-  exercise_id: number;
-  sets: number;
-  reps: number;
-  rest_seconds: number;
+  exercise_id: string;
+  set_index?: number;
+  reps_target?: number;
+  rest_seconds?: number;
   order_index: number;
-  created_at: string;
+  created_at?: string;
 }
 
 interface WorkoutLog {
-  id: number;
+  id?: number;
   workout_id: number;
-  exercise_id: number;
-  sets_completed: number;
+  exercise_id: string;
+  set_index: number;
   reps_completed: number;
   weight_kg: number;
-  created_at: string;
+  created_at?: string;
 }
 
 // Getter Function
@@ -153,5 +155,70 @@ export async function registerProfile(
     Alert.alert(data.message);
     return null;
   }
-  return data;
+  return data.data as Profile;
+}
+
+export async function createWorkout(
+  workout: Workout,
+  session: Session | null
+): Promise<Workout | null> {
+  if (!session) return null; //TODO Error handling
+  const response = await fetch(
+    "https://tegfwlejpnjfcyyppogf.supabase.co/functions/v1/setWorkout",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify({
+        user_id: workout.user_id,
+        name: workout.name,
+        description: workout.description,
+      }),
+    }
+  );
+
+  const data = await response.json();
+
+  if (data.message) {
+    return null; //TODO Error handling
+  }
+  return data.data as Workout;
+}
+
+export async function addExercise(
+  exercises: WorkoutExercise[],
+  session: Session | null
+): Promise<WorkoutExercise[] | null> {
+  if (!session || exercises.length === 0) return null; //TODO Error handling
+  const response = await fetch(
+    "https://tegfwlejpnjfcyyppogf.supabase.co/functions/v1/addExercise",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify({
+        exercises: exercises.map((ex) => ({
+          workout_id: ex.workout_id,
+          exercise_id: ex.exercise_id,
+          set_index: ex.set_index,
+          reps_target: ex.reps_target,
+          rest_seconds: ex.rest_seconds,
+          order_index: ex.order_index,
+        })),
+      }),
+    }
+  );
+
+  const data = await response.json();
+
+  if (data.message) {
+    //TODO Error handling
+    Alert.alert(data.message);
+    return null;
+  }
+  return data.data as WorkoutExercise[];
 }

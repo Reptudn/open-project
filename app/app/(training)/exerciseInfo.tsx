@@ -26,9 +26,9 @@ export default function ExerciseInfo() {
   console.log(overview);
   console.log(imageUrl);
 
-useEffect(() => {
-  modalizeRef.current?.open();
-}, []);
+  useEffect(() => {
+    modalizeRef.current?.open();
+  }, []);
 
   return (
     <SafeAreaView>
@@ -52,32 +52,32 @@ useEffect(() => {
                 fontSize: 20,
               }}
             >
-               {name}
+              {name}
             </Text>
             <Image
-                    source={{
-                      uri: imageUrl
-                    }}
-                    style={{
-                      width: 400,
-                      height: 400,
-                      borderRadius: 5,
-                    }}
-                    resizeMode="contain"
-                    onError={(error) =>
-                      console.log("Image load error:", error.nativeEvent.error)
-                    }
-                    alt="Exercise GIF"
-                  />
+              source={{
+                uri: imageUrl,
+              }}
+              style={{
+                width: 400,
+                height: 400,
+                borderRadius: 5,
+              }}
+              resizeMode="contain"
+              onError={(error) =>
+                console.log("Image load error:", error.nativeEvent.error)
+              }
+              alt="Exercise GIF"
+            />
             <Text
-                          style={{
-                            color: isDark ? ThemeColors.dark.text : ThemeColors.light.text,
-                            paddingHorizontal: 15,
-                            fontSize: 20,
-                          }}
-                        >
-                          {overview}
-                        </Text>
+              style={{
+                color: isDark ? ThemeColors.dark.text : ThemeColors.light.text,
+                paddingHorizontal: 15,
+                fontSize: 20,
+              }}
+            >
+              {overview}
+            </Text>
           </View>
         </View>
       </Modalize>
