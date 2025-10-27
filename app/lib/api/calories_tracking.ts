@@ -84,7 +84,6 @@ export async function getFoodDataByQuery(
 
   try {
     const data = await response.json();
-    console.log("Search results:", data);
     return data as SearchResponse;
   } catch (error) {
     console.error("Failed to parse JSON:", error);

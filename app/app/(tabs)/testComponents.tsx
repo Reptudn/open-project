@@ -11,7 +11,7 @@ import { GymTitle, GymHeader, GymText } from "@/components/ui/Text";
 import { getThemeColor } from "@/constants/theme";
 import { useColorScheme } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import { GymBodyMetric } from "@/components/ui/BodyMetrics";
+import { Test } from "@/components/ui/BodyMetrics";
 
 export default function TestComponentsScreen() {
   const theme = getThemeColor(useColorScheme());
@@ -58,16 +58,17 @@ export default function TestComponentsScreen() {
         onPress={() => alert("add function")}
       ></GymHomeStats>
       <GymBr />
-      <GymBodyMetric
+      {/* <GymBodyMetric
         min={140}
         max={250}
         step={1}
         unit="cm"
         onValueChange={onValueChange}
         title="Enter your Height"
-      ></GymBodyMetric>
+      ></GymBodyMetric> */}
       <GymBr />
       <GymBr />
+      <Test />
     </ScrollView>
   );
 }
