@@ -9,7 +9,7 @@ export async function deleteWorkout(
     .delete()
     .eq("id", workoutId);
 
-  if (error && error.message) return { data: null, error: error.message };
+  if (error) return { data: null, error: error.message };
 
   return { data: true, error: null };
 }
@@ -24,7 +24,9 @@ export async function removeExercise(
     .eq("workout_id", workoutId)
     .eq("exercise_id", exerciseId);
 
-  if (error && error.message) return { data: null, error: error.message };
+  if (error) return { data: null, error: error.message };
 
   return { data: true, error: null };
 }
+
+//TODO remove only on set from exercise
