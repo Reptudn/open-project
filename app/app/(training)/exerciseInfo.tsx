@@ -14,7 +14,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Modalize } from "react-native-modalize";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 
 export default function ExerciseInfo() {
   const modalizeRef = useRef<Modalize>(null);
@@ -22,14 +22,20 @@ export default function ExerciseInfo() {
   const isDark = colorScheme === "dark";
   const { width, height } = Dimensions.get("window");
   const { name, overview, imageUrl } = useLocalSearchParams();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
 useEffect(() => {
   modalizeRef.current?.open();
 }, []);
 
+const handleModalClose = () => {
+    setIsModalOpen(false);
+  router.push("/(tabs)/training");
+  };
+
   return (
     <SafeAreaView>
-      <Modalize ref={modalizeRef}>
+      <Modalize ref={modalizeRef} onClose={handleModalClose}>
         <View style={styles.modalBackground}>
           <View
             style={[

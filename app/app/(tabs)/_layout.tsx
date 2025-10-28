@@ -1,10 +1,10 @@
-import { Tabs } from "expo-router";
+import { router, Tabs } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { HapticTab } from "@/components/haptic-tab";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { TouchableOpacity } from "react-native";
-import { ThemeColors } from "@/constants/theme";
+import { getThemeColor, ThemeColors } from "@/constants/theme";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -73,11 +73,14 @@ export default function TabLayout() {
           title: "Training",
           headerTitle: "Workout Training",
           headerRight: () => (
-            <TouchableOpacity style={{ marginRight: 15 }} onPress={() => {}}>
+            <TouchableOpacity style={{ marginRight: 15, backgroundColor: getThemeColor(useColorScheme()).text, height: 40, width: 40, borderRadius: 20, alignItems: "center", justifyContent: "center" }} onPress={() => {
+          // Navigate to modal
+          router.push('/(training)/trainingOverview');
+        }}>
               <Ionicons
                 name="add-outline"
                 size={24}
-                color={isDark ? ThemeColors.dark.icon : ThemeColors.light.icon}
+                color={isDark ? ThemeColors.dark.background : ThemeColors.light.background}
               />
             </TouchableOpacity>
           ),

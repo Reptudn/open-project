@@ -1,126 +1,16 @@
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  Dimensions,
-  Modal,
-} from "react-native";
+import { StyleSheet } from "react-native";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { ThemeColors } from "@/constants/theme";
-import { getWorkouts } from "@/lib/api/workoutTableUtils";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import React, { useRef } from "react";
-import ExerciseList from "@/components/training/exercises/ExerciseList";
-import { Modalize } from "react-native-modalize";
+import GymView from "@/components/ui/GymView";
+import { GymText } from "@/components/ui/Text";
 
 export default function TrainingScreen() {
-  const modalizeRef = useRef<Modalize>(null);
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
 
-  const onOpen = () => {
-    modalizeRef.current?.open();
-  };
-
-  const Workouts = async () => {
-    return await getWorkouts();
-  };
-
-  const Training = () => {
-    const { width, height } = Dimensions.get("window");
-    if (Workouts.length === 0) {
-      return (
-        <SafeAreaView>
-          <TouchableOpacity
-            onPress={() => onOpen()}
-            style={[
-              styles.itemsingle,
-              {
-                backgroundColor: isDark
-                  ? ThemeColors.dark.button
-                  : ThemeColors.light.button,
-              },
-            ]}
-          >
-            <Ionicons
-              name={isDark ? "add-circle-outline" : "add-circle"}
-              size={35}
-              color={isDark ? ThemeColors.dark.text : ThemeColors.light.text}
-            />
-            <Text
-              style={[
-                styles.title,
-                {
-                  color: isDark
-                    ? ThemeColors.dark.text
-                    : ThemeColors.light.text,
-                },
-              ]}
-            >
-              Workout
-            </Text>
-          </TouchableOpacity>
-          <Modalize ref={modalizeRef}>
-            <View style={styles.modalBackground}>
-              <View
-                style={[
-                  { width: width, height: height * 0.9 },
-                  {
-                    backgroundColor: isDark
-                      ? ThemeColors.dark.button
-                      : ThemeColors.light.button,
-                  },
-                ]}
-              >
-                <Text
-                  style={{
-                    color: isDark
-                      ? ThemeColors.dark.text
-                      : ThemeColors.light.text,
-                    fontWeight: "bold",
-                    paddingHorizontal: 15,
-                    fontSize: 20,
-                  }}
-                >
-                  Build your workout
-                </Text>
-                <ExerciseList />
-              </View>
-            </View>
-          </Modalize>
-        </SafeAreaView>
-      );
-    }
-
-    return (
-      <View>
-        <Text
-          style={[
-            styles.title,
-            { color: isDark ? ThemeColors.dark.text : ThemeColors.light.text },
-          ]}
-        >
-          Hier workouts
-        </Text>
-      </View>
-    );
-  };
-
   return (
-    <SafeAreaView
-      style={[
-        styles.container,
-        {
-          backgroundColor: isDark
-            ? ThemeColors.dark.background
-            : ThemeColors.light.background,
-        },
-      ]}
-    >
-      <Training />
-    </SafeAreaView>
+    <GymView>
+      <GymText>Hier workouts</GymText>
+    </GymView>
   );
 }
 
