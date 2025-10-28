@@ -1,4 +1,4 @@
-import { Profile } from "@/lib/api/workoutTableUtils";
+import { Profile } from "@/lib/api/workout/workoutTableInsert";
 import { Session } from "@supabase/supabase-js";
 import { createContext, useContext } from "react";
 
@@ -7,7 +7,7 @@ export type AuthData = {
   profile: Profile | null;
   isLoading: boolean;
   isLoggedIn: boolean;
-  updateProfile: (updates: Profile) => Promise<void>
+  updateProfile: (updates: Profile) => Promise<void>;
 };
 
 export const AuthContext = createContext<AuthData>({

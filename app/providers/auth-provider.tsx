@@ -1,6 +1,6 @@
 import { AuthContext } from "@/hooks/use-auth-context";
 import { supabase } from "@/lib/supabase";
-import { getUser, registerProfile } from "@/lib/api/workoutTableUtils";
+import { getUser, registerProfile } from "@/lib/api/workout/workoutTableInsert";
 import { Session } from "@supabase/supabase-js";
 import { PropsWithChildren, useEffect, useState } from "react";
 import { Alert } from "react-native";

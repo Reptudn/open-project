@@ -1,6 +1,9 @@
 import { ThemeColors } from "@/constants/theme";
 import { useAuthContext } from "@/hooks/use-auth-context";
-import { addExercise, createWorkout } from "@/lib/api/workoutTableUtils";
+import {
+  addExercise,
+  createWorkout,
+} from "@/lib/api/workout/workoutTableInsert";
 import { useState } from "react";
 import {
   StyleSheet,

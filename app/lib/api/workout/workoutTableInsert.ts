@@ -1,5 +1,5 @@
 import { Result } from "@/types/ErrorHandling";
-import { supabase } from "../supabase";
+import { supabase } from "../../supabase";
 import { Session } from "@supabase/supabase-js";
 
 // Getter Function

@@ -9,7 +9,7 @@ import {
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ThemeColors } from "@/constants/theme";
-import { getWorkouts } from "@/lib/api/workoutTableUtils";
+import { getWorkouts } from "@/lib/api/workout/workoutTableInsert";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import React, { useRef } from "react";
 import ExerciseList from "@/components/training/exercises/ExerciseList";
