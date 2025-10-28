@@ -28,7 +28,6 @@ export async function updateWorkout(
 export async function updateWorkoutExercise(
   workoutId: number,
   exerciseId: string,
-  sessionId: number,
   set_index: number | null,
   update: {
     order_index?: number;
@@ -52,7 +51,6 @@ export async function updateWorkoutExercise(
     .update(upExercise)
     .eq("workout_id", workoutId)
     .eq("exercise_id", exerciseId)
-    .eq("session_id", sessionId)
     .select()
     .single();
 
