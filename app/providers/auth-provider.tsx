@@ -1,8 +1,9 @@
 import { AuthContext } from "@/hooks/use-auth-context";
 import { supabase } from "@/lib/supabase";
-import { getUser, Profile, registerProfile } from "@/lib/api/workoutTableUtils";
+import { getUser, registerProfile } from "@/lib/api/workoutTableUtils";
 import { Session } from "@supabase/supabase-js";
 import { PropsWithChildren, useEffect, useState } from "react";
+import { Alert } from "react-native";
 
 export default function AuthProvider({ children }: PropsWithChildren) {
   const [nowSession, setSession] = useState<Session | null>(null);
@@ -21,7 +22,9 @@ export default function AuthProvider({ children }: PropsWithChildren) {
         return;
       }
       setSession(session);
-      const {data: {user}} = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (user) {
         const prof = await getUser(user.id);
         setProfile(prof);
@@ -64,7 +67,13 @@ export default function AuthProvider({ children }: PropsWithChildren) {
   }, [nowSession]);
 
   const updateProfile = async (updates: Profile) => {
-    setProfile(await registerProfile(updates));
+    const { data, error } = await registerProfile(updates, nowSession);
+
+    if (!data && error) {
+      Alert.alert(error);
+    } else {
+      setProfile(data);
+    }
   };
 
   return (

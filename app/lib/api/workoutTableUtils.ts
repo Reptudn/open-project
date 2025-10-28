@@ -1,50 +1,6 @@
-import { Alert } from "react-native";
+import { Result } from "@/types/ErrorHandling";
 import { supabase } from "../supabase";
-import { PropsFilter } from "react-native-reanimated/lib/typescript/createAnimatedComponent/PropsFilter";
-import { useAuthContext } from "@/hooks/use-auth-context";
 import { Session } from "@supabase/supabase-js";
-import { Exercise } from "@/types/Exercise";
-
-export interface Profile {
-  id?: string;
-  username?: string;
-  full_name?: string;
-  gender?: string;
-  birth_date?: Date;
-  height_cm?: number;
-  weight_kg?: number;
-  created_at?: string;
-  updated_at?: string;
-}
-
-interface Workout {
-  id?: number;
-  user_id: string;
-  name: string;
-  description?: string;
-  created_at?: string;
-}
-
-interface WorkoutExercise {
-  id?: number;
-  workout_id: number;
-  exercise_id: string;
-  set_index?: number;
-  reps_target?: number;
-  rest_seconds?: number;
-  order_index: number;
-  created_at?: string;
-}
-
-interface WorkoutLog {
-  id?: number;
-  workout_id: number;
-  exercise_id: string;
-  set_index: number;
-  reps_completed: number;
-  weight_kg: number;
-  created_at?: string;
-}
 
 // Getter Function
 
@@ -125,10 +81,11 @@ export async function getWorkoutLogs(
 // Setter Function
 
 export async function registerProfile(
-  profile: Profile
-): Promise<Profile | null> {
-  const { session } = useAuthContext();
-  if (!session) return null;
+  profile: Profile,
+  session: Session | null
+): Promise<Result<Profile>> {
+  if (!session) return { data: null, error: "No Session found" };
+
   const response = await fetch(
     "https://tegfwlejpnjfcyyppogf.supabase.co/functions/v1/setProfile",
     {
@@ -149,20 +106,20 @@ export async function registerProfile(
     }
   );
 
-  const data = await response.json();
+  const json = await response.json();
 
-  if (data.message) {
-    Alert.alert(data.message);
-    return null;
+  if (!response.ok || json.message) {
+    return { data: null, error: json.message };
   }
-  return data.data as Profile;
+  return { data: json.data as Profile, error: null };
 }
 
 export async function createWorkout(
   workout: Workout,
   session: Session | null
-): Promise<Workout | null> {
-  if (!session) return null; //TODO Error handling
+): Promise<Result<Workout>> {
+  if (!session) return { data: null, error: "No Session found" };
+
   const response = await fetch(
     "https://tegfwlejpnjfcyyppogf.supabase.co/functions/v1/setWorkout",
     {
@@ -179,19 +136,23 @@ export async function createWorkout(
     }
   );
 
-  const data = await response.json();
+  const json = await response.json();
 
-  if (data.message) {
-    return null; //TODO Error handling
+  if (!response.ok || json.message) {
+    return { data: null, error: json.message };
   }
-  return data.data as Workout;
+  return { data: json.data as Workout, error: null };
 }
 
 export async function addExercise(
   exercises: WorkoutExercise[],
   session: Session | null
-): Promise<WorkoutExercise[] | null> {
-  if (!session || exercises.length === 0) return null; //TODO Error handling
+): Promise<Result<WorkoutExercise[]>> {
+  if (!session) return { data: null, error: "No Session found" };
+
+  if (exercises.length === 0)
+    return { data: null, error: "No Exercises added" };
+
   const response = await fetch(
     "https://tegfwlejpnjfcyyppogf.supabase.co/functions/v1/addExercise",
     {
@@ -213,12 +174,75 @@ export async function addExercise(
     }
   );
 
-  const data = await response.json();
+  const json = await response.json();
 
-  if (data.message) {
-    //TODO Error handling
-    Alert.alert(data.message);
-    return null;
+  if (!response.ok || json.message) {
+    return { data: null, error: json.message };
   }
-  return data.data as WorkoutExercise[];
+  return { data: json.data as WorkoutExercise[], error: null };
+}
+
+export async function addExerciseLog(
+  exerciseLog: WorkoutLog[],
+  session: Session | null
+): Promise<Result<WorkoutLog[]>> {
+  if (!session) return { data: null, error: "No Session found" };
+
+  if (exerciseLog.length === 0)
+    return { data: null, error: "No Exercise Logs where added" };
+
+  const response = await fetch(
+    "https://tegfwlejpnjfcyyppogf.supabase.co/functions/v1/addExerciseLog",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify({
+        exercisesLog: exerciseLog.map((ex) => ({
+          workout_id: ex.workout_id,
+          exercise_id: ex.exercise_id,
+          set_index: ex.set_index,
+          reps_completed: ex.reps_completed,
+          rest_seconds: ex.weight_kg,
+        })),
+      }),
+    }
+  );
+
+  const json = await response.json();
+
+  if (!response.ok || json.message) {
+    return { data: null, error: json.message };
+  }
+  return { data: json.data as WorkoutLog[], error: null };
+}
+
+export async function setWorkoutSession(
+  workoutSession: WorkoutSession,
+  session: Session | null
+): Promise<Result<WorkoutSession>> {
+  if (!session) return { data: null, error: "No Session found" };
+
+  const response = await fetch(
+    "https://tegfwlejpnjfcyyppogf.supabase.co/functions/v1/setSession",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify({
+        workout_id: workoutSession.workout_id,
+      }),
+    }
+  );
+
+  const json = await response.json();
+
+  if (!response.ok || json.message) {
+    return { data: null, error: json.message };
+  }
+  return { data: json.data as WorkoutSession, error: null };
 }
