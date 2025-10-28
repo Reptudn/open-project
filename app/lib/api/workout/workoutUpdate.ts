@@ -62,3 +62,4 @@ export async function updateWorkoutExercise(
 export async function updateWorkoutLog() {}
 
 //TODO need to check if i want to update all sets or only one set
+//TODO for updateing order_index i need to change more than one exercise
