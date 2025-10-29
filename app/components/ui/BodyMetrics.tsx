@@ -1,13 +1,14 @@
 import React from "react";
 import { View, Text } from "react-native";
-import { interpolate, withDecay } from "react-native-reanimated";
 import type { SharedValue } from "react-native-reanimated";
-import Carousel, { TAnimationStyle } from "react-native-reanimated-carousel";
+import Carousel, {
+  ICarouselInstance,
+  Pagination,
+} from "react-native-reanimated-carousel";
 import { Dimensions } from "react-native";
 import { getThemeColor } from "@/constants/theme";
-import { GymButtonFullMedium, GymButtonSmall } from "./Button";
 import { GymText, GymTitle } from "./Text";
-import { useThemeColor } from "@/hooks/use-theme-color";
+import { useSharedValue } from "react-native-reanimated";
 
 const { width: PAGE_WIDTH } = Dimensions.get("window");
 
@@ -113,3 +114,60 @@ const NumberItem: React.FC<{
     </View>
   );
 };
+
+const data = [...new Array(6).keys()];
+const width = Dimensions.get("window").width;
+
+export function Test() {
+  const ref = React.useRef<ICarouselInstance>(null);
+  const progress = useSharedValue<number>(0);
+  const theme = getThemeColor();
+
+  const onPressPagination = (index: number) => {
+    ref.current?.scrollTo({
+      /**
+       * Calculate the difference between the current index and the target index
+       * to ensure that the carousel scrolls to the nearest index
+       */
+      count: index - progress.value,
+      animated: true,
+    });
+  };
+
+  return (
+    <View style={{ flex: 1 }}>
+      <Carousel
+        ref={ref}
+        width={width}
+        height={width / 2}
+        data={data}
+        onProgressChange={progress}
+        renderItem={({ index }) => (
+          <View
+            style={{
+              flex: 1,
+              borderWidth: 1,
+              justifyContent: "center",
+              borderColor: theme.text,
+            }}
+          >
+            <GymText
+              style={{ textAlign: "center", fontSize: 30, color: theme.text }}
+            >
+              {index}
+            </GymText>
+          </View>
+        )}
+      />
+
+      <Pagination.Basic
+        progress={progress}
+        data={data}
+        dotStyle={{ backgroundColor: theme.text, borderRadius: 50 }}
+        containerStyle={{ gap: 5, marginTop: 10 }}
+        onPress={onPressPagination}
+      />
+    </View>
+  );
+}
+

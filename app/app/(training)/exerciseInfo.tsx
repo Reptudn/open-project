@@ -22,9 +22,6 @@ export default function ExerciseInfo() {
   const isDark = colorScheme === "dark";
   const { width, height } = Dimensions.get("window");
   const { name, overview, imageUrl } = useLocalSearchParams();
-  console.log(name);
-  console.log(overview);
-  console.log(imageUrl);
 
   useEffect(() => {
     modalizeRef.current?.open();

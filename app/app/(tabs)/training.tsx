@@ -17,7 +17,6 @@ import { Modalize } from "react-native-modalize";
 
 export default function TrainingScreen() {
   const modalizeRef = useRef<Modalize>(null);
-  const exerciseInfo = useRef<Modalize>(null);
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
 

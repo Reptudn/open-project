@@ -4,17 +4,17 @@ import { deleteWorkout, removeExercise, removeExerciseSet } from "@/lib/api/work
 import { addExercise, createWorkout } from "@/lib/api/workout/workoutInsert";
 import { useState } from "react";
 import {
-  StyleSheet,
-  Text,
-  Keyboard,
-  KeyboardAvoidingView,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  useColorScheme,
-  View,
-  Alert,
-} from "react-native";
-import { TextInput } from "react-native-gesture-handler";
+  GymButtonFullLarge,
+  GymButtonFullMedium,
+  GymButtonFullWidth,
+  GymButtonSmall,
+} from "@/components/ui/Button";
+import { GymHomeStats } from "@/components/ui/Statistics";
+import { GymTitle, GymHeader, GymText } from "@/components/ui/Text";
+import { getThemeColor } from "@/constants/theme";
+import { useColorScheme } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
+import { Test } from "@/components/ui/BodyMetrics";
 
 export default function TestComponentsScreen() {
   const [name, setName] = useState("");
@@ -80,92 +80,52 @@ export default function TestComponentsScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.topContainer}>
-          <KeyboardAvoidingView style={{ gap: 10 }}>
-            <Text style={styles.infoText}>Enter Name of Workout</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="example@wtf.com"
-              value={name}
-              onChangeText={setName}
-            />
-          </KeyboardAvoidingView>
-          <KeyboardAvoidingView style={{ gap: 10 }}>
-            <Text style={styles.infoText}>Enter a Discription</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="starwars"
-              value={discription}
-              onChangeText={setDiscription}
-            />
-          </KeyboardAvoidingView>
-          <TouchableOpacity
-            style={styles.button}
-            disabled={loading}
-            onPress={createWorkoutButton}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.loginText}>Create Workout</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.button}
-            disabled={loading}
-            onPress={deleteWorkoutButton}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.loginText}>Delete Workout</Text>
-          </TouchableOpacity>
-        </View>
-      </TouchableWithoutFeedback>
-    </View>
+    <ScrollView
+      style={{ backgroundColor: theme.background }}
+      contentContainerStyle={{ padding: 20, alignItems: "flex-start" }}
+    >
+      <GymTitle>Title</GymTitle>
+      <GymBr />
+      <GymHeader>Header</GymHeader>
+      <GymBr />
+      <GymText>Text</GymText>
+      <GymBr />
+      <GymButtonFullWidth onPress={() => alert("add function")}>
+        ButtonFullWidth
+      </GymButtonFullWidth>
+      <GymBr />
+      <GymButtonSmall onPress={() => alert("add function")}>
+        Small
+      </GymButtonSmall>
+      <GymBr />
+      <GymButtonFullMedium onPress={() => alert("add function")}>
+        Medium
+      </GymButtonFullMedium>
+      <GymBr />
+      <GymButtonFullLarge onPress={() => alert("add function")}>
+        Large
+      </GymButtonFullLarge>
+      <GymBr />
+      <GymHomeStats
+        header="Calories"
+        iconName={"contrast-outline"}
+        value={799}
+        type="kcal"
+        backgroundColor="#38B6FF"
+        onPress={() => alert("add function")}
+      ></GymHomeStats>
+      <GymBr />
+      {/* <GymBodyMetric
+        min={140}
+        max={250}
+        step={1}
+        unit="cm"
+        onValueChange={onValueChange}
+        title="Enter your Height"
+      ></GymBodyMetric> */}
+      <GymBr />
+      <GymBr />
+      <Test />
+    </ScrollView>
   );
 }
-
-const getStyles = (isDark: boolean) =>
-  StyleSheet.create({
-    container: {
-      flex: 1,
-      alignItems: "center",
-      gap: 10,
-    },
-    topContainer: {
-      marginTop: "50%",
-      gap: 15,
-    },
-    bottomContainer: {
-      gap: 10,
-    },
-    input: {
-      width: 352,
-      height: 56.32,
-      borderRadius: 17.6,
-      borderWidth: 1,
-      textAlign: "center",
-      borderColor: isDark
-        ? ThemeColors.dark.borderTopColor
-        : ThemeColors.light.borderTopColor,
-      color: isDark
-        ? ThemeColors.dark.borderTopColor
-        : ThemeColors.light.borderTopColor,
-    },
-    button: {
-      backgroundColor: isDark
-        ? ThemeColors.dark.button
-        : ThemeColors.light.button,
-      width: 352,
-      height: 56.32,
-      borderRadius: 17.6,
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    infoText: {
-      color: isDark ? ThemeColors.dark.text : ThemeColors.light.text,
-    },
-    loginText: {
-      color: isDark ? ThemeColors.dark.text : ThemeColors.light.text,
-      fontWeight: "bold",
-      fontSize: 16,
-    },
-  });
