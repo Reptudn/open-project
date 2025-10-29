@@ -8,12 +8,15 @@ import { router } from "expo-router";
 import { GymHeader, GymText } from "@/components/ui/Text";
 import GymView from "@/components/ui/GymView";
 import { GymButtonMedium } from "@/components/ui/Button";
+import { createWorkout } from "@/lib/api/workout/workoutInsert";
+import { useAuthContext } from "@/hooks/use-auth-context";
 
 export default function TrainingScreen() {
   const modalizeRef = useRef<Modalize>(null);
   const theme = getThemeColor(useColorScheme());
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { height, width } = Dimensions.get("window");
+  const { session } = useAuthContext();
 
   const [workoutName, setWorkoutName] = useState("");
   const [workoutDescription, setWorkoutDescription] = useState("");
@@ -28,11 +31,23 @@ export default function TrainingScreen() {
     router.push("/(tabs)/training");
   };
 
-  const handleButtonPress = () => {
-    console.log("WorkoutName: ", workoutName);
-    console.log("WorkoutDescription: ", workoutDescription);
-
-    router.push("/(training)/trainingOverview");
+  const handleButtonPress = async () => {
+    const { data, error } = await createWorkout(
+      { name: workoutName, description: workoutDescription },
+      session
+    );
+    if (error) {
+      alert(`Error in creating workout: ${error}`);
+    }
+	if(!data){
+		alert('Error: Data empty')
+	}
+	else{
+		router.push({
+		  pathname: "/(training)/trainingOverview",
+		  params: { workoutId: data.id },
+		});
+	}
   };
 
   return (

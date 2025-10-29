@@ -5,7 +5,7 @@ import { getThemeColor } from "@/constants/theme";
 import React, { useEffect, useRef, useState } from "react";
 import ExerciseList from "@/components/training/exercises/ExerciseList";
 import { Modalize } from "react-native-modalize";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { GymHeader } from "@/components/ui/Text";
 import GymView from "@/components/ui/GymView";
 
@@ -13,6 +13,7 @@ export default function TrainingScreen() {
   const modalizeRef = useRef<Modalize>(null);
   const theme = getThemeColor(useColorScheme());
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const {workoutId} = useLocalSearchParams();
 
   useEffect(() => {
     modalizeRef.current?.open();
@@ -31,7 +32,7 @@ export default function TrainingScreen() {
         <Modalize ref={modalizeRef} onClose={handleModalClose}>
           <GymView style={{ backgroundColor: theme.background }}>
             <GymHeader style={{margin: 10, color: theme.text}}>Build your workout</GymHeader>
-            <ExerciseList />
+            <ExerciseList workoutId={workoutId as string} />
           </GymView>
         </Modalize>
       </SafeAreaView>

@@ -14,7 +14,11 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import { getThemeColor, ThemeColors } from "@/constants/theme";
 import { GymText } from "@/components/ui/Text";
 
-export default function ExerciseList() {
+interface ExerciseListProps {
+  workoutId: string;
+}
+
+export default function ExerciseList({workoutId}: ExerciseListProps) {
   const theme = getThemeColor(useColorScheme());
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [loading, setLoading] = useState(true);
@@ -98,6 +102,7 @@ export default function ExerciseList() {
               <ExerciseItem
                 key={ex.exerciseId || `exercise-${index}`}
                 exercise={ex}
+                workoutid={workoutId}
               />
             ))
           ) : (

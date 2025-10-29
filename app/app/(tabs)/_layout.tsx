@@ -142,7 +142,7 @@ export default function TabLayout() {
         }}
       />
       {process.env.NODE_ENV == 'development' && (<Tabs.Screen
-        name="TestComponents"
+        name="testComponents"
         options={{
           title: "TestComponents",
           headerTitle: "Components",

@@ -15,13 +15,18 @@ import { Modalize } from "react-native-modalize";
 import { useRef, useEffect, useState } from "react";
 import { GymButtonMedium } from "@/components/ui/Button";
 import { GymText, GymHeader } from "@/components/ui/Text";
+import { addExercise } from "@/lib/api/workout/workoutInsert";
+import { useAuthContext } from "@/hooks/use-auth-context";
+
+export let excerciseList: string[] = [];
 
 export default function ExerciseInfo() {
   const modalizeRef = useRef<Modalize>(null);
   const theme = getThemeColor(useColorScheme());
   const { width, height } = Dimensions.get("window");
-  const { name, overview, imageUrl, excerciseId } = useLocalSearchParams();
+  const { name, overview, imageUrl, excerciseId, workoutId } = useLocalSearchParams();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const {session} = useAuthContext();
 
   // Convert params to strings
   const exerciseName = Array.isArray(name) ? name[0] : name || "";
@@ -32,6 +37,14 @@ export default function ExerciseInfo() {
     ? imageUrl[0]
     : imageUrl || "";
 
+    const workoutIdNumber = Array.isArray(workoutId)
+      ? Number(workoutId[0])
+      : Number(workoutId || 0);
+
+    const exerciseIdString = Array.isArray(excerciseId)
+      ? String(excerciseId[0])
+      : String(excerciseId || '');
+
   useEffect(() => {
     modalizeRef.current?.open();
   }, []);
@@ -40,6 +53,16 @@ export default function ExerciseInfo() {
     setIsModalOpen(false);
     router.push("/(training)/trainingOverview");
   };
+
+  async function handleButtonPress(){
+    const {data, error} = await addExercise(
+      [{ workout_id: workoutIdNumber, exercise_id: exerciseIdString, order_index: 0 }],
+      session
+    );
+    if (error)
+      alert(`Error in exInfo ${error}`);
+    router.push("/(training)/trainingOverview");
+  }
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
@@ -109,11 +132,7 @@ export default function ExerciseInfo() {
 
             <GymButtonMedium
               style={[styles.primaryButton, { backgroundColor: "#4CAF50" }]}
-              onPress={() => {
-                console.log("Adding exercise:", exerciseName);
-                console.log("Id:", excerciseId);
-                router.push("/(training)/trainingOverview");
-              }}
+              onPress={handleButtonPress}
             >
               <GymText
                 style={{ color: "white", fontSize: 16, fontWeight: "bold" }}

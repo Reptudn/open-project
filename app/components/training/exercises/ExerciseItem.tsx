@@ -6,7 +6,12 @@ import { ThemeColors } from "@/constants/theme";
 import { Exercise } from "@/types/Exercise";
 import { router } from "expo-router";
 
-export default function ExerciseItem({ exercise }: { exercise: Exercise }) {
+interface ExerciseItemProps {
+  exercise: Exercise;
+  workoutid: string;
+}
+
+export default function ExerciseItem({exercise, workoutid }: ExerciseItemProps) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   return (
@@ -33,7 +38,8 @@ export default function ExerciseItem({ exercise }: { exercise: Exercise }) {
                          name: exercise.name,
                          overview: exercise.overview,
                          imageUrl: exercise.imageUrl,
-                         excerciseId: exercise.exerciseId
+                         excerciseId: exercise.exerciseId,
+                         workoutID: workoutid
                        },
           })
       }
