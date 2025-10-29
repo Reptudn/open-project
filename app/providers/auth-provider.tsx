@@ -27,7 +27,7 @@ export default function AuthProvider({ children }: PropsWithChildren) {
         data: { user },
       } = await supabase.auth.getUser();
       if (user) {
-        const { data } = await getProfile(nowSession);
+        const { data } = await getProfile();
         if (data) setProfile(data);
       }
       setLoading(false);
@@ -42,7 +42,7 @@ export default function AuthProvider({ children }: PropsWithChildren) {
       setSession(session ?? null);
 
       if (nowSession) {
-        const { data } = await getProfile(nowSession);
+        const { data } = await getProfile();
         if (data) setProfile(data);
       } else setProfile(null);
 
@@ -58,7 +58,7 @@ export default function AuthProvider({ children }: PropsWithChildren) {
     const loadProfile = async () => {
       setLoading(true);
       if (nowSession) {
-        const { data } = await getProfile(nowSession);
+        const { data } = await getProfile();
         if (data) setProfile(data);
       } else setProfile(null);
       setLoading(false);
