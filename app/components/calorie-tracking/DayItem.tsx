@@ -21,6 +21,7 @@ import { useState, useEffect } from "react";
 import DayNutritionOverview from "./DayNutritionOverview";
 import { getDayData } from "@/lib/api/calorie_day_tracking";
 import Meals from "./Meal";
+import WeightEntry from "./WeightEntry";
 
 export default function DayItem({
   date,
@@ -121,10 +122,10 @@ export default function DayItem({
               {date.getDate() === currDate.getDate()
                 ? "Today"
                 : date.getDate() === currDate.getDate() - 1
-                ? "Yesterday"
-                : date.getDate() === currDate.getDate() + 1
-                ? "Tomorrow"
-                : date.toDateString()}
+                  ? "Yesterday"
+                  : date.getDate() === currDate.getDate() + 1
+                    ? "Tomorrow"
+                    : date.toDateString()}
             </Text>
             <TouchableOpacity onPress={() => goToDayOffset(1)}>
               <Ionicons
@@ -167,6 +168,7 @@ export default function DayItem({
           >
             <DayNutritionOverview eaten={631} burnt={200} toGo={1923} />
             <Meals />
+            <WeightEntry />
             {products && products.length > 0 ? (
               products.map((product) => (
                 <ProductItem key={product.code} product={product} />
