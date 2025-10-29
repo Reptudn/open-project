@@ -1,6 +1,7 @@
 import { AuthContext } from "@/hooks/use-auth-context";
+import { registerProfile } from "@/lib/api/profile/profileInsert";
+import { getProfile } from "@/lib/api/profile/profileSelecte";
 import { supabase } from "@/lib/supabase";
-import { getUser, registerProfile } from "@/lib/api/workout/workoutInsert";
 import { Session } from "@supabase/supabase-js";
 import { PropsWithChildren, useEffect, useState } from "react";
 import { Alert } from "react-native";
@@ -26,8 +27,8 @@ export default function AuthProvider({ children }: PropsWithChildren) {
         data: { user },
       } = await supabase.auth.getUser();
       if (user) {
-        const prof = await getUser(user.id);
-        setProfile(prof);
+        const { data } = await getProfile(nowSession);
+        if (data) setProfile(data);
       }
       setLoading(false);
     };
@@ -41,8 +42,8 @@ export default function AuthProvider({ children }: PropsWithChildren) {
       setSession(session ?? null);
 
       if (nowSession) {
-        const prof = await getUser(nowSession.user.id);
-        setProfile(prof);
+        const { data } = await getProfile(nowSession);
+        if (data) setProfile(data);
       } else setProfile(null);
 
       setLoading(false);
@@ -57,8 +58,8 @@ export default function AuthProvider({ children }: PropsWithChildren) {
     const loadProfile = async () => {
       setLoading(true);
       if (nowSession) {
-        const prof = await getUser(nowSession.user.id);
-        setProfile(prof);
+        const { data } = await getProfile(nowSession);
+        if (data) setProfile(data);
       } else setProfile(null);
       setLoading(false);
     };
@@ -66,7 +67,7 @@ export default function AuthProvider({ children }: PropsWithChildren) {
     loadProfile();
   }, [nowSession]);
 
-  const updateProfile = async (updates: Profile) => {
+  const updateProfile = async (updates: InsertProfile) => {
     const { data, error } = await registerProfile(updates, nowSession);
 
     if (!data && error) {

@@ -1,5 +1,6 @@
 import { ThemeColors } from "@/constants/theme";
 import { useAuthContext } from "@/hooks/use-auth-context";
+import { deleteWorkout, removeExercise, removeExerciseSet } from "@/lib/api/workout/workoutDelete";
 import { addExercise, createWorkout } from "@/lib/api/workout/workoutInsert";
 import { useState } from "react";
 import {
@@ -17,38 +18,63 @@ import { TextInput } from "react-native-gesture-handler";
 
 export default function TestComponentsScreen() {
   const [name, setName] = useState("");
-  const [discription, setDiscription] = useState("");
+  const [discription, setDiscription] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState(false);
   const colorScheme = useColorScheme();
   const styles = getStyles(colorScheme === "dark");
-  const { profile, session } = useAuthContext();
+  const { session } = useAuthContext();
+
+  const deleteWorkoutButton = async () => {
+    setLoading(true);
+    const { data, error } = await removeExerciseSet(22, "exr_41n2ha5iPFpN3hEJ", 1);
+
+    if (error) return Alert.alert(error);
+
+    if (data) Alert.alert("Lets Go");
+  };
 
   const createWorkoutButton = async () => {
     setLoading(true);
-    if (profile && profile.id) {
-      const workout = await createWorkout(
-        {
-          id: 0,
-          user_id: profile.id,
-          name: name,
-          description: discription,
-          created_at: "",
-        },
+    const { data, error } = await createWorkout(
+      {
+        name: name,
+        description: discription,
+      },
+      session
+    );
+
+    if (error) return Alert.alert(error);
+
+    if (data) {
+      addExercise(
+        [
+          {
+            workout_id: data.id,
+            exercise_id: "exr_41n2ha5iPFpN3hEJ",
+            order_index: 0,
+            set_index: 1,
+            reps_target: 8,
+            rest_seconds: 120,
+          },
+          {
+            workout_id: data.id,
+            exercise_id: "exr_41n2ha5iPFpN3hEJ",
+            order_index: 0,
+            set_index: 2,
+            reps_target: 10,
+            rest_seconds: 120,
+          },
+          {
+            workout_id: data.id,
+            exercise_id: "exr_41n2ha5iPFpN3hEJ",
+            order_index: 0,
+            set_index: 3,
+            reps_target: 12,
+            rest_seconds: 120,
+          },
+        ],
         session
       );
-      if (workout) {
-        const exercise = await addExercise(
-          [
-            {
-              workout_id: workout.id,
-              exercise_id: "exr_41n2ha5iPFpN3hEJ",
-              order_index: 1,
-            },
-          ],
-          session
-        );
-        if (!exercise) Alert.alert("LOL was los");
-      }
     }
     setLoading(false);
   };
@@ -82,6 +108,14 @@ export default function TestComponentsScreen() {
             activeOpacity={0.7}
           >
             <Text style={styles.loginText}>Create Workout</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            disabled={loading}
+            onPress={deleteWorkoutButton}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.loginText}>Delete Workout</Text>
           </TouchableOpacity>
         </View>
       </TouchableWithoutFeedback>
