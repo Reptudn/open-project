@@ -75,7 +75,7 @@ export default function TabLayout() {
           headerRight: () => (
             <TouchableOpacity style={{ marginRight: 15, backgroundColor: getThemeColor(useColorScheme()).text, height: 40, width: 40, borderRadius: 20, alignItems: "center", justifyContent: "center" }} onPress={() => {
           // Navigate to modal
-          router.push('/(training)/trainingOverview');
+          router.push('/(training)/createWorkout');
         }}>
               <Ionicons
                 name="add-outline"

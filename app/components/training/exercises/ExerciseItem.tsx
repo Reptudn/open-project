@@ -33,6 +33,7 @@ export default function ExerciseItem({ exercise }: { exercise: Exercise }) {
                          name: exercise.name,
                          overview: exercise.overview,
                          imageUrl: exercise.imageUrl,
+                         excerciseId: exercise.exerciseId
                        },
           })
       }

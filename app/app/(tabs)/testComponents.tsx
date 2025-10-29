@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { GymBr } from "@/components/ui/Br";
 import {
-  GymButtonFullLarge,
-  GymButtonFullMedium,
+  GymButtonLarge,
+  GymButtonMedium,
   GymButtonFullWidth,
   GymButtonSmall,
 } from "@/components/ui/Button";
@@ -41,13 +41,13 @@ export default function TestComponentsScreen() {
         Small
       </GymButtonSmall>
       <GymBr />
-      <GymButtonFullMedium onPress={() => alert("add function")}>
+      <GymButtonMedium onPress={() => alert("add function")}>
         Medium
-      </GymButtonFullMedium>
+      </GymButtonMedium>
       <GymBr />
-      <GymButtonFullLarge onPress={() => alert("add function")}>
+      <GymButtonLarge onPress={() => alert("add function")}>
         Large
-      </GymButtonFullLarge>
+      </GymButtonLarge>
       <GymBr />
       <GymHomeStats
         header="Calories"
