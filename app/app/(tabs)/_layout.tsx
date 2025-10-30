@@ -3,7 +3,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { HapticTab } from "@/components/haptic-tab";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { TouchableOpacity } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import { ThemeColors } from "@/constants/theme";
 
 export default function TabLayout() {
@@ -87,11 +87,55 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="calorie_tracker"
+        name="daily"
         options={{
-          title: "Calories",
-          headerTitle: "Calorie Tracker",
+          title: "Daily",
+          headerTitle: "Daily Overview",
           headerShown: false,
+          // headerRight: () => (
+          //   <View style={{ flexDirection: "row", marginRight: 15, gap: 15 }}>
+          //     <TouchableOpacity>
+          //       <Ionicons
+          //         name="camera-outline"
+          //         size={24}
+          //         color={
+          //           isDark ? ThemeColors.dark.icon : ThemeColors.light.icon
+          //         }
+          //       />
+          //     </TouchableOpacity>
+          //     <TouchableOpacity>
+          //       <Ionicons
+          //         name="add-outline"
+          //         size={24}
+          //         color={
+          //           isDark ? ThemeColors.dark.icon : ThemeColors.light.icon
+          //         }
+          //       />
+          //     </TouchableOpacity>
+          //   </View>
+          // ),
+          tabBarIcon: ({ color }) => (
+            <Ionicons
+              size={28}
+              name="add"
+              color={color}
+              style={{
+                backgroundColor: "blue",
+                borderRadius: "50%",
+                width: 28,
+                height: 28,
+                borderColor: "lightblue",
+              }}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="food"
+        options={{
+          title: "Food",
+          headerTitle: "Food Tracker",
+          headerShown: true,
           // headerRight: () => (
           //   <View style={{ flexDirection: "row", marginRight: 15, gap: 15 }}>
           //     <TouchableOpacity>
@@ -138,34 +182,38 @@ export default function TabLayout() {
           ),
         }}
       />
-      {process.env.NODE_ENV == 'development' && (<Tabs.Screen
-        name="TestComponents"
-        options={{
-          title: "TestComponents",
-          headerTitle: "Components",
-          headerLeft: () => (
-            <TouchableOpacity style={{ marginLeft: 15 }}>
-              <Ionicons
-                name="help-circle"
-                size={24}
-                color={isDark ? "#d0d0c0" : "#242c40"}
-              />
-            </TouchableOpacity>
-          ),
-          headerRight: () => (
-            <TouchableOpacity style={{ marginRight: 15 }}>
-              <Ionicons
-                name="notifications-outline"
-                size={24}
-                color={isDark ? ThemeColors.dark.icon : ThemeColors.light.icon}
-              />
-            </TouchableOpacity>
-          ),
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="house.fill" color={color} />
-          ),
-        }}
-      />)}
+      {process.env.NODE_ENV == "development" && (
+        <Tabs.Screen
+          name="TestComponents"
+          options={{
+            title: "TestComponents",
+            headerTitle: "Components",
+            headerLeft: () => (
+              <TouchableOpacity style={{ marginLeft: 15 }}>
+                <Ionicons
+                  name="help-circle"
+                  size={24}
+                  color={isDark ? "#d0d0c0" : "#242c40"}
+                />
+              </TouchableOpacity>
+            ),
+            headerRight: () => (
+              <TouchableOpacity style={{ marginRight: 15 }}>
+                <Ionicons
+                  name="notifications-outline"
+                  size={24}
+                  color={
+                    isDark ? ThemeColors.dark.icon : ThemeColors.light.icon
+                  }
+                />
+              </TouchableOpacity>
+            ),
+            tabBarIcon: ({ color }) => (
+              <IconSymbol size={28} name="house.fill" color={color} />
+            ),
+          }}
+        />
+      )}
     </Tabs>
   );
 }

@@ -1,5 +1,8 @@
 import { ThemeColors } from "@/constants/theme";
-import { getFoodDataByBarcode, searchFood } from "@/lib/api/calories_tracking";
+import {
+  getFoodDataByBarcode,
+  searchFood,
+} from "@/lib/api/calorie_tracking/calories_tracking";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {
   View,
@@ -19,9 +22,9 @@ import ProductItem from "./ProductItem";
 import { Product } from "@/types/FoodData";
 import { useState, useEffect } from "react";
 import DayNutritionOverview from "./DayNutritionOverview";
-import { getDayData } from "@/lib/api/calorie_day_tracking";
 import Meals from "./Meal";
 import WeightEntry from "./WeightEntry";
+import { getDayData } from "@/lib/api/daily/daily";
 
 export default function DayItem({
   date,
@@ -168,7 +171,7 @@ export default function DayItem({
           >
             <DayNutritionOverview eaten={631} burnt={200} toGo={1923} />
             <Meals />
-            <WeightEntry />
+            <WeightEntry date={date} />
             {products && products.length > 0 ? (
               products.map((product) => (
                 <ProductItem key={product.code} product={product} />
