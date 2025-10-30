@@ -15,6 +15,8 @@ export default function TrainingScreen() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const {workoutId} = useLocalSearchParams();
 
+  console.log("WorkoutId ", workoutId);
+
   useEffect(() => {
     modalizeRef.current?.open();
     setIsModalOpen(true);
@@ -26,7 +28,6 @@ export default function TrainingScreen() {
   };
 
   const Training = () => {
-    const { width, height } = Dimensions.get("window");
     return (
       <SafeAreaView>
         <Modalize ref={modalizeRef} onClose={handleModalClose}>

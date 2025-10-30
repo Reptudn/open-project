@@ -32,6 +32,15 @@ export default function TrainingScreen() {
   };
 
   const handleButtonPress = async () => {
+    if (!workoutName.trim()) {
+      alert("Workout name is required");
+      return;
+    }
+
+    if (!workoutDescription.trim()) {
+      alert("Workout description is required");
+      return;
+    }
     const { data, error } = await createWorkout(
       { name: workoutName, description: workoutDescription },
       session
@@ -39,15 +48,15 @@ export default function TrainingScreen() {
     if (error) {
       alert(`Error in creating workout: ${error}`);
     }
-	if(!data){
-		alert('Error: Data empty')
-	}
-	else{
-		router.push({
-		  pathname: "/(training)/trainingOverview",
-		  params: { workoutId: data.id },
-		});
-	}
+    if (!data) {
+      alert("Error: Data empty");
+    } else {
+      console.log("ActuaId", data.id);
+      router.push({
+        pathname: "/(training)/trainingOverview",
+        params: { workoutId: data.id },
+      });
+    }
   };
 
   return (

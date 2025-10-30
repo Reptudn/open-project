@@ -8,12 +8,13 @@ import { router } from "expo-router";
 
 interface ExerciseItemProps {
   exercise: Exercise;
-  workoutid: string;
+  workoutId: string;
 }
 
-export default function ExerciseItem({exercise, workoutid }: ExerciseItemProps) {
+export default function ExerciseItem({exercise, workoutId }: ExerciseItemProps) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
+  console.log("ExItemId: ", workoutId);
   return (
     <TouchableOpacity
       style={{
@@ -39,7 +40,7 @@ export default function ExerciseItem({exercise, workoutid }: ExerciseItemProps) 
                          overview: exercise.overview,
                          imageUrl: exercise.imageUrl,
                          excerciseId: exercise.exerciseId,
-                         workoutID: workoutid
+                         workoutId: workoutId
                        },
           })
       }

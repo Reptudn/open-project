@@ -24,9 +24,20 @@ export default function ExerciseInfo() {
   const modalizeRef = useRef<Modalize>(null);
   const theme = getThemeColor(useColorScheme());
   const { width, height } = Dimensions.get("window");
-  const { name, overview, imageUrl, excerciseId, workoutId } = useLocalSearchParams();
+  const { name, overview, imageUrl, excerciseId, workoutId } =
+    useLocalSearchParams();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const {session} = useAuthContext();
+  const { session } = useAuthContext();
+
+  console.log("Raw params received:", {
+    name,
+    overview,
+    imageUrl,
+    excerciseId,
+    workoutId,
+  });
+  console.log("workoutId type:", typeof workoutId);
+  console.log("workoutId value:", workoutId);
 
   // Convert params to strings
   const exerciseName = Array.isArray(name) ? name[0] : name || "";
@@ -37,13 +48,13 @@ export default function ExerciseInfo() {
     ? imageUrl[0]
     : imageUrl || "";
 
-    const workoutIdNumber = Array.isArray(workoutId)
-      ? Number(workoutId[0])
-      : Number(workoutId || 0);
+  const workoutIdNumber = Array.isArray(workoutId)
+    ? Number(workoutId[0])
+    : Number(workoutId);
 
-    const exerciseIdString = Array.isArray(excerciseId)
-      ? String(excerciseId[0])
-      : String(excerciseId || '');
+  const exerciseIdString = Array.isArray(excerciseId)
+    ? String(excerciseId[0])
+    : String(excerciseId);
 
   useEffect(() => {
     modalizeRef.current?.open();
@@ -54,13 +65,20 @@ export default function ExerciseInfo() {
     router.push("/(training)/trainingOverview");
   };
 
-  async function handleButtonPress(){
-    const {data, error} = await addExercise(
-      [{ workout_id: workoutIdNumber, exercise_id: exerciseIdString, order_index: 0 }],
+  async function handleButtonPress() {
+    console.log("Workid; ", workoutIdNumber);
+    console.log("Exerciseid: ", exerciseIdString);
+    const { data, error } = await addExercise(
+      [
+        {
+          workout_id: workoutIdNumber,
+          exercise_id: exerciseIdString,
+          order_index: 0,
+        },
+      ],
       session
     );
-    if (error)
-      alert(`Error in exInfo ${error}`);
+    if (error) alert(`Error in exInfo ${error}`);
     router.push("/(training)/trainingOverview");
   }
 

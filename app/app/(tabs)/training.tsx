@@ -31,21 +31,21 @@ export default function TrainingScreen() {
   return (
     <GymView>
       <ScrollView>
-         {test.length > 0 ? (
-                    test.map((workout) => (
-                      <GymText>{workout.name}</GymText>
-                    ))
-                  ) : (
-                    <View
-                      style={{
-                        flex: 1,
-                        justifyContent: "flex-start",
-                        alignItems: "center",
-                      }}
-                    >
-                      <GymText>No exercises found.</GymText>
-                    </View>
-                  )}
+        {test.length > 0 ? (
+          test.map((workout) => (
+            <GymText key={workout.id}>{workout.name}</GymText>
+          ))
+        ) : (
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "flex-start",
+              alignItems: "center",
+            }}
+          >
+            <GymText>No exercises found.</GymText>
+          </View>
+        )}
       </ScrollView>
     </GymView>
   );

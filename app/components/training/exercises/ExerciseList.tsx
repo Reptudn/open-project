@@ -25,6 +25,8 @@ export default function ExerciseList({workoutId}: ExerciseListProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const { height, width } = Dimensions.get("window");
 
+  console.log("ListId", workoutId);
+
   const handleSearch = useCallback(async (query: string) => {
     setLoading(true);
     const exercises = await getExerciseEdge(query);
@@ -102,7 +104,7 @@ export default function ExerciseList({workoutId}: ExerciseListProps) {
               <ExerciseItem
                 key={ex.exerciseId || `exercise-${index}`}
                 exercise={ex}
-                workoutid={workoutId}
+                workoutId={workoutId}
               />
             ))
           ) : (
