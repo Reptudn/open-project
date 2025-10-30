@@ -6,7 +6,7 @@ import { Text } from "react-native";
 export function GymBr() {
 
   return (
-    <Text>
+    <Text className="">
       {"\n"}
     </Text>
   );

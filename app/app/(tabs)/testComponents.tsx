@@ -9,7 +9,7 @@ import {
 import { GymHomeStats } from "@/components/ui/Statistics";
 import { GymTitle, GymHeader, GymText } from "@/components/ui/Text";
 import { getThemeColor } from "@/constants/theme";
-import { useColorScheme } from "react-native";
+import { useColorScheme, View, Text } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { Test } from "@/components/ui/BodyMetrics";
 
