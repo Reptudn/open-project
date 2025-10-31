@@ -1,5 +1,5 @@
 import { getThemeColor } from "@/constants/theme";
-import { useColorScheme } from "react-native";
+import { useColorScheme, View, Text } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import TableStats from "@/components/ui/TableStats";
 

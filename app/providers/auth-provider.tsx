@@ -1,8 +1,10 @@
 import { AuthContext } from "@/hooks/use-auth-context";
+import { registerProfile } from "@/lib/api/profile/profileInsert";
+import { getProfile } from "@/lib/api/profile/profileSelecte";
 import { supabase } from "@/lib/supabase";
-import { getUser, Profile, registerProfile } from "@/lib/api/workoutTableUtils";
 import { Session } from "@supabase/supabase-js";
 import { PropsWithChildren, useEffect, useState } from "react";
+import { Alert } from "react-native";
 
 export default function AuthProvider({ children }: PropsWithChildren) {
   const [nowSession, setSession] = useState<Session | null>(null);
@@ -21,10 +23,12 @@ export default function AuthProvider({ children }: PropsWithChildren) {
         return;
       }
       setSession(session);
-      const {data: {user}} = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (user) {
-        const prof = await getUser(user.id);
-        setProfile(prof);
+        const { data } = await getProfile();
+        if (data) setProfile(data);
       }
       setLoading(false);
     };
@@ -38,8 +42,8 @@ export default function AuthProvider({ children }: PropsWithChildren) {
       setSession(session ?? null);
 
       if (nowSession) {
-        const prof = await getUser(nowSession.user.id);
-        setProfile(prof);
+        const { data } = await getProfile();
+        if (data) setProfile(data);
       } else setProfile(null);
 
       setLoading(false);
@@ -54,8 +58,8 @@ export default function AuthProvider({ children }: PropsWithChildren) {
     const loadProfile = async () => {
       setLoading(true);
       if (nowSession) {
-        const prof = await getUser(nowSession.user.id);
-        setProfile(prof);
+        const { data } = await getProfile();
+        if (data) setProfile(data);
       } else setProfile(null);
       setLoading(false);
     };
@@ -63,8 +67,14 @@ export default function AuthProvider({ children }: PropsWithChildren) {
     loadProfile();
   }, [nowSession]);
 
-  const updateProfile = async (updates: Profile) => {
-    setProfile(await registerProfile(updates));
+  const updateProfile = async (updates: InsertProfile) => {
+    const { data, error } = await registerProfile(updates, nowSession);
+
+    if (!data && error) {
+      Alert.alert(error);
+    } else {
+      setProfile(data);
+    }
   };
 
   return (

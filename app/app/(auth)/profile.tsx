@@ -43,7 +43,7 @@ export default function Profile() {
     } = await supabase.auth.getUser();
     if (user)
       await updateProfile({
-        id: user?.id,
+        id: user.id,
         gender: gender,
         weight_kg: Number.parseInt(weight),
         height_cm: Number.parseInt(height),
