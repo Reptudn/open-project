@@ -1,12 +1,16 @@
-import React, { useState } from "react";
-import { View, Text, Pressable, StyleSheet } from "react-native";
+import React from "react";
+import { View, Text, StyleSheet } from "react-native";
 import { VictoryChart, VictoryLine, VictoryAxis, VictoryTheme } from "victory-native";
 
 type DataPoint = { x: string; y: number };
 
-export default function StatsScreen({title}: {title:string}) {
-  const [range, setRange] = useState<"week" | "month" | "3months">("week");
-
+export default function StatsScreen({
+  title,
+  range,
+}: {
+  title: string;
+  range: "week" | "month" | "3months";
+}) {
   const dataWeek: DataPoint[] = [
     { x: "Mo", y: 70 },
     { x: "Di", y: 70.4 },
@@ -52,22 +56,6 @@ export default function StatsScreen({title}: {title:string}) {
     <View style={styles.screen}>
       <Text style={styles.header}>{title}</Text>
 
-      {/* Buttons */}
-      <View style={styles.buttonContainer}>
-        {(["week", "month", "3months"] as const).map((key) => (
-          <Pressable
-            key={key}
-            onPress={() => setRange(key)}
-            style={[
-              styles.button,
-              range === key && styles.buttonActive,
-            ]}
-          >
-            <Text style={styles.buttonText}>{labels[key]}</Text>
-          </Pressable>
-        ))}
-      </View>
-
       {/* Chart */}
       <View style={styles.chartContainer}>
         <Text style={styles.title}>{labels[range]}</Text>
@@ -107,7 +95,7 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     justifyContent: "flex-start",
-	marginBottom: 30,
+    marginBottom: 30,
   },
   header: {
     color: "#fff",
@@ -115,24 +103,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 15,
-  },
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    marginBottom: 20,
-  },
-  button: {
-    backgroundColor: "#222",
-    paddingVertical: 8,
-    paddingHorizontal: 10,
-    borderRadius: 10,
-  },
-  buttonActive: {
-    backgroundColor: "#38B6FF",
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 12,
   },
   chartContainer: {
     flex: 1,
