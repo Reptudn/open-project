@@ -14,7 +14,7 @@ interface InsertWorkout {
 interface WorkoutExercise {
   id: number;
   workout_id: number;
-  exercise_id: string;
+  exercise_id: Exercise;
   set_index?: number;
   reps_target?: number;
   rest_seconds?: number;

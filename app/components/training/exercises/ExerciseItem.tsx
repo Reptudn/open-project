@@ -3,7 +3,6 @@ import ExerciseTag, { ExerciseTagType } from "./ExerciseTag";
 import { AddExerciseSmall } from "./AddExercise";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { ThemeColors } from "@/constants/theme";
-import { Exercise } from "@/types/Exercise";
 import { router } from "expo-router";
 
 interface ExerciseItemProps {
@@ -14,7 +13,6 @@ interface ExerciseItemProps {
 export default function ExerciseItem({exercise, workoutId }: ExerciseItemProps) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
-  console.log("ExItemId: ", workoutId);
   return (
     <TouchableOpacity
       style={{
@@ -38,8 +36,8 @@ export default function ExerciseItem({exercise, workoutId }: ExerciseItemProps) 
             params:  {
                          name: exercise.name,
                          overview: exercise.overview,
-                         imageUrl: exercise.imageUrl,
-                         excerciseId: exercise.exerciseId,
+                         imageUrl: exercise.image_url,
+                         excerciseId: exercise.exercise_id,
                          workoutId: workoutId
                        },
           })
@@ -48,8 +46,8 @@ export default function ExerciseItem({exercise, workoutId }: ExerciseItemProps) 
       <Image
         source={{
           uri:
-            exercise.imageUrl && exercise.imageUrl.trim()
-              ? exercise.imageUrl
+            exercise.image_url && exercise.image_url.trim()
+              ? exercise.image_url
               : "https://via.placeholder.com/80x80/cccccc/666666?text=No+Image",
         }}
         style={{
@@ -85,16 +83,16 @@ export default function ExerciseItem({exercise, workoutId }: ExerciseItemProps) 
             marginBottom: 10,
           }}
         >
-          {exercise.targetMuscles &&
-            exercise.targetMuscles.map((ex) => (
+          {exercise.target_muscles &&
+            exercise.target_muscles.map((ex) => (
               <ExerciseTag
                 key={ex}
                 name={ex}
                 type={ExerciseTagType.MUSCLE_PRIMARY}
               />
             ))}
-          {exercise.secondaryMuscles &&
-            exercise.secondaryMuscles.map((ex) => (
+          {exercise.secondary_muscles &&
+            exercise.secondary_muscles.map((ex) => (
               <ExerciseTag
                 key={ex}
                 name={ex}
@@ -109,8 +107,8 @@ export default function ExerciseItem({exercise, workoutId }: ExerciseItemProps) 
                 type={ExerciseTagType.EQUIPMENT}
               />
             ))}
-          {exercise.bodyParts &&
-            exercise.bodyParts.map((ex) => (
+          {exercise.body_parts &&
+            exercise.body_parts.map((ex) => (
               <ExerciseTag key={ex} name={ex} type={ExerciseTagType.BODYPART} />
             ))}
         </View>
@@ -129,7 +127,7 @@ export default function ExerciseItem({exercise, workoutId }: ExerciseItemProps) 
         </View>
       </View>
       <View style={{ alignItems: "flex-end" }}>
-        <AddExerciseSmall exerciseId={exercise.exerciseId} />
+        <AddExerciseSmall exerciseId={exercise.exercise_id} />
       </View>
     </TouchableOpacity>
   );

@@ -51,7 +51,6 @@ export default function TrainingScreen() {
     if (!data) {
       alert("Error: Data empty");
     } else {
-      console.log("ActuaId", data.id);
       router.push({
         pathname: "/(training)/trainingOverview",
         params: { workoutId: data.id },

@@ -8,7 +8,6 @@ import {
 } from "react-native";
 import ExerciseItem from "./ExerciseItem";
 import { useState, useEffect, useCallback } from "react";
-import { Exercise } from "@/types/Exercise";
 import { getExerciseEdge } from "@/lib/api/exercise";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { getThemeColor, ThemeColors } from "@/constants/theme";
@@ -18,14 +17,12 @@ interface ExerciseListProps {
   workoutId: string;
 }
 
-export default function ExerciseList({workoutId}: ExerciseListProps) {
+export default function ExerciseList({ workoutId }: ExerciseListProps) {
   const theme = getThemeColor(useColorScheme());
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const { height, width } = Dimensions.get("window");
-
-  console.log("ListId", workoutId);
 
   const handleSearch = useCallback(async (query: string) => {
     setLoading(true);
@@ -102,7 +99,7 @@ export default function ExerciseList({workoutId}: ExerciseListProps) {
           {displayExercises.length > 0 ? (
             displayExercises.map((ex, index) => (
               <ExerciseItem
-                key={ex.exerciseId || `exercise-${index}`}
+                key={ex.exercise_id || `exercise-${index}`}
                 exercise={ex}
                 workoutId={workoutId}
               />

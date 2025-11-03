@@ -1,5 +1,3 @@
-import { Exercise } from "@/types/Exercise";
-
 export async function getExerciseEdge(queries: string): Promise<Exercise[]> {
   try {
     const req = await fetch(
@@ -16,6 +14,7 @@ export async function getExerciseEdge(queries: string): Promise<Exercise[]> {
     );
 
     const data = await req.json();
+    console.log(data);
 
     if (req.ok) {
       return data as Exercise[];

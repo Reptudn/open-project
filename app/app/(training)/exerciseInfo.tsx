@@ -29,16 +29,6 @@ export default function ExerciseInfo() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { session } = useAuthContext();
 
-  console.log("Raw params received:", {
-    name,
-    overview,
-    imageUrl,
-    excerciseId,
-    workoutId,
-  });
-  console.log("workoutId type:", typeof workoutId);
-  console.log("workoutId value:", workoutId);
-
   // Convert params to strings
   const exerciseName = Array.isArray(name) ? name[0] : name || "";
   const exerciseOverview = Array.isArray(overview)
@@ -62,12 +52,13 @@ export default function ExerciseInfo() {
 
   const handleModalClose = () => {
     setIsModalOpen(false);
-    router.push("/(training)/trainingOverview");
+    router.push({
+      pathname: "/(training)/trainingOverview",
+      params: { workoutId: workoutId },
+    });
   };
 
   async function handleButtonPress() {
-    console.log("Workid; ", workoutIdNumber);
-    console.log("Exerciseid: ", exerciseIdString);
     const { data, error } = await addExercise(
       [
         {
@@ -79,7 +70,10 @@ export default function ExerciseInfo() {
       session
     );
     if (error) alert(`Error in exInfo ${error}`);
-    router.push("/(training)/trainingOverview");
+    router.push({
+      pathname: "/(training)/trainingOverview",
+      params: { workoutId: workoutId },
+    });
   }
 
   return (

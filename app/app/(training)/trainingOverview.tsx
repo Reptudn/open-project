@@ -15,8 +15,6 @@ export default function TrainingScreen() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const {workoutId} = useLocalSearchParams();
 
-  console.log("WorkoutId ", workoutId);
-
   useEffect(() => {
     modalizeRef.current?.open();
     setIsModalOpen(true);
