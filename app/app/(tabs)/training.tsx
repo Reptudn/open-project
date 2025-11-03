@@ -5,7 +5,6 @@ import { GymHeader, GymText } from "@/components/ui/Text";
 import { getThemeColor } from "@/constants/theme";
 import {
   getWorkoutExercises,
-  getWorkoutInfo,
   getWorkouts,
 } from "@/lib/api/workout/workoutSelect";
 import { ScrollView } from "react-native-gesture-handler";

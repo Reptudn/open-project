@@ -38,17 +38,3 @@ export async function getWorkoutLogs(
 
   return { data: data, error: null };
 }
-
-export async function getWorkoutInfo(
-  workoutId: number,
-  sessionId: Session | null
-): Promise<Result<Workout[]>> {
-  const { data, error } = await supabase
-    .from("exercises")
-    .select("*")
-    .eq("exercise_id", workoutId)
-
-  if (error) return { data: null, error: error.message };
-
-  return { data: data, error: null };
-}
