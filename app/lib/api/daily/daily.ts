@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import { getMealsByDate } from "./food_tracking";
 
 interface CalorieDayTracking {
   calories_consumed: number;
@@ -32,14 +33,12 @@ export async function getDayData(date: Date): Promise<DayData | null> {
     return null;
   }
 
-  const { data: food_data, error: err } = await supabase
-    .from("user_calorie_stats")
-    .select("*")
-    .eq("date", date);
-
-  if (err) {
-    console.error("Error fetching food data:", err);
-    return null;
+  let meals;
+  try {
+    meals = await getMealsByDate(date);
+  } catch (error) {
+    console.error("Error fetching meals:", error);
+    meals = null;
   }
 
   const dayData: DayData = {
@@ -50,8 +49,48 @@ export async function getDayData(date: Date): Promise<DayData | null> {
       ? null
       : data.workout_session_id,
     date: data.date,
-    calorie_data: err ? null : (food_data as CalorieDayTracking[]),
+    calorie_data: meals,
   };
 
   return dayData;
+}
+
+export async function updateWeight(newWeightInKg: number) {
+  const { error } = await supabase
+    .from("daily_stats")
+    .update({ weight: newWeightInKg })
+    .single();
+
+  if (error) {
+    console.error("Error updating weight:", error);
+    throw new Error(`Error updating weight: ${error.message}`);
+  }
+}
+
+export async function addWorkoutSession(workoutId: string, date: Date) {
+  const { error } = await supabase
+    .from("daily_stats")
+    .update({
+      workout_session_id: workoutId,
+    })
+    .eq("date", date);
+
+  if (error) {
+    console.error("Error adding workout session:", error);
+    throw new Error(`Error adding workout session: ${error.message}`);
+  }
+}
+
+export async function removeWorkoutSession(date: Date) {
+  const { error } = await supabase
+    .from("daily_stats")
+    .update({
+      workout_session_id: null,
+    })
+    .eq("date", date);
+
+  if (error) {
+    console.error("Error removing workout session:", error);
+    throw new Error(`Error removing workout session: ${error.message}`);
+  }
 }
