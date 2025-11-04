@@ -1,3 +1,10 @@
+enum MealType {
+  BREAKFAST,
+  LUNCH,
+  DINNER,
+  SNACK,
+}
+
 // Nutriments interface for nutritional information
 interface ProductNutriments {
   // Basic macronutrients
