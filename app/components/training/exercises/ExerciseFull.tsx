@@ -2,34 +2,39 @@ import { ThemeColors } from "@/constants/theme";
 import { View, Text, useColorScheme, Image, ScrollView } from "react-native";
 import AddExerciseFull from "./AddExercise";
 import ExerciseTag, { ExerciseTagType } from "./ExerciseTag";
-import { Exercise } from "@/types/Exercise";
 import { VideoView, useVideoPlayer } from "expo-video";
 import { useEffect, useState, useCallback } from "react";
 import ExerciseItem from "./ExerciseItem";
 import { supabase } from "@/lib/supabase";
 
-export default function ExerciseFull({ exercise }: { exercise: Exercise }) {
+export default function ExerciseFull({
+  exercise,
+  workoutId,
+}: {
+  exercise: Exercise;
+  workoutId: string;
+}) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
 
   const [relatedExercises, setRelatedExercises] = useState<Exercise[]>([]);
   const [loadingRelated, setLoadingRelated] = useState(false);
 
-  const player = useVideoPlayer(exercise.videoUrl || "", (player) => {
+  const player = useVideoPlayer(exercise.video_url || "", (player) => {
     player.loop = true;
     player.muted = false;
   });
 
   useEffect(() => {
-    if (exercise.videoUrl) {
+    if (exercise.video_url) {
       player.play();
     }
-  }, [exercise.videoUrl, player]);
+  }, [exercise.video_url, player]);
 
   const fetchRelatedExercises = useCallback(async () => {
     if (
-      !exercise.relatedExerciseIds ||
-      exercise.relatedExerciseIds.length === 0
+      !exercise.related_exercise_ids ||
+      exercise.related_exercise_ids.length === 0
     ) {
       return;
     }
@@ -39,7 +44,7 @@ export default function ExerciseFull({ exercise }: { exercise: Exercise }) {
       const { data, error } = await supabase
         .from("exercises")
         .select("*")
-        .in("exercise_id", exercise.relatedExerciseIds);
+        .in("exercise_id", exercise.related_exercise_ids);
 
       if (error) {
         console.error("Error fetching related exercises:", error);
@@ -74,7 +79,7 @@ export default function ExerciseFull({ exercise }: { exercise: Exercise }) {
     } finally {
       setLoadingRelated(false);
     }
-  }, [exercise.relatedExerciseIds]);
+  }, [exercise.related_exercise_ids]);
 
   useEffect(() => {
     fetchRelatedExercises();
@@ -102,7 +107,7 @@ export default function ExerciseFull({ exercise }: { exercise: Exercise }) {
         showsVerticalScrollIndicator={true}
       >
         <Image
-          source={{ uri: exercise.imageUrl }}
+          source={{ uri: exercise.image_url }}
           style={{
             width: "100%",
             height: 400,
@@ -119,27 +124,27 @@ export default function ExerciseFull({ exercise }: { exercise: Exercise }) {
             marginBottom: 12,
           }}
         >
-          {exercise.targetMuscles &&
-            exercise.targetMuscles.length > 0 &&
-            exercise.targetMuscles.map((muscle, index) => (
+          {exercise.target_muscles &&
+            exercise.target_muscles.length > 0 &&
+            exercise.target_muscles.map((muscle, index) => (
               <ExerciseTag
                 key={index}
                 name={muscle.toLocaleUpperCase()}
                 type={ExerciseTagType.MUSCLE_PRIMARY}
               />
             ))}
-          {exercise.secondaryMuscles &&
-            exercise.secondaryMuscles.length > 0 &&
-            exercise.secondaryMuscles.map((muscle, index) => (
+          {exercise.secondary_muscles &&
+            exercise.secondary_muscles.length > 0 &&
+            exercise.secondary_muscles.map((muscle, index) => (
               <ExerciseTag
                 key={index}
                 name={muscle.toLocaleUpperCase()}
                 type={ExerciseTagType.MUSCLE_SECONDARY}
               />
             ))}
-          {exercise.bodyParts &&
-            exercise.bodyParts.length > 0 &&
-            exercise.bodyParts.map((part, index) => (
+          {exercise.body_parts &&
+            exercise.body_parts.length > 0 &&
+            exercise.body_parts.map((part, index) => (
               <ExerciseTag
                 key={index}
                 name={part.toLocaleUpperCase()}
@@ -211,7 +216,7 @@ export default function ExerciseFull({ exercise }: { exercise: Exercise }) {
           )}
         </View>
         <View>
-          {exercise.exerciseTips && exercise.exerciseTips.length > 0 && (
+          {exercise.exercise_tips && exercise.exercise_tips.length > 0 && (
             <>
               <Text
                 style={{
@@ -224,7 +229,7 @@ export default function ExerciseFull({ exercise }: { exercise: Exercise }) {
               >
                 Tips:
               </Text>
-              {exercise.exerciseTips.map((tip, index) => (
+              {exercise.exercise_tips.map((tip, index) => (
                 <Text
                   key={index}
                   style={{
@@ -271,8 +276,8 @@ export default function ExerciseFull({ exercise }: { exercise: Exercise }) {
           )}
         </View>
         <View>
-          {exercise.relatedExerciseIds &&
-            exercise.relatedExerciseIds.length > 0 && (
+          {exercise.related_exercise_ids &&
+            exercise.related_exercise_ids.length > 0 && (
               <>
                 <Text
                   style={{
@@ -300,8 +305,9 @@ export default function ExerciseFull({ exercise }: { exercise: Exercise }) {
                 ) : relatedExercises.length > 0 ? (
                   relatedExercises.map((relEx: Exercise) => (
                     <ExerciseItem
-                      key={relEx.exerciseId || `related-${Math.random()}`}
+                      key={relEx.exercise_id || `related-${Math.random()}`}
                       exercise={relEx}
+                      workoutId={workoutId}
                     />
                   ))
                 ) : (
@@ -321,7 +327,7 @@ export default function ExerciseFull({ exercise }: { exercise: Exercise }) {
             )}
         </View>
         <View>
-          {exercise.videoUrl && (
+          {exercise.video_url && (
             <>
               <Text
                 style={{
@@ -352,7 +358,6 @@ export default function ExerciseFull({ exercise }: { exercise: Exercise }) {
           )}
         </View>
       </ScrollView>
-      <AddExerciseFull name={exercise.name} />
     </>
   );
 }

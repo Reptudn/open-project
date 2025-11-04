@@ -10,6 +10,10 @@ import GymView from "@/components/ui/GymView";
 import { GymButtonMedium } from "@/components/ui/Button";
 import { createWorkout } from "@/lib/api/workout/workoutInsert";
 import { useAuthContext } from "@/hooks/use-auth-context";
+import ExerciseInfo from "./WorkoutExerciseInfo";
+import { WorkoutExerciseItem } from "@/components/training/exercises/ExerciseItem";
+import { getWorkoutExercises } from "@/lib/api/workout/workoutSelect";
+import { deleteWorkout } from "@/lib/api/workout/workoutDelete";
 
 export default function TrainingScreen() {
   const modalizeRef = useRef<Modalize>(null);
@@ -58,6 +62,18 @@ export default function TrainingScreen() {
     }
   };
 
+  const openWorkoutInfo = async (workoutid: number) => {
+      const { data, error } = await getWorkoutExercises(workoutid);
+      if (error) {
+        alert(`Couldn't get workouts: ${error}`);
+        return;
+      }
+      if (data) {
+        setExercises(data);
+      }
+      modalizeRef.current?.open();
+    };
+  
   return (
     <SafeAreaView
       style={[
@@ -121,6 +137,18 @@ export default function TrainingScreen() {
                 }
               ></TextInput>
             </View>
+            {/* <View
+              style={{
+                borderColor: theme.text,
+                borderWidth: 1,
+                marginBottom: 20,
+                borderRadius: 5,
+                padding: 10,
+              }}
+            >
+              <GymHeader>Exercises: </GymHeader>
+              <WorkoutExerciseItem></WorkoutExerciseItem>
+            </View> */}
             <GymButtonMedium onPress={handleButtonPress}>
               Add Exercise
             </GymButtonMedium>

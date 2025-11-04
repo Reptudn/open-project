@@ -1,4 +1,4 @@
-import { Modal, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Alert, Modal, StyleSheet, TouchableOpacity, View } from "react-native";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import GymView from "@/components/ui/GymView";
 import { GymHeader, GymText } from "@/components/ui/Text";
@@ -11,6 +11,10 @@ import { ScrollView } from "react-native-gesture-handler";
 import { useEffect, useRef, useState } from "react";
 import { Modalize } from "react-native-modalize";
 import { useAuthContext } from "@/hooks/use-auth-context";
+import { deleteWorkout } from "@/lib/api/workout/workoutDelete";
+import ExerciseItem, {
+  WorkoutExerciseItem,
+} from "@/components/training/exercises/ExerciseItem";
 
 export default function TrainingScreen() {
   const theme = getThemeColor(useColorScheme());
@@ -42,6 +46,28 @@ export default function TrainingScreen() {
     modalizeRef.current?.open();
   };
 
+  const handleDeleteWorkout = async (workout: Workout) => {
+    Alert.alert(
+      "Delete Workout",
+      `Are you sure you want to delete ${workout.name}?`,
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel",
+        },
+        {
+          text: "Yes",
+          onPress: async () => {
+            const { data, error } = await deleteWorkout(workout.id);
+            if (error || !data) return;
+            setFullWorkout(fullWorkout.filter((fw) => fw.id !== workout.id));
+          },
+        },
+      ]
+    );
+  };
+
   return (
     <GymView>
       <ScrollView>
@@ -52,6 +78,7 @@ export default function TrainingScreen() {
               className="border border-r-8 m-2 rounded-lg"
               style={{ borderColor: theme.text }}
               onPress={() => openWorkoutInfo(workout.id)}
+              onLongPress={() => handleDeleteWorkout(workout)}
             >
               <GymView>
                 <GymHeader>{workout.name}</GymHeader>
@@ -87,7 +114,10 @@ export default function TrainingScreen() {
                 marginBottom: 8,
               }}
             >
-              <GymText>Exercise Name: {exercise.exercise_id.name ?? "Untitled"}</GymText>
+              <WorkoutExerciseItem
+                exercise={exercise.exercise_id as Exercise}
+                workoutId={String(exercise.workout_id)}
+              />
             </View>
           ))}
         </ScrollView>

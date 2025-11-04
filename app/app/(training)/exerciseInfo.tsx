@@ -17,6 +17,7 @@ import { GymButtonMedium } from "@/components/ui/Button";
 import { GymText, GymHeader } from "@/components/ui/Text";
 import { addExercise } from "@/lib/api/workout/workoutInsert";
 import { useAuthContext } from "@/hooks/use-auth-context";
+import ExerciseFull from "@/components/training/exercises/ExerciseFull";
 
 export let excerciseList: string[] = [];
 
@@ -24,8 +25,9 @@ export default function ExerciseInfo() {
   const modalizeRef = useRef<Modalize>(null);
   const theme = getThemeColor(useColorScheme());
   const { width, height } = Dimensions.get("window");
-  const { name, overview, imageUrl, excerciseId, workoutId } =
+  const { name, overview, imageUrl, excerciseId, workoutId, exercise } =
     useLocalSearchParams();
+  const exerciseT = JSON.parse(exercise as string) as Exercise;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { session } = useAuthContext();
 
@@ -86,74 +88,33 @@ export default function ExerciseInfo() {
         handleStyle={{ backgroundColor: theme.text }}
         handlePosition="inside"
       >
-        <ScrollView
-          style={{ flex: 1, backgroundColor: theme.background }}
-          contentContainerStyle={{ flexGrow: 1, padding: 20 }}
-          showsVerticalScrollIndicator={false}
-        >
-          <GymHeader
-            style={{
-              color: theme.text,
-              textAlign: "center",
-              marginBottom: 20,
-              fontSize: 24,
-            }}
+        <ExerciseFull
+          exercise={exerciseT}
+          workoutId={workoutId as string}
+        ></ExerciseFull>
+
+        {/* Action Buttons */}
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={[styles.secondaryButton, { borderColor: theme.text }]}
+            onPress={() => modalizeRef.current?.close()}
           >
-            {exerciseName}
-          </GymHeader>
+            <GymText style={{ color: theme.text, fontSize: 16 }}>
+              Cancel
+            </GymText>
+          </TouchableOpacity>
 
-          <View style={styles.imageContainer}>
-            <Image
-              source={{ uri: exerciseImageUrl }}
-              style={[styles.exerciseImage, { borderColor: theme.text + "30" }]}
-              resizeMode="contain"
-              onError={(error) =>
-                console.log("Image load error:", error.nativeEvent.error)
-              }
-            />
-          </View>
-
-          <View
-            style={[
-              styles.descriptionContainer,
-              { backgroundColor: theme.text + "10" },
-            ]}
+          <GymButtonMedium
+            style={[styles.primaryButton, { backgroundColor: "#4CAF50" }]}
+            onPress={handleButtonPress}
           >
             <GymText
-              style={{
-                color: theme.text,
-                fontSize: 16,
-                lineHeight: 24,
-                textAlign: "left",
-              }}
+              style={{ color: "white", fontSize: 16, fontWeight: "bold" }}
             >
-              {exerciseOverview}
+              Add Exercise
             </GymText>
-          </View>
-
-          {/* Action Buttons */}
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={[styles.secondaryButton, { borderColor: theme.text }]}
-              onPress={() => modalizeRef.current?.close()}
-            >
-              <GymText style={{ color: theme.text, fontSize: 16 }}>
-                Cancel
-              </GymText>
-            </TouchableOpacity>
-
-            <GymButtonMedium
-              style={[styles.primaryButton, { backgroundColor: "#4CAF50" }]}
-              onPress={handleButtonPress}
-            >
-              <GymText
-                style={{ color: "white", fontSize: 16, fontWeight: "bold" }}
-              >
-                Add Exercise
-              </GymText>
-            </GymButtonMedium>
-          </View>
-        </ScrollView>
+          </GymButtonMedium>
+        </View>
       </Modalize>
     </SafeAreaView>
   );
