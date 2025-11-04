@@ -10,7 +10,7 @@ import GymView from "@/components/ui/GymView";
 import { GymButtonMedium } from "@/components/ui/Button";
 import { createWorkout } from "@/lib/api/workout/workoutInsert";
 import { useAuthContext } from "@/hooks/use-auth-context";
-import ExerciseInfo from "./WorkoutExerciseInfo";
+// import ExerciseInfo from "./WorkoutExerciseInfo";
 import { WorkoutExerciseItem } from "@/components/training/exercises/ExerciseItem";
 import { getWorkoutExercises } from "@/lib/api/workout/workoutSelect";
 import { deleteWorkout } from "@/lib/api/workout/workoutDelete";
@@ -62,17 +62,17 @@ export default function TrainingScreen() {
     }
   };
 
-  const openWorkoutInfo = async (workoutid: number) => {
-      const { data, error } = await getWorkoutExercises(workoutid);
-      if (error) {
-        alert(`Couldn't get workouts: ${error}`);
-        return;
-      }
-      if (data) {
-        setExercises(data);
-      }
-      modalizeRef.current?.open();
-    };
+  // const openWorkoutInfo = async (workoutid: number) => {
+  //     const { data, error } = await getWorkoutExercises(workoutid);
+  //     if (error) {
+  //       alert(`Couldn't get workouts: ${error}`);
+  //       return;
+  //     }
+  //     if (data) {
+  //       setExercises(data);
+  //     }
+  //     modalizeRef.current?.open();
+  //   };
   
   return (
     <SafeAreaView
