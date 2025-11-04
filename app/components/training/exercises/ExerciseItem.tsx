@@ -1,12 +1,28 @@
-import { TouchableOpacity, Text, Image, View, StyleSheet, Dimensions } from "react-native";
+import {
+  TouchableOpacity,
+  Text,
+  Image,
+  View,
+  StyleSheet,
+  Dimensions,
+} from "react-native";
 import ExerciseTag, { ExerciseTagType } from "./ExerciseTag";
 import { AddExerciseSmall } from "./AddExercise";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { ThemeColors } from "@/constants/theme";
-import { Exercise } from "@/types/Exercise";
+import { getThemeColor, ThemeColors } from "@/constants/theme";
 import { router } from "expo-router";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { GymText } from "@/components/ui/Text";
 
-export default function ExerciseItem({ exercise }: { exercise: Exercise }) {
+interface ExerciseItemProps {
+  exercise: Exercise;
+  workoutId: string;
+}
+
+export default function ExerciseItem({
+  exercise,
+  workoutId,
+}: ExerciseItemProps) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   return (
@@ -25,23 +41,25 @@ export default function ExerciseItem({ exercise }: { exercise: Exercise }) {
         borderColor: isDark ? "#444" : "#ddd",
         borderWidth: 1,
       }}
-      onPress={
-        () =>
-          router.navigate({
-            pathname: "/(training)/exerciseInfo",
-            params:  {
-                         name: exercise.name,
-                         overview: exercise.overview,
-                         imageUrl: exercise.imageUrl,
-                       },
-          })
+      onPress={() =>
+        router.navigate({
+          pathname: "/(training)/exerciseInfo",
+          params: {
+            name: exercise.name,
+            overview: exercise.overview,
+            imageUrl: exercise.image_url,
+            excerciseId: exercise.exercise_id,
+            workoutId: workoutId,
+            exercise: JSON.stringify(exercise),
+          },
+        })
       }
     >
       <Image
         source={{
           uri:
-            exercise.imageUrl && exercise.imageUrl.trim()
-              ? exercise.imageUrl
+            exercise.image_url && exercise.image_url.trim()
+              ? exercise.image_url
               : "https://via.placeholder.com/80x80/cccccc/666666?text=No+Image",
         }}
         style={{
@@ -77,16 +95,16 @@ export default function ExerciseItem({ exercise }: { exercise: Exercise }) {
             marginBottom: 10,
           }}
         >
-          {exercise.targetMuscles &&
-            exercise.targetMuscles.map((ex) => (
+          {exercise.target_muscles &&
+            exercise.target_muscles.map((ex) => (
               <ExerciseTag
                 key={ex}
                 name={ex}
                 type={ExerciseTagType.MUSCLE_PRIMARY}
               />
             ))}
-          {exercise.secondaryMuscles &&
-            exercise.secondaryMuscles.map((ex) => (
+          {exercise.secondary_muscles &&
+            exercise.secondary_muscles.map((ex) => (
               <ExerciseTag
                 key={ex}
                 name={ex}
@@ -101,8 +119,8 @@ export default function ExerciseItem({ exercise }: { exercise: Exercise }) {
                 type={ExerciseTagType.EQUIPMENT}
               />
             ))}
-          {exercise.bodyParts &&
-            exercise.bodyParts.map((ex) => (
+          {exercise.body_parts &&
+            exercise.body_parts.map((ex) => (
               <ExerciseTag key={ex} name={ex} type={ExerciseTagType.BODYPART} />
             ))}
         </View>
@@ -121,9 +139,135 @@ export default function ExerciseItem({ exercise }: { exercise: Exercise }) {
         </View>
       </View>
       <View style={{ alignItems: "flex-end" }}>
-        <AddExerciseSmall exerciseId={exercise.exerciseId} />
+        <AddExerciseSmall exerciseId={exercise.exercise_id} />
       </View>
     </TouchableOpacity>
   );
 }
 
+export function WorkoutExerciseItem({
+  exercise,
+  workoutId,
+}: {
+  exercise: Exercise;
+  workoutId: string;
+}) {
+  const theme = getThemeColor();
+
+  return (
+    <TouchableOpacity
+      style={{
+        marginBottom: 20,
+        backgroundColor: theme.background,
+        padding: 10,
+        borderRadius: 10,
+        flexDirection: "row",
+        alignItems: "flex-start",
+        gap: 15,
+        width: "100%",
+        borderColor: theme.text,
+        borderWidth: 1,
+      }}
+      onPress={() =>
+        router.navigate({
+          pathname: "/(training)/workoutExerciseInfo",
+          params: {
+            name: exercise.name,
+            overview: exercise.overview,
+            imageUrl: exercise.image_url,
+            excerciseId: exercise.exercise_id,
+            workoutId: workoutId,
+            exercise: JSON.stringify(exercise),
+          },
+        })
+      }
+    >
+      <Image
+        source={{
+          uri:
+            exercise.image_url && exercise.image_url.trim()
+              ? exercise.image_url
+              : "https://via.placeholder.com/80x80/cccccc/666666?text=No+Image",
+        }}
+        style={{
+          width: 80,
+          height: 80,
+          borderRadius: 5,
+        }}
+        resizeMode="contain"
+        onError={(error) =>
+          console.log("Image load error:", error.nativeEvent.error)
+        }
+        alt="Exercise GIF"
+      />
+
+      <View style={{ flex: 1, justifyContent: "space-between" }}>
+        <Text
+          style={{
+            fontWeight: "bold",
+            color: theme.text,
+            fontSize: 16,
+            marginBottom: 8,
+          }}
+        >
+          {exercise.name}
+        </Text>
+
+        <View
+          style={{
+            flexDirection: "row",
+            flexWrap: "wrap",
+            alignItems: "center",
+            gap: 5,
+            marginBottom: 10,
+          }}
+        >
+          {exercise.target_muscles &&
+            exercise.target_muscles.map((ex) => (
+              <ExerciseTag
+                key={ex}
+                name={ex}
+                type={ExerciseTagType.MUSCLE_PRIMARY}
+              />
+            ))}
+          {exercise.secondary_muscles &&
+            exercise.secondary_muscles.map((ex) => (
+              <ExerciseTag
+                key={ex}
+                name={ex}
+                type={ExerciseTagType.MUSCLE_SECONDARY}
+              />
+            ))}
+          {exercise.equipments &&
+            exercise.equipments.map((ex) => (
+              <ExerciseTag
+                key={ex}
+                name={ex}
+                type={ExerciseTagType.EQUIPMENT}
+              />
+            ))}
+          {exercise.body_parts &&
+            exercise.body_parts.map((ex) => (
+              <ExerciseTag key={ex} name={ex} type={ExerciseTagType.BODYPART} />
+            ))}
+        </View>
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <View>
+            <Ionicons name="reorder-three" size={16} color={theme.text} />
+            <GymText style={{ marginLeft: 5, color: theme.text }}>Sets</GymText>
+          </View>
+          <View>
+            <Ionicons name="repeat-sharp" size={16} color={theme.text} />
+            <GymText style={{ marginLeft: 5, color: theme.text }}>Reps</GymText>
+          </View>
+          <View>
+            <Ionicons name="barbell-outline" size={16} color={theme.text} />
+            <GymText style={{ marginLeft: 5, color: theme.text }}>
+              Weight
+            </GymText>
+          </View>
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
+}

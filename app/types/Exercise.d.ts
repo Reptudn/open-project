@@ -28,21 +28,38 @@
 */
 
 interface Exercise {
-  exerciseId: string;
-  name: string;
-  imageUrl: string;
-  bodyParts?: string[];
+  exercise_id: string;
+  name?: string;
+  image_url?: string;
+  target_muscles?: string[];
+  body_parts?: string[];
   equipments?: string[];
-  exerciseType?: string;
-  targetMuscles?: string[];
-  secondaryMuscles?: string[];
-  instructions?: string[];
+  secondary_muscles?: string[];
   keywords?: string[];
-  variations?: string[];
-  exerciseTips?: string[];
-  videoUrl?: string;
-  relatedExerciseIds?: string[];
+  exercise_type?: string;
   overview?: string;
+  instructions?: string[];
+  exercise_tips?: string[];
+  variations?: string[];
+  video_url?: string;
+  related_exercise_ids?: string[];
 }
 
-export type { Exercise };
+
+// interface Exercise {
+//   exerciseId: string;
+//   name: string;
+//   imageUrl: string;
+//   bodyParts?: string[];
+//   equipments?: string[];
+//   exerciseType?: string;
+//   targetMuscles?: string[];
+//   secondaryMuscles?: string[];
+//   instructions?: string[];
+//   keywords?: string[];
+//   variations?: string[];
+//   exerciseTips?: string[];
+//   videoUrl?: string;
+//   relatedExerciseIds?: string[];
+//   overview?: string;
+// }

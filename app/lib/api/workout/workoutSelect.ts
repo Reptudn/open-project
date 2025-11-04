@@ -1,5 +1,6 @@
 import { supabase } from "@/lib/supabase";
 import { Result } from "@/types/ErrorHandling";
+import { Session } from "@supabase/supabase-js";
 
 export async function getWorkouts(): Promise<Result<Workout[]>> {
   const { data, error } = await supabase.from("workouts").select("*");
@@ -14,7 +15,7 @@ export async function getWorkoutExercises(
 ): Promise<Result<WorkoutExercise[]>> {
   const { data, error } = await supabase
     .from("workout_exercises")
-    .select("*")
+    .select("*, exercise_id(*)")
     .eq("workout_id", workoutId);
 
   if (error) {

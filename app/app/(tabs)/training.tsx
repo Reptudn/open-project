@@ -1,205 +1,127 @@
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  Dimensions,
-  Modal,
-} from "react-native";
+import { Alert, Modal, StyleSheet, TouchableOpacity, View } from "react-native";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { ThemeColors } from "@/constants/theme";
-import { getWorkouts } from "@/lib/api/workout/workoutInsert";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import React, { useRef } from "react";
-import ExerciseList from "@/components/training/exercises/ExerciseList";
+import GymView from "@/components/ui/GymView";
+import { GymHeader, GymText } from "@/components/ui/Text";
+import { getThemeColor } from "@/constants/theme";
+import {
+  getWorkoutExercises,
+  getWorkouts,
+} from "@/lib/api/workout/workoutSelect";
+import { ScrollView } from "react-native-gesture-handler";
+import { useEffect, useRef, useState } from "react";
 import { Modalize } from "react-native-modalize";
+import { useAuthContext } from "@/hooks/use-auth-context";
+import { deleteWorkout } from "@/lib/api/workout/workoutDelete";
+import ExerciseItem, {
+  WorkoutExerciseItem,
+} from "@/components/training/exercises/ExerciseItem";
 
 export default function TrainingScreen() {
+  const theme = getThemeColor(useColorScheme());
+  const [fullWorkout, setFullWorkout] = useState<Workout[]>([]);
   const modalizeRef = useRef<Modalize>(null);
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const [exercises, setExercises] = useState<WorkoutExercise[]>([]);
+  const { session } = useAuthContext();
 
-  const onOpen = () => {
+  useEffect(() => {
+    const workouts = async () => {
+      const { data, error } = await getWorkouts();
+      if (error) {
+        alert("Didnt get workouts");
+      }
+      if (data) setFullWorkout(data);
+    };
+    workouts();
+  }, []);
+
+  const openWorkoutInfo = async (workoutid: number) => {
+    const { data, error } = await getWorkoutExercises(workoutid);
+    if (error) {
+      alert(`Couldn't get workouts: ${error}`);
+      return;
+    }
+    if (data) {
+      setExercises(data);
+    }
     modalizeRef.current?.open();
   };
 
-  const Workouts = async () => {
-    return await getWorkouts();
-  };
-
-  const Training = () => {
-    const { width, height } = Dimensions.get("window");
-    if (Workouts.length === 0) {
-      return (
-        <SafeAreaView>
-          <TouchableOpacity
-            onPress={() => onOpen()}
-            style={[
-              styles.itemsingle,
-              {
-                backgroundColor: isDark
-                  ? ThemeColors.dark.button
-                  : ThemeColors.light.button,
-              },
-            ]}
-          >
-            <Ionicons
-              name={isDark ? "add-circle-outline" : "add-circle"}
-              size={35}
-              color={isDark ? ThemeColors.dark.text : ThemeColors.light.text}
-            />
-            <Text
-              style={[
-                styles.title,
-                {
-                  color: isDark
-                    ? ThemeColors.dark.text
-                    : ThemeColors.light.text,
-                },
-              ]}
-            >
-              Workout
-            </Text>
-          </TouchableOpacity>
-          <Modalize ref={modalizeRef}>
-            <View style={styles.modalBackground}>
-              <View
-                style={[
-                  { width: width, height: height * 0.9 },
-                  {
-                    backgroundColor: isDark
-                      ? ThemeColors.dark.button
-                      : ThemeColors.light.button,
-                  },
-                ]}
-              >
-                <Text
-                  style={{
-                    color: isDark
-                      ? ThemeColors.dark.text
-                      : ThemeColors.light.text,
-                    fontWeight: "bold",
-                    paddingHorizontal: 15,
-                    fontSize: 20,
-                  }}
-                >
-                  Build your workout
-                </Text>
-                <ExerciseList />
-              </View>
-            </View>
-          </Modalize>
-        </SafeAreaView>
-      );
-    }
-
-    return (
-      <View>
-        <Text
-          style={[
-            styles.title,
-            { color: isDark ? ThemeColors.dark.text : ThemeColors.light.text },
-          ]}
-        >
-          Hier workouts
-        </Text>
-      </View>
+  const handleDeleteWorkout = async (workout: Workout) => {
+    Alert.alert(
+      "Delete Workout",
+      `Are you sure you want to delete ${workout.name}?`,
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel",
+        },
+        {
+          text: "Yes",
+          onPress: async () => {
+            const { data, error } = await deleteWorkout(workout.id);
+            if (error || !data) return;
+            setFullWorkout(fullWorkout.filter((fw) => fw.id !== workout.id));
+          },
+        },
+      ]
     );
   };
 
   return (
-    <SafeAreaView
-      style={[
-        styles.container,
-        {
-          backgroundColor: isDark
-            ? ThemeColors.dark.background
-            : ThemeColors.light.background,
-        },
-      ]}
-    >
-      <Training />
-    </SafeAreaView>
+    <GymView>
+      <ScrollView>
+        {fullWorkout.length > 0 ? (
+          fullWorkout.map((workout) => (
+            <TouchableOpacity
+              key={workout.id}
+              className="border border-r-8 m-2 rounded-lg"
+              style={{ borderColor: theme.text }}
+              onPress={() => openWorkoutInfo(workout.id)}
+              onLongPress={() => handleDeleteWorkout(workout)}
+            >
+              <GymView>
+                <GymHeader>{workout.name}</GymHeader>
+                <GymText>{workout.description}</GymText>
+              </GymView>
+            </TouchableOpacity>
+          ))
+        ) : (
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "flex-start",
+              alignItems: "center",
+            }}
+          >
+            <GymText>No workouts found.</GymText>
+          </View>
+        )}
+      </ScrollView>
+
+      <Modalize
+        ref={modalizeRef}
+        modalStyle={{ backgroundColor: theme.background }}
+      >
+        <ScrollView style={{ padding: 16 }}>
+          {exercises.map((exercise) => (
+            <View
+              key={exercise.id}
+              style={{
+                padding: 10,
+                borderBottomWidth: 1,
+                borderColor: theme.text + "20",
+                marginBottom: 8,
+              }}
+            >
+              <WorkoutExerciseItem
+                exercise={exercise.exercise_id as Exercise}
+                workoutId={String(exercise.workout_id)}
+              />
+            </View>
+          ))}
+        </ScrollView>
+      </Modalize>
+    </GymView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  titleContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  icon: {
-    width: 32,
-    height: 32,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: "absolute",
-  },
-  text: {
-    color: "black",
-  },
-  header: {
-    color: "black",
-    fontSize: 40,
-    fontWeight: "bold",
-    margin: 20,
-  },
-  item: {
-    backgroundColor: "#dadadaff",
-    padding: 20,
-    marginVertical: 8,
-    marginHorizontal: 16,
-    borderRadius: 20,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  itemsingle: {
-    borderRadius: 100,
-    alignItems: "center",
-    justifyContent: "center",
-    top: "50%",
-    left: "25%",
-    width: "50%",
-    height: "50%",
-  },
-  itemIcon: {
-    marginRight: 15,
-  },
-  itemContent: {
-    flex: 1,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "600",
-  },
-  subtitle: {
-    fontSize: 14,
-    marginTop: 2,
-  },
-  textStyle: {
-    color: "white",
-    textAlign: "center",
-  },
-  modalBackground: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.5)", // Semi-transparent background
-  },
-  modalText: {
-    fontSize: 18,
-  },
-});
