@@ -11,7 +11,6 @@ interface Profile {
 }
 
 interface InsertProfile {
-  id: string;
   username?: string;
   full_name?: string;
   gender?: string;

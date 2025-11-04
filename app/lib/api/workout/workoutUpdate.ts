@@ -1,17 +1,13 @@
 import { supabase } from "@/lib/supabase";
 import { Result } from "@/types/ErrorHandling";
-import { ExpoRoot } from "expo-router";
-import { useDebugValue } from "react";
 
 export async function updateWorkout(
-  workoutId: number,
-  name?: string,
-  discription?: string
+  workoutId: number, update: InsertWorkout
 ): Promise<Result<Workout>> {
   const upWorkout: any = {};
 
-  if (name !== undefined) upWorkout.name = name;
-  if (discription !== undefined) upWorkout.discription = discription;
+  if (update.name !== undefined) upWorkout.name = update.name;
+  if (update.description !== undefined) upWorkout.discription = update.description;
 
   const { data, error } = await supabase
     .from("workouts")
