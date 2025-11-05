@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { View, Text } from "react-native";
 import { useColorScheme } from "@/hooks/use-color-scheme.web";
 import { ThemeColors } from "@/constants/theme";
-import { supabase } from "@/lib/supabase";
+import { getWeightByDate, updateWeightByDate } from "@/lib/api/daily/daily";
 
 export default function WeightEntry({ date }: { date: Date }) {
   const [weight, setWeight] = useState<number>(0);
@@ -14,54 +14,13 @@ export default function WeightEntry({ date }: { date: Date }) {
   const isDark = colorScheme === "dark";
 
   useEffect(() => {
-    // Fetch weight entry for the given date.
-    // If none exists for the date, create a row using the last available weight (or default 75).
     const fetchWeight = async () => {
-      const dateStr = date.toISOString().split("T")[0];
-
-      // Try to get today's weight
-      const { data: todayData, error: todayError } = await supabase
-        .from("user_weights")
-        .select("weight")
-        .eq("date", dateStr)
-        .single();
-
-      if (todayData && !todayError) {
-        setWeight(todayData.weight);
-        return;
+      try {
+        const weight = await getWeightByDate(date);
+        setWeight(weight ? weight : 0);
+      } catch (error) {
+        console.error("Failed to fetch weight:", error);
       }
-
-      // No entry for today — find the most recent previous weight
-      const { data: lastData, error: lastError } = await supabase
-        .from("user_weights")
-        .select("weight,date")
-        .lt("date", dateStr)
-        .order("date", { ascending: false })
-        .limit(1)
-        .single();
-
-      const initialWeight =
-        lastData && !lastError && typeof lastData.weight === "number"
-          ? lastData.weight
-          : 75;
-
-      // Insert a new row for today's date with the last known weight (or default)
-      const { error: insertError } = await supabase
-        .from("user_weights")
-        .insert({
-          date: dateStr,
-          weight: initialWeight,
-        });
-
-      if (insertError) {
-        console.error(
-          "Error inserting initial weight for date",
-          dateStr,
-          insertError
-        );
-      }
-
-      setWeight(initialWeight);
     };
 
     fetchWeight();
@@ -73,25 +32,17 @@ export default function WeightEntry({ date }: { date: Date }) {
   };
 
   const updateWeight = async (newWeight: number) => {
-    const clamped = clampWeight(newWeight);
-    const dateStr = date.toISOString().split("T")[0];
-
-    const { error } = await supabase.from("user_weights").upsert(
-      {
-        date: dateStr,
-        weight: clamped,
-      },
-      { onConflict: "date" }
-    );
-
-    if (error) {
-      console.error("Error updating weight:", error);
-      return;
+    const prev = weight;
+    const clapmedWeight = clampWeight(newWeight);
+    setWeight(clapmedWeight);
+    try {
+      await updateWeightByDate(clapmedWeight, date);
+      setWeight(clampWeight);
+    } catch (error) {
+      console.error("Failed to update weight:", error);
+      setWeight(prev);
     }
-
-    setWeight(clamped);
   };
-
   return (
     <GymView
       style={{

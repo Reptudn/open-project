@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 import { GymBr } from "@/components/ui/Br";
 import {
-  GymButtonFullLarge,
-  GymButtonFullMedium,
+  GymButtonLarge,
+  GymButtonMedium,
   GymButtonFullWidth,
   GymButtonSmall,
 } from "@/components/ui/Button";
 import { GymHomeStats } from "@/components/ui/Statistics";
 import { GymTitle, GymHeader, GymText } from "@/components/ui/Text";
 import { getThemeColor } from "@/constants/theme";
-import { useColorScheme } from "react-native";
+import { useColorScheme, View, Text } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { Test } from "@/components/ui/BodyMetrics";
 
@@ -41,13 +41,13 @@ export default function TestComponentsScreen() {
         Small
       </GymButtonSmall>
       <GymBr />
-      <GymButtonFullMedium onPress={() => alert("add function")}>
+      <GymButtonMedium onPress={() => alert("add function")}>
         Medium
-      </GymButtonFullMedium>
+      </GymButtonMedium>
       <GymBr />
-      <GymButtonFullLarge onPress={() => alert("add function")}>
+      <GymButtonLarge onPress={() => alert("add function")}>
         Large
-      </GymButtonFullLarge>
+      </GymButtonLarge>
       <GymBr />
       <GymHomeStats
         header="Calories"

@@ -1,42 +1,29 @@
-import { Tabs } from "expo-router";
+import { router, Tabs } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { HapticTab } from "@/components/haptic-tab";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { TouchableOpacity, View } from "react-native";
-import { ThemeColors } from "@/constants/theme";
+import { TouchableOpacity } from "react-native";
+import { getThemeColor } from "@/constants/theme";
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const theme = getThemeColor(useColorScheme());
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: isDark
-          ? ThemeColors.dark.tabBarActiveTintColor
-          : ThemeColors.light.tabBarActiveTintColor,
-        tabBarInactiveTintColor: isDark
-          ? ThemeColors.dark.tabBarInactiveTintColor
-          : ThemeColors.light.tabBarInactiveTintColor,
+        tabBarActiveTintColor: theme.tabBarActiveTintColor,
+        tabBarInactiveTintColor: theme.tabBarInactiveTintColor,
         tabBarStyle: {
-          backgroundColor: isDark
-            ? ThemeColors.dark.background
-            : ThemeColors.light.background,
-          borderTopColor: isDark
-            ? ThemeColors.dark.borderTopColor
-            : ThemeColors.light.borderTopColor,
+          backgroundColor: theme.background,
+          borderTopColor: theme.borderTopColor,
         },
         headerShown: true,
         tabBarButton: HapticTab,
         headerStyle: {
-          backgroundColor: isDark
-            ? ThemeColors.dark.background
-            : ThemeColors.light.background,
+          backgroundColor: theme.background,
         },
-        headerTintColor: isDark
-          ? ThemeColors.dark.headerTintColor
-          : ThemeColors.light.headerTintColor,
+        headerTintColor: theme.headerTintColor,
       }}
     >
       <Tabs.Screen
@@ -49,7 +36,7 @@ export default function TabLayout() {
               <Ionicons
                 name="person-circle-outline"
                 size={24}
-                color={isDark ? "#d0d0c0" : "#242c40"}
+                color={theme.icon}
               />
             </TouchableOpacity>
           ),
@@ -58,7 +45,7 @@ export default function TabLayout() {
               <Ionicons
                 name="notifications-outline"
                 size={24}
-                color={isDark ? ThemeColors.dark.icon : ThemeColors.light.icon}
+                color={theme.icon}
               />
             </TouchableOpacity>
           ),
@@ -73,12 +60,22 @@ export default function TabLayout() {
           title: "Training",
           headerTitle: "Workout Training",
           headerRight: () => (
-            <TouchableOpacity style={{ marginRight: 15 }} onPress={() => {}}>
-              <Ionicons
-                name="add-outline"
-                size={24}
-                color={isDark ? ThemeColors.dark.icon : ThemeColors.light.icon}
-              />
+            <TouchableOpacity
+              style={{
+                marginRight: 15,
+                backgroundColor: theme.text,
+                height: 40,
+                width: 40,
+                borderRadius: 20,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+              onPress={() => {
+                // Navigate to modal
+                router.push("/(training)/createWorkout");
+              }}
+            >
+              <Ionicons name="add-outline" size={24} color={theme.background} />
             </TouchableOpacity>
           ),
           tabBarIcon: ({ color }) => (
@@ -173,7 +170,7 @@ export default function TabLayout() {
               <Ionicons
                 name="help-circle-outline"
                 size={24}
-                color={isDark ? ThemeColors.dark.icon : ThemeColors.light.icon}
+                color={theme.icon}
               />
             </TouchableOpacity>
           ),
@@ -182,19 +179,15 @@ export default function TabLayout() {
           ),
         }}
       />
-      {process.env.NODE_ENV == "development" && (
+      {process.env.NODE_ENV === "development" && (
         <Tabs.Screen
-          name="TestComponents"
+          name="testComponents"
           options={{
             title: "TestComponents",
             headerTitle: "Components",
             headerLeft: () => (
               <TouchableOpacity style={{ marginLeft: 15 }}>
-                <Ionicons
-                  name="help-circle"
-                  size={24}
-                  color={isDark ? "#d0d0c0" : "#242c40"}
-                />
+                <Ionicons name="help-circle" size={24} color={theme.icon} />
               </TouchableOpacity>
             ),
             headerRight: () => (
@@ -202,9 +195,7 @@ export default function TabLayout() {
                 <Ionicons
                   name="notifications-outline"
                   size={24}
-                  color={
-                    isDark ? ThemeColors.dark.icon : ThemeColors.light.icon
-                  }
+                  color={theme.icon}
                 />
               </TouchableOpacity>
             ),

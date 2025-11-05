@@ -1,8 +1,4 @@
 import { ThemeColors } from "@/constants/theme";
-import {
-  getFoodDataByBarcode,
-  searchFood,
-} from "@/lib/api/calorie_tracking/calories_tracking";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {
   View,
@@ -24,7 +20,9 @@ import { useState, useEffect } from "react";
 import DayNutritionOverview from "./DayNutritionOverview";
 import Meals from "./Meal";
 import WeightEntry from "./WeightEntry";
-import { getDayData } from "@/lib/api/daily/daily";
+import { getWorkoutSessionByDate } from "@/lib/api/daily/daily";
+import { getFoodDataByBarcode, searchFood } from "@/lib/api/daily/food_data";
+import { getMealsByDate } from "@/lib/api/daily/food_tracking";
 
 export default function DayItem({
   date,
@@ -47,7 +45,8 @@ export default function DayItem({
   const [searchText, setSearchText] = useState("");
 
   const [products, setProducts] = useState<Product[]>([]);
-  const [dayData, setDayData] = useState({});
+  const [foods, setFoods] = useState<Product[]>([]);
+  const [training, setTraining] = useState<any>(null);
 
   const handleBarcodeScanned = async (barcode: string) => {
     console.log("Barcode scanned:", barcode);
@@ -73,8 +72,16 @@ export default function DayItem({
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await getDayData(date);
-      setDayData(data);
+      try {
+        setFoods(await getMealsByDate(date));
+      } catch (error) {
+        console.error("Failed to fetch meals:", error);
+      }
+      try {
+        setTraining(await getWorkoutSessionByDate(date));
+      } catch (error) {
+        console.error("Failed to fetch workout session:", error);
+      }
     };
     fetchData();
 
