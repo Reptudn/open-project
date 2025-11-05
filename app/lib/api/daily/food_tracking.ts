@@ -61,7 +61,10 @@ export async function getMealsByType(type: MealType, date?: Date) {
   return data;
 }
 
-export async function editMeal(mealId: number, updatedData: Partial<MealType>) {
+export async function editMeal(
+  mealId: number,
+  updatedData: Partial<{ amount_in_g: number; meal_type: MealType }>
+) {
   const { error } = await supabase
     .from("meals")
     .update(updatedData)
