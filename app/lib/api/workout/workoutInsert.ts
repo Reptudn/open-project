@@ -49,6 +49,7 @@ export async function addExercise(
     reps_target: ex.reps_target ?? null,
     rest_seconds: ex.rest_seconds ?? null,
     order_index: ex.order_index,
+    weight_kg: ex.weight_kg ?? null,
   }));
 
   const response = await fetch(
@@ -72,7 +73,7 @@ export async function addExercise(
 }
 
 export async function addExerciseLog(
-  exerciseLog: WorkoutLog[],
+  exerciseLog: InsertWorkoutLog[],
   session: Session | null
 ): Promise<Result<WorkoutLog[]>> {
   if (!session) return { data: null, error: "No Session found" };
@@ -94,7 +95,8 @@ export async function addExerciseLog(
           exercise_id: ex.exercise_id,
           set_index: ex.set_index,
           reps_completed: ex.reps_completed,
-          rest_seconds: ex.weight_kg,
+          created_at: ex.created_at,
+          weight_kg: ex.weight_kg
         })),
       }),
     }
@@ -106,32 +108,4 @@ export async function addExerciseLog(
     return { data: null, error: json.message };
   }
   return { data: json.data as WorkoutLog[], error: null };
-}
-
-export async function setWorkoutSession(
-  workoutSession: WorkoutSession,
-  session: Session | null
-): Promise<Result<WorkoutSession>> {
-  if (!session) return { data: null, error: "No Session found" };
-
-  const response = await fetch(
-    "https://tegfwlejpnjfcyyppogf.supabase.co/functions/v1/setSession",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${session.access_token}`,
-      },
-      body: JSON.stringify({
-        workout_id: workoutSession.workout_id,
-      }),
-    }
-  );
-
-  const json = await response.json();
-
-  if (!response.ok || json.message) {
-    return { data: null, error: json.message };
-  }
-  return { data: json.data as WorkoutSession, error: null };
 }

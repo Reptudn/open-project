@@ -50,3 +50,38 @@ export async function removeExerciseSet(
 
   return { data: data as WorkoutExercise, error: null };
 }
+
+export async function removeWorkoutLog(
+  workoutId: number,
+  exerciseId: string
+): Promise<Result<WorkoutExercise[]>> {
+  const { data, error } = await supabase
+    .from("workout_logs")
+    .delete()
+    .eq("workout_id", workoutId)
+    .eq("exercise_id", exerciseId)
+    .select();
+
+  if (error) return { data: null, error: error.message };
+
+  return { data: data as WorkoutExercise[], error: null };
+}
+
+export async function removeWorkoutLogSet(
+  workoutId: number,
+  exerciseId: string,
+  setIndex: number
+): Promise<Result<WorkoutExercise>> {
+  const { data, error } = await supabase
+    .from("workout_logs")
+    .delete()
+    .eq("workout_id", workoutId)
+    .eq("exercise_id", exerciseId)
+    .eq("set_index", setIndex)
+    .select()
+    .single();
+
+  if (error) return { data: null, error: error.message };
+
+  return { data: data as WorkoutExercise, error: null };
+}

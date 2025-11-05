@@ -14,7 +14,7 @@ export async function getWorkoutExercises(
 ): Promise<Result<WorkoutExercise[]>> {
   const { data, error } = await supabase
     .from("workout_exercises")
-    .select("*")
+    .select("*, exercise_id(*), workout_id(*)")
     .eq("workout_id", workoutId);
 
   if (error) {
@@ -25,13 +25,13 @@ export async function getWorkoutExercises(
 
 export async function getWorkoutLogs(
   workoutId: number,
-  sessionId: WorkoutSession
+  date: string
 ): Promise<Result<WorkoutLog[]>> {
   const { data, error } = await supabase
     .from("workout_logs")
-    .select("*")
+    .select("*, exercise_id(*), workout_id(*)")
     .eq("workout_id", workoutId)
-    .eq("session_id", sessionId);
+    .eq("created_at", date);
 
   if (error) return { data: null, error: error.message };
 

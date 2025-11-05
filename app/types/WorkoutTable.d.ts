@@ -1,21 +1,21 @@
 interface Workout {
   id: number;
   user_id: string;
-  name: string;
+  name?: string;
   description?: string;
   created_at: string;
 }
 
 interface InsertWorkout {
-  name: string;
+  name?: string;
   description?: string;
 }
 
 interface WorkoutExercise {
   id: number;
-  workout_id: number;
-  exercise_id: string;
-  set_index?: number;
+  workout_id: Workout;
+  exercise_id: Exercise;
+  set_index: number;
   reps_target?: number;
   rest_seconds?: number;
   weight?: number;
@@ -26,26 +26,28 @@ interface WorkoutExercise {
 interface InsertWorkoutExercise {
   workout_id: number;
   exercise_id: string;
-  set_index?: number;
+  set_index: number;
   reps_target?: number;
   rest_seconds?: number;
-  weight?: number;
+  weight_kg?: number;
   order_index: number;
 }
 
 interface WorkoutLog {
-  id?: number;
-  session_id: string;
-  exercise_id: string;
+  id: number;
+  workout_id: Workout;
+  exercise_id: Exercise;
   set_index: number;
-  reps_completed: number;
-  weight_kg: number;
-  created_at?: string;
+  reps_completed?: number;
+  weight_kg?: number;
+  created_at: string;
 }
 
-interface WorkoutSession {
-  id?: string;
+interface InsertWorkoutLog {
   workout_id: number;
-  started_at: string;
-  ended_at: string;
+  exercise_id: string;
+  set_index: number;
+  reps_completed?: number;
+  weight_kg?: number;
+  created_at: string;
 }

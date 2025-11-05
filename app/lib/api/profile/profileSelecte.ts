@@ -1,6 +1,5 @@
 import { supabase } from "@/lib/supabase";
 import { Result } from "@/types/ErrorHandling";
-import { Session } from "@supabase/supabase-js";
 
 export async function getProfile(): Promise<Result<Profile>> {
   const { data, error } = await supabase

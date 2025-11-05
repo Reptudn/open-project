@@ -1,21 +1,12 @@
 import { Result } from "@/types/ErrorHandling";
 import { Session } from "@supabase/supabase-js";
 
-export async function registerProfile(
-  profile: InsertProfile,
+export async function deleteProfile(
   session: Session | null
-): Promise<Result<Profile>> {
+): Promise<Result<boolean>> {
   if (!session) return { data: null, error: "No Session found" };
 
-  const body = {
-    id: session.user.id,
-    username: profile.username,
-    full_name: profile.full_name,
-    gender: profile.gender,
-    birth_date: profile.birth_date,
-    height_cm: profile.height_cm,
-    weight_kg: profile.weight_kg,
-  };
+  const user_id = session.user.id;
 
   const response = await fetch(
     "https://tegfwlejpnjfcyyppogf.supabase.co/functions/v1/setProfile",
@@ -23,9 +14,8 @@ export async function registerProfile(
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${session.access_token}`,
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify(user_id),
     }
   );
 
@@ -34,5 +24,5 @@ export async function registerProfile(
   if (!response.ok || json.message) {
     return { data: null, error: json.message };
   }
-  return { data: json.data as Profile, error: null };
+  return { data: true, error: null };
 }
