@@ -13,7 +13,7 @@ export default function TableStats({
   range: "week" | "month" | "3months";
   data: { [key in "week" | "month" | "3months"]: DataPoint[] };
 }) {
-  const dataForRange = data[range];
+  const dataForRange = data[range] || [];
 
   const labels = {
     week: "Letzte Woche",
@@ -21,10 +21,32 @@ export default function TableStats({
     "3months": "Letzte 3 Monate",
   };
 
-  const percentageChange = parseFloat(
-    (((dataForRange[dataForRange.length - 1].y - dataForRange[0].y) / dataForRange[0].y) * 100).toFixed(1)
-  );
-  const numberColor = percentageChange <= 0 ? "#39FF14" : "#FF4C4C";
+  // Nur berechnen, wenn mindestens 2 Werte vorhanden sind
+  let percentageChange: number | null = null;
+  let numberColor = "#FFFFFF";
+
+  if (dataForRange.length >= 2) {
+    percentageChange = parseFloat(
+      (
+        ((dataForRange[dataForRange.length - 1].y - dataForRange[0].y) /
+          dataForRange[0].y) *
+        100
+      ).toFixed(1)
+    );
+    numberColor = percentageChange <= 0 ? "#39FF14" : "#FF4C4C";
+  }
+
+  // Fallback UI, wenn noch keine Daten vorhanden
+  if (dataForRange.length === 0) {
+    return (
+      <View style={styles.screen}>
+        <Text style={styles.header}>{title}</Text>
+        <Text style={{ color: "#fff", textAlign: "center", marginTop: 20 }}>
+          Daten werden geladen...
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.screen}>
@@ -33,7 +55,11 @@ export default function TableStats({
       {/* Chart */}
       <View style={styles.chartContainer}>
         <Text style={styles.title}>{labels[range]}</Text>
-        <Text style={[styles.number, { color: numberColor }]}>{percentageChange}%</Text>
+        {percentageChange !== null && (
+          <Text style={[styles.number, { color: numberColor }]}>
+            {percentageChange}%
+          </Text>
+        )}
 
         <VictoryChart theme={VictoryTheme.material} width={350} height={200}>
           <VictoryAxis
@@ -46,7 +72,7 @@ export default function TableStats({
           />
           <VictoryAxis
             dependentAxis
-            label="Gewicht (kg)"
+            label="Wert"
             style={{
               axisLabel: { padding: 38, fill: "#FFFFFF" },
               tickLabels: { fontSize: 8, fill: "#FFFFFF" },
