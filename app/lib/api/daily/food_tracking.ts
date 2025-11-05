@@ -60,3 +60,14 @@ export async function getMealsByType(type: MealType, date?: Date) {
 
   return data;
 }
+
+export async function editMeal(mealId: number, updatedData: Partial<MealType>) {
+  const { error } = await supabase
+    .from("meals")
+    .update(updatedData)
+    .eq("id", mealId);
+
+  if (error) {
+    throw new Error(`Error editing meal: ${error.message}`);
+  }
+}
