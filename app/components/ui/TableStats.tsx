@@ -4,41 +4,16 @@ import { VictoryChart, VictoryLine, VictoryAxis, VictoryTheme } from "victory-na
 
 type DataPoint = { x: string; y: number };
 
-export default function StatsScreen({
+export default function TableStats({
   title,
   range,
+  data,
 }: {
   title: string;
   range: "week" | "month" | "3months";
+  data: { [key in "week" | "month" | "3months"]: DataPoint[] };
 }) {
-  const dataWeek: DataPoint[] = [
-    { x: "Mo", y: 70 },
-    { x: "Di", y: 70.4 },
-    { x: "Mi", y: 70.1 },
-    { x: "Do", y: 70.3 },
-    { x: "Fr", y: 70.0 },
-    { x: "Sa", y: 69.8 },
-    { x: "So", y: 69.7 },
-  ];
-
-  const dataMonth: DataPoint[] = [
-    { x: "W1", y: 71 },
-    { x: "W2", y: 70.6 },
-    { x: "W3", y: 70.3 },
-    { x: "W4", y: 69.9 },
-  ];
-
-  const data3Months: DataPoint[] = [
-    { x: "Aug", y: 72 },
-    { x: "Sep", y: 70.8 },
-    { x: "Okt", y: 69.8 },
-  ];
-
-  const dataMap = {
-    week: dataWeek,
-    month: dataMonth,
-    "3months": data3Months,
-  };
+  const dataForRange = data[range];
 
   const labels = {
     week: "Letzte Woche",
@@ -46,9 +21,8 @@ export default function StatsScreen({
     "3months": "Letzte 3 Monate",
   };
 
-  const data = dataMap[range];
   const percentageChange = parseFloat(
-    (((data[data.length - 1].y - data[0].y) / data[0].y) * 100).toFixed(1)
+    (((dataForRange[dataForRange.length - 1].y - dataForRange[0].y) / dataForRange[0].y) * 100).toFixed(1)
   );
   const numberColor = percentageChange <= 0 ? "#39FF14" : "#FF4C4C";
 
@@ -64,7 +38,7 @@ export default function StatsScreen({
         <VictoryChart theme={VictoryTheme.material} width={350} height={200}>
           <VictoryAxis
             label="Datum"
-            tickFormat={data.map((d) => d.x)}
+            tickFormat={dataForRange.map((d) => d.x)}
             style={{
               axisLabel: { padding: 30, fill: "#FFFFFF" },
               tickLabels: { fontSize: 10, fill: "#FFFFFF" },
@@ -79,7 +53,7 @@ export default function StatsScreen({
             }}
           />
           <VictoryLine
-            data={data}
+            data={dataForRange}
             interpolation="monotoneX"
             style={{
               data: { stroke: "#FFFFFF", strokeWidth: 2 },
