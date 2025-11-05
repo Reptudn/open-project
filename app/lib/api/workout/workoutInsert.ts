@@ -49,6 +49,7 @@ export async function addExercise(
     reps_target: ex.reps_target ?? null,
     rest_seconds: ex.rest_seconds ?? null,
     order_index: ex.order_index,
+    weight_kg: ex.weight_kg ?? null,
   }));
 
   const response = await fetch(
@@ -94,8 +95,8 @@ export async function addExerciseLog(
           exercise_id: ex.exercise_id,
           set_index: ex.set_index,
           reps_completed: ex.reps_completed,
-          rest_seconds: ex.weight_kg,
-          created_at: ex.created_at
+          created_at: ex.created_at,
+          weight_kg: ex.weight_kg
         })),
       }),
     }

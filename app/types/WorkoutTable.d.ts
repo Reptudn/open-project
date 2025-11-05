@@ -15,7 +15,7 @@ interface WorkoutExercise {
   id: number;
   workout_id: Workout;
   exercise_id: Exercise;
-  set_index?: number;
+  set_index: number;
   reps_target?: number;
   rest_seconds?: number;
   weight?: number;
@@ -26,10 +26,10 @@ interface WorkoutExercise {
 interface InsertWorkoutExercise {
   workout_id: number;
   exercise_id: string;
-  set_index?: number;
+  set_index: number;
   reps_target?: number;
   rest_seconds?: number;
-  weight?: number;
+  weight_kg?: number;
   order_index: number;
 }
 
@@ -37,7 +37,7 @@ interface WorkoutLog {
   id: number;
   workout_id: Workout;
   exercise_id: Exercise;
-  set_index?: number;
+  set_index: number;
   reps_completed?: number;
   weight_kg?: number;
   created_at: string;
@@ -46,8 +46,8 @@ interface WorkoutLog {
 interface InsertWorkoutLog {
   workout_id: number;
   exercise_id: string;
-  set_index?: number;
+  set_index: number;
   reps_completed?: number;
   weight_kg?: number;
-  created_at?: string;
+  created_at: string;
 }
