@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import { GymBr } from "@/components/ui/Br";
 import {
   GymButtonLarge,
@@ -12,6 +11,7 @@ import { getThemeColor } from "@/constants/theme";
 import { useColorScheme, View, Text } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { Test } from "@/components/ui/BodyMetrics";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 
 export default function TestComponentsScreen() {
   const theme = getThemeColor(useColorScheme());
@@ -69,6 +69,8 @@ export default function TestComponentsScreen() {
       <GymBr />
       <GymBr />
       <Test />
+      <GymBr />
+      <GymBr />
     </ScrollView>
   );
 }

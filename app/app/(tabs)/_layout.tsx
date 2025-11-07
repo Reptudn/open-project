@@ -5,10 +5,32 @@ import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { TouchableOpacity } from "react-native";
 import { getThemeColor, ThemeColors } from "@/constants/theme";
+import { useAuthContext } from "@/hooks/use-auth-context";
+import { createWorkout } from "@/lib/api/workout/workoutInsert";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
+  const { session } = useAuthContext();
+
+  const navigateToWorkoutCreate = async () => {
+    const { data, error } = await createWorkout(
+      { name: "Untitled", description: "Description" },
+      session
+    );
+    if (error) {
+      alert(`Error in creating workout: ${error}`);
+      return;
+    }
+    if (!data) {
+      alert("Error: Data empty");
+      return;
+    }
+    router.push({
+      pathname: "/(training)/createWorkout",
+      params: { workoutId: data.id },
+    });
+  };
 
   return (
     <Tabs
@@ -73,14 +95,26 @@ export default function TabLayout() {
           title: "Training",
           headerTitle: "Workout Training",
           headerRight: () => (
-            <TouchableOpacity style={{ marginRight: 15, backgroundColor: getThemeColor(useColorScheme()).text, height: 40, width: 40, borderRadius: 20, alignItems: "center", justifyContent: "center" }} onPress={() => {
-          // Navigate to modal
-          router.push('/(training)/createWorkout');
-        }}>
+            <TouchableOpacity
+              style={{
+                marginRight: 15,
+                backgroundColor: getThemeColor(useColorScheme()).text,
+                height: 40,
+                width: 40,
+                borderRadius: 20,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+              onPress={navigateToWorkoutCreate}
+            >
               <Ionicons
                 name="add-outline"
                 size={24}
-                color={isDark ? ThemeColors.dark.background : ThemeColors.light.background}
+                color={
+                  isDark
+                    ? ThemeColors.dark.background
+                    : ThemeColors.light.background
+                }
               />
             </TouchableOpacity>
           ),
@@ -141,34 +175,38 @@ export default function TabLayout() {
           ),
         }}
       />
-      {process.env.NODE_ENV == 'development' && (<Tabs.Screen
-        name="testComponents"
-        options={{
-          title: "TestComponents",
-          headerTitle: "Components",
-          headerLeft: () => (
-            <TouchableOpacity style={{ marginLeft: 15 }}>
-              <Ionicons
-                name="help-circle"
-                size={24}
-                color={isDark ? "#d0d0c0" : "#242c40"}
-              />
-            </TouchableOpacity>
-          ),
-          headerRight: () => (
-            <TouchableOpacity style={{ marginRight: 15 }}>
-              <Ionicons
-                name="notifications-outline"
-                size={24}
-                color={isDark ? ThemeColors.dark.icon : ThemeColors.light.icon}
-              />
-            </TouchableOpacity>
-          ),
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="house.fill" color={color} />
-          ),
-        }}
-      />)}
+      {process.env.NODE_ENV == "development" && (
+        <Tabs.Screen
+          name="testComponents"
+          options={{
+            title: "TestComponents",
+            headerTitle: "Components",
+            headerLeft: () => (
+              <TouchableOpacity style={{ marginLeft: 15 }}>
+                <Ionicons
+                  name="help-circle"
+                  size={24}
+                  color={isDark ? "#d0d0c0" : "#242c40"}
+                />
+              </TouchableOpacity>
+            ),
+            headerRight: () => (
+              <TouchableOpacity style={{ marginRight: 15 }}>
+                <Ionicons
+                  name="notifications-outline"
+                  size={24}
+                  color={
+                    isDark ? ThemeColors.dark.icon : ThemeColors.light.icon
+                  }
+                />
+              </TouchableOpacity>
+            ),
+            tabBarIcon: ({ color }) => (
+              <IconSymbol size={28} name="house.fill" color={color} />
+            ),
+          }}
+        />
+      )}
     </Tabs>
   );
 }
