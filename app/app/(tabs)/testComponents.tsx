@@ -6,22 +6,13 @@ import { getDailyStats } from "@/lib/api/stats/weightSelect"; // 🔹 Pfad ggf. 
 
 export default function TestComponentsScreen() {
   const theme = getThemeColor(useColorScheme());
-  const [range, setRange] = useState<"week" | "month" | "3months">("week");
+  const [range, setRange] = useState<"week" | "month" | "threemonths">("week");
 
   // 🔹 Gewichtsdaten aus Supabase
   const [weightData, setWeightData] = useState({
     week: [] as { x: string; y: number }[],
-    month: [
-      { x: "W1", y: 71 },
-      { x: "W2", y: 70.6 },
-      { x: "W3", y: 70.3 },
-      { x: "W4", y: 69.9 },
-    ],
-    "3months": [
-      { x: "Aug", y: 72 },
-      { x: "Sep", y: 70.8 },
-      { x: "Okt", y: 69.8 },
-    ],
+    month: [] as { x: string; y: number }[],
+    threemonths: [] as { x: string; y: number }[],
   });
 
   // 🔹 Supabase-Test beim Mount
@@ -42,21 +33,58 @@ export default function TestComponentsScreen() {
         (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
       );
   
-      // Nimm die letzten 7 Einträge
-      const last7 = sortedData.slice(0, 7).reverse(); // chronologisch
-  
-      // Mappe auf Chart-Format: Datum ohne Jahr
+      // --- 🔹 WEEK: letzte 7 Einträge
+      const last7 = sortedData.slice(0, 7).reverse();
       const weekData = last7.map((row) => {
-        const dateObj = new Date(row.date);
-        const formattedDate = `${dateObj.getDate().toString().padStart(2, "0")}.${(dateObj.getMonth() + 1)
+        const d = new Date(row.date);
+        const formattedDate = `${d.getDate().toString().padStart(2, "0")}.${(d.getMonth() + 1)
           .toString()
-          .padStart(2, "0")}`; // dd.mm
+          .padStart(2, "0")}`;
         return { x: formattedDate, y: row.weight_kg };
       });
   
-      setWeightData((prev) => ({ ...prev, week: weekData }));
+      // --- 🔹 MONTH: letzte 28 Einträge, 4 Blöcke à 7 Tage
+      const last28 = sortedData.slice(0, 28).reverse();
+      const weekChunks = [
+        last28.slice(0, 7),
+        last28.slice(7, 14),
+        last28.slice(14, 21),
+        last28.slice(21, 28),
+      ];
+      const monthData = weekChunks
+      .map((chunk, i) => {
+        if (chunk.length === 0) return null;
+        const avg = chunk.reduce((sum, r) => sum + r.weight_kg, 0) / chunk.length;
+        return { x: `W${i + 1}`, y: parseFloat(avg.toFixed(1)) };
+      })
+      .filter(Boolean) as { x: string; y: number }[];
+    
   
-      console.log("✅ Gewichtsdaten für Chart:", weekData);
+      // --- 🔹 3MONTHS: letzte 84 Einträge, 3 Blöcke à 28 Tage
+      const last84 = sortedData.slice(0, 84).reverse();
+      const monthChunks = [
+        last84.slice(0, 28),
+        last84.slice(28, 56),
+        last84.slice(56, 84),
+      ];
+      const threeMonthsData = monthChunks
+      .map((chunk, i) => {
+        if (chunk.length === 0) return null;
+        const avg = chunk.reduce((sum, r) => sum + r.weight_kg, 0) / chunk.length;
+        return { x: `M${i + 1}`, y: parseFloat(avg.toFixed(1)) };
+      })
+      .filter(Boolean) as { x: string; y: number }[];
+    
+      // --- 🔹 Alle Werte in State übernehmen
+      setWeightData({
+        week: weekData,
+        month: monthData,
+        threemonths: threeMonthsData,
+      });
+  
+      console.log("✅ Woche:", weekData);
+      console.log("✅ Monat:", monthData);
+      console.log("✅ 3 Monate:", threeMonthsData);
     };
   
     testFetch();
@@ -79,7 +107,7 @@ export default function TestComponentsScreen() {
       { x: "W3", y: 86 },
       { x: "W4", y: 88 },
     ],
-    "3months": [
+    threemonths: [
       { x: "Aug", y: 82 },
       { x: "Sep", y: 85 },
       { x: "Okt", y: 88 },
@@ -89,13 +117,13 @@ export default function TestComponentsScreen() {
   const labels = {
     week: "Letzte Woche",
     month: "Letzter Monat",
-    "3months": "Letzte 3 Monate",
+    threemonths: "Letzte 3 Monate",
   };
 
   return (
     <ScrollView style={{ backgroundColor: theme.background, padding: 20 }}>
       <View style={styles.buttonContainer}>
-        {(["week", "month", "3months"] as const).map((key) => (
+        {(["week", "month", "threemonths"] as const).map((key) => (
           <Pressable
             key={key}
             onPress={() => setRange(key)}
@@ -109,8 +137,8 @@ export default function TestComponentsScreen() {
         ))}
       </View>
 
-      <TableStats title="Körpergewicht" range={range} data={weightData} />
-      <TableStats title="Bankdrücken" range={range} data={benchData} />
+      <TableStats title="Körpergewicht" range={range || "week"} data={weightData} />
+      {/* <TableStats title="Bankdrücken" range={range} data={benchData} /> */}
     </ScrollView>
   );
 }

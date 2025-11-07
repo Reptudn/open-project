@@ -10,15 +10,15 @@ export default function TableStats({
   data,
 }: {
   title: string;
-  range: "week" | "month" | "3months";
-  data: { [key in "week" | "month" | "3months"]: DataPoint[] };
+  range: "week" | "month" | "threemonths";
+  data: { [key in "week" | "month" | "threemonths"]: DataPoint[] };
 }) {
   const dataForRange = data[range] || [];
 
   const labels = {
     week: "Letzte Woche",
     month: "Letzter Monat",
-    "3months": "Letzte 3 Monate",
+    threemonths: "Letzte 3 Monate",
   };
 
   // Nur berechnen, wenn mindestens 2 Werte vorhanden sind
@@ -57,7 +57,7 @@ export default function TableStats({
         <Text style={styles.title}>{labels[range]}</Text>
         {percentageChange !== null && (
           <Text style={[styles.number, { color: numberColor }]}>
-            {percentageChange}%
+            {percentageChange >= 0 ? `+${percentageChange}` : percentageChange}%
           </Text>
         )}
 
