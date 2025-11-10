@@ -1,74 +1,73 @@
-import React, { useState } from "react";
-import { GymBr } from "@/components/ui/Br";
-import {
-  GymButtonLarge,
-  GymButtonMedium,
-  GymButtonFullWidth,
-  GymButtonSmall,
-} from "@/components/ui/Button";
-import { GymHomeStats } from "@/components/ui/Statistics";
-import { GymTitle, GymHeader, GymText } from "@/components/ui/Text";
-import { getThemeColor } from "@/constants/theme";
-import { useColorScheme, View, Text } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
-import { Test } from "@/components/ui/BodyMetrics";
+import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import { useRef, useMemo, useCallback } from "react";
+import { View, Button, Text, StyleSheet } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 export default function TestComponentsScreen() {
-  const theme = getThemeColor(useColorScheme());
-  const [height, setHeight] = useState<number>(170);
+  const sheetRef = useRef<BottomSheet>(null);
 
-  const onValueChange = (val: number) => {
-    setHeight(val);
-  };
+  // variables
+  const data = useMemo(
+    () =>
+      Array(50)
+        .fill(0)
+        .map((_, index) => `index-${index}`),
+    []
+  );
+  const snapPoints = useMemo(() => ["25%", "50%", "90%"], []);
 
-  // Main testing page with components
+  // callbacks
+  const handleSheetChange = useCallback((index) => {
+    console.log("handleSheetChange", index);
+  }, []);
+  const handleSnapPress = useCallback((index) => {
+    sheetRef.current?.snapToIndex(index);
+  }, []);
+  const handleClosePress = useCallback(() => {
+    sheetRef.current?.close();
+  }, []);
+
+  // render
+  const renderItem = useCallback(
+    (item) => (
+      <View key={item} style={styles.itemContainer}>
+        <Text>{item}</Text>
+      </View>
+    ),
+    []
+  );
   return (
-    <ScrollView
-      style={{ backgroundColor: theme.background }}
-      contentContainerStyle={{ padding: 20, alignItems: "flex-start" }}
-    >
-      <GymTitle>Title</GymTitle>
-      <GymBr />
-      <GymHeader>Header</GymHeader>
-      <GymBr />
-      <GymText>Text</GymText>
-      <GymBr />
-      <GymButtonFullWidth onPress={() => alert("add function")}>
-        ButtonFullWidth
-      </GymButtonFullWidth>
-      <GymBr />
-      <GymButtonSmall onPress={() => alert("add function")}>
-        Small
-      </GymButtonSmall>
-      <GymBr />
-      <GymButtonMedium onPress={() => alert("add function")}>
-        Medium
-      </GymButtonMedium>
-      <GymBr />
-      <GymButtonLarge onPress={() => alert("add function")}>
-        Large
-      </GymButtonLarge>
-      <GymBr />
-      <GymHomeStats
-        header="Calories"
-        iconName={"contrast-outline"}
-        value={799}
-        type="kcal"
-        backgroundColor="#38B6FF"
-        onPress={() => alert("add function")}
-      ></GymHomeStats>
-      <GymBr />
-      {/* <GymBodyMetric
-        min={140}
-        max={250}
-        step={1}
-        unit="cm"
-        onValueChange={onValueChange}
-        title="Enter your Height"
-      ></GymBodyMetric> */}
-      <GymBr />
-      <GymBr />
-      <Test />
-    </ScrollView>
+    <GestureHandlerRootView style={styles.container}>
+      <Button title="Snap To 90%" onPress={() => handleSnapPress(2)} />
+      <Button title="Snap To 50%" onPress={() => handleSnapPress(1)} />
+      <Button title="Snap To 25%" onPress={() => handleSnapPress(0)} />
+      <Button title="Close" onPress={() => handleClosePress()} />
+      <BottomSheet
+        ref={sheetRef}
+        index={1}
+        snapPoints={snapPoints}
+        enableDynamicSizing={false}
+        onChange={handleSheetChange}
+      >
+        <BottomSheetScrollView contentContainerStyle={styles.contentContainer}>
+          {data.map(renderItem)}
+        </BottomSheetScrollView>
+      </BottomSheet>
+    </GestureHandlerRootView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingTop: 200,
+  },
+  contentContainer: {
+    backgroundColor: "white",
+  },
+  itemContainer: {
+    padding: 6,
+    margin: 6,
+    backgroundColor: "#eee",
+  },
+});

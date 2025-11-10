@@ -23,6 +23,7 @@ import WeightEntry from "./WeightEntry";
 import { getWorkoutSessionByDate } from "@/lib/api/daily/daily";
 import { getFoodDataByBarcode, searchFood } from "@/lib/api/daily/food_data";
 import { getMealsByDate } from "@/lib/api/daily/food_tracking";
+import DailyTraining from "@/components/training/daily/DailyTraining";
 
 export default function DayItem({
   date,
@@ -178,6 +179,7 @@ export default function DayItem({
           >
             <DayNutritionOverview eaten={631} burnt={200} toGo={1923} />
             <Meals />
+            <DailyTraining />
             <WeightEntry date={date} />
             {products && products.length > 0 ? (
               products.map((product) => (

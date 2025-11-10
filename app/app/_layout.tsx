@@ -11,10 +11,10 @@ import "../global.css";
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <GestureHandlerRootView style={{flex: 1}}>
+    <GestureHandlerRootView style={{ flex: 1 }}>
       <AuthProvider>
-        <InnerLayout />
-        <StatusBar style="auto" />
+          <InnerLayout />
+          <StatusBar style="auto" />
       </AuthProvider>
     </GestureHandlerRootView>
   );

@@ -11,6 +11,7 @@ import { ThemeColors } from "@/constants/theme";
 import DayItem from "@/components/calorie-tracking/DayItem";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
+import BottomSheetProvider from "@/providers/bottomSheet-provider";
 
 function DailyWorkout() {}
 function DailyCalories() {}
@@ -65,64 +66,66 @@ export default function CalorieTrackerScreen() {
   }, [centerIndex]);
 
   return (
-    <SafeAreaView
-      style={[
-        styles.container,
-        {
-          backgroundColor: isDark
-            ? ThemeColors.dark.background
-            : ThemeColors.light.background,
-        },
-      ]}
-    >
-      {/* FlatList-based horizontal pager (works in Expo managed apps) */}
-      <FlatList
-        ref={flatListRef}
-        data={Array.from({ length: maxDays })}
-        keyExtractor={(_, i) => String(i)}
-        horizontal
-        pagingEnabled
-        showsHorizontalScrollIndicator={false}
-        onScroll={Keyboard.dismiss}
-        initialScrollIndex={centerIndex}
-        onScrollToIndexFailed={(info) => {
-          // fallback: scroll to offset
-          const screenWidth = Dimensions.get("window").width;
-          const offset = info.index * screenWidth;
-          flatListRef.current?.scrollToOffset({ offset, animated: true });
-        }}
-        viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
-        onViewableItemsChanged={
-          useRef(({ viewableItems }: { viewableItems: ViewToken[] }) => {
-            if (viewableItems && viewableItems.length > 0) {
-              const idx = viewableItems[0].index ?? 0;
-              setSelectedPageIndex(idx);
-            }
-          }).current
-        }
-        renderItem={({ index: i }) => {
-          const date = new Date();
-          date.setDate(date.getDate() + (i - centerIndex));
-          const isSelected = selectedPageIndex === i;
-          return (
-            <DayItem
-              key={i}
-              date={date}
-              currDate={currDate}
-              isSelected={isSelected}
-              pageIndex={i}
-              goToToday={goToToday}
-              goToDayOffset={goToDayOffset}
-            />
-          );
-        }}
-        getItemLayout={(_, index) => {
-          const width = Dimensions.get("window").width;
-          return { length: width, offset: width * index, index };
-        }}
-        style={{ flex: 1 }}
-      />
-    </SafeAreaView>
+      <SafeAreaView
+        style={[
+          styles.container,
+          {
+            backgroundColor: isDark
+              ? ThemeColors.dark.background
+              : ThemeColors.light.background,
+          },
+        ]}
+      >
+        <BottomSheetProvider>
+        {/* FlatList-based horizontal pager (works in Expo managed apps) */}
+        <FlatList
+          ref={flatListRef}
+          data={Array.from({ length: maxDays })}
+          keyExtractor={(_, i) => String(i)}
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          onScroll={Keyboard.dismiss}
+          initialScrollIndex={centerIndex}
+          onScrollToIndexFailed={(info) => {
+            // fallback: scroll to offset
+            const screenWidth = Dimensions.get("window").width;
+            const offset = info.index * screenWidth;
+            flatListRef.current?.scrollToOffset({ offset, animated: true });
+          }}
+          viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
+          onViewableItemsChanged={
+            useRef(({ viewableItems }: { viewableItems: ViewToken[] }) => {
+              if (viewableItems && viewableItems.length > 0) {
+                const idx = viewableItems[0].index ?? 0;
+                setSelectedPageIndex(idx);
+              }
+            }).current
+          }
+          renderItem={({ index: i }) => {
+            const date = new Date();
+            date.setDate(date.getDate() + (i - centerIndex));
+            const isSelected = selectedPageIndex === i;
+            return (
+              <DayItem
+                key={i}
+                date={date}
+                currDate={currDate}
+                isSelected={isSelected}
+                pageIndex={i}
+                goToToday={goToToday}
+                goToDayOffset={goToDayOffset}
+              />
+            );
+          }}
+          getItemLayout={(_, index) => {
+            const width = Dimensions.get("window").width;
+            return { length: width, offset: width * index, index };
+          }}
+          style={{ flex: 1 }}
+        />
+        </BottomSheetProvider>
+      </SafeAreaView>
   );
 }
 
