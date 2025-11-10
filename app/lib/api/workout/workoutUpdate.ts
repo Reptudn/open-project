@@ -6,17 +6,17 @@ import { useDebugValue } from "react";
 export async function updateWorkout(
   workoutId: number,
   name?: string,
-  discription?: string
+  description?: string
 ): Promise<Result<Workout>> {
   const upWorkout: any = {};
 
   if (name !== undefined) upWorkout.name = name;
-  if (discription !== undefined) upWorkout.discription = discription;
+  if (description !== undefined) upWorkout.description = description;
 
   const { data, error } = await supabase
     .from("workouts")
     .update(upWorkout)
-    .eq("workout_id", workoutId)
+    .eq("id", workoutId)
     .select()
     .single();
 
