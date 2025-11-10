@@ -3,16 +3,15 @@ import { Result } from "@/types/ErrorHandling";
 
 // Typ für die Gewichtsdaten
 export interface DailyStat {
-  date: string;   // oder Date, je nach DB-Schema
+  date: string;
   weight_kg: number;
 }
 
-// Funktion: Holt Gewicht + Datum aus der daily_stats Tabelle
 export async function getDailyStats(): Promise<Result<DailyStat[]>> {
 const { data, error } = await supabase
-  .from("daily stats") // doppelte Anführungszeichen notwendig
+  .from("daily stats")
   .select("date, weight_kg")
-  .order("date", { ascending: true }); // optional, aber meist sinnvoll
+  .order("date", { ascending: true });
 
   if (error) {
     return { data: null, error: error.message };
