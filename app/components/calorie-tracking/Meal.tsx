@@ -1,5 +1,6 @@
 import { ThemeColors } from "@/constants/theme";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { router } from "expo-router";
 import {
   StyleSheet,
   View,
@@ -22,12 +23,21 @@ function MealItem({
   const progress = Math.min(eaten / toEat, 1);
   const isComplete = eaten >= toEat;
   return (
-    <View
+    <TouchableOpacity
       style={{
         padding: 16,
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
+      }}
+      onPress={() => {
+        router.push({
+          pathname: "/(meal)/meal",
+          params: {
+            mealType: title,
+            openSearch: "false",
+          },
+        });
       }}
     >
       <Ionicons
@@ -38,9 +48,6 @@ function MealItem({
           marginRight: 8,
           justifyContent: "flex-start",
           padding: 5,
-          // borderRadius: 50,
-          // borderWidth: 5,
-          // borderColor: "rgba(34, 183, 209, 1)",
         }}
       />
       <Text style={{ fontWeight: "bold", color: isDark ? "white" : "black" }}>
@@ -51,18 +58,36 @@ function MealItem({
       </Text>
       <TouchableOpacity
         onPress={() => {
-          /* Handle add food action */
+          router.push({
+            pathname: "/(meal)/meal",
+            params: {
+              mealType: title,
+              openSearch: "true",
+            },
+          });
         }}
       >
-        <Ionicons
-          name="add-circle-outline"
-          size={24}
-          color={isDark ? "white" : "black"}
-          style={{
-            marginLeft: 8,
-            justifyContent: "flex-end",
-          }}
-        />
+        {!isComplete ? (
+          <Ionicons
+            name="add-circle-outline"
+            size={24}
+            color={isDark ? "white" : "black"}
+            style={{
+              marginLeft: 8,
+              justifyContent: "flex-end",
+            }}
+          />
+        ) : (
+          <Ionicons
+            name="checkmark-circle-outline"
+            size={24}
+            color={isDark ? "white" : "black"}
+            style={{
+              marginLeft: 8,
+              justifyContent: "flex-end",
+            }}
+          />
+        )}
       </TouchableOpacity>
       <View
         style={{
@@ -74,7 +99,7 @@ function MealItem({
           width: `${progress * 100}%`,
         }}
       />
-    </View>
+    </TouchableOpacity>
   );
 }
 

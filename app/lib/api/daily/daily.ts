@@ -58,7 +58,7 @@ import { supabase } from "@/lib/supabase";
 export async function getWeightByDate(date: Date): Promise<number | null> {
   const { data, error } = await supabase
     .from("daily stats")
-    .select("weight")
+    .select("weight_kg")
     .eq("date", date)
     .single();
 
@@ -67,13 +67,13 @@ export async function getWeightByDate(date: Date): Promise<number | null> {
     return null;
   }
 
-  return data.weight;
+  return data.weight_kg;
 }
 
 export async function updateWeightByDate(newWeightInKg: number, date: Date) {
   const { error } = await supabase
     .from("daily stats")
-    .update({ weight: newWeightInKg })
+    .update({ weight_kg: newWeightInKg })
     .eq("date", date)
     .single();
 

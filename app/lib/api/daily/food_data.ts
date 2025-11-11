@@ -1,3 +1,4 @@
+import { supabase } from "@/lib/supabase";
 import { FoodData, Product, SearchResponse } from "@/types/FoodData";
 
 export async function getFoodDataByBarcode(
@@ -15,6 +16,19 @@ export async function getFoodDataByBarcode(
 
   try {
     const data = (await response.json()) as FoodData;
+    console.info("Fetched food data by barcode:", data);
+    if (data.product) {
+      await supabase.from("foods").upsert({
+        barcode: data.product.code,
+        name: data.product.product_name,
+        brand: data.product.brands,
+        image_url: data.product.image_url,
+        nutriments: data.product.nutriments,
+        categories: data.product.categories_tags,
+        source: "OpenFoodFacts",
+        created_at: new Date(),
+      });
+    }
     return data.product ? data.product : null;
   } catch (error) {
     console.error("Failed to parse JSON:", error);
@@ -50,6 +64,19 @@ export async function searchFood(
 
   try {
     const data = (await response.json()) as SearchResponse;
+    data.products &&
+      data.products.forEach(async (product) => {
+        await supabase.from("foods").upsert({
+          barcode: product.code,
+          name: product.product_name,
+          brand: product.brands,
+          image_url: product.image_url,
+          nutriments: product.nutriments,
+          categories: product.categories_tags,
+          source: "OpenFoodFacts",
+          created_at: new Date(),
+        });
+      });
     return data.products;
   } catch (error) {
     console.error("Failed to parse JSON:", error);

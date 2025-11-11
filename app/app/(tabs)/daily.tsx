@@ -1,10 +1,4 @@
-import {
-  Keyboard,
-  StyleSheet,
-  FlatList,
-  ViewToken,
-  Dimensions,
-} from "react-native";
+import { StyleSheet, FlatList } from "react-native";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ThemeColors } from "@/constants/theme";
@@ -75,7 +69,7 @@ export default function CalorieTrackerScreen() {
         },
       ]}
     >
-      {/* FlatList-based horizontal pager (works in Expo managed apps) */}
+      {/*
       <FlatList
         ref={flatListRef}
         data={Array.from({ length: maxDays })}
@@ -121,6 +115,15 @@ export default function CalorieTrackerScreen() {
           return { length: width, offset: width * index, index };
         }}
         style={{ flex: 1 }}
+      /> */}
+      <DayItem
+        // key={i}
+        date={currDate}
+        currDate={currDate}
+        isSelected={true}
+        // pageIndex={i}
+        goToToday={goToToday}
+        goToDayOffset={goToDayOffset}
       />
     </SafeAreaView>
   );

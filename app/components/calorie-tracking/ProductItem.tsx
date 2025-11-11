@@ -1,5 +1,6 @@
 import { ThemeColors } from "@/constants/theme";
-import { Product } from "@/types/FoodData";
+import { addMeal } from "@/lib/api/daily/food_tracking";
+import { MealType, Product } from "@/types/FoodData";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {
   useColorScheme,
@@ -9,7 +10,15 @@ import {
   View,
 } from "react-native";
 
-export default function ProductItem({ product }: { product: Product }) {
+export default function ProductItem({
+  product,
+  date,
+  mealType,
+}: {
+  product: Product;
+  date?: Date;
+  mealType?: MealType;
+}) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   return (
@@ -36,7 +45,7 @@ export default function ProductItem({ product }: { product: Product }) {
             color={isDark ? ThemeColors.dark.text : ThemeColors.light.text}
             style={{ marginRight: 4 }}
           />
-          {product.nutriments?.["energy-kcal_100g"]?.toFixed(0) || 0}kcal
+          {(product.nutriments?.["energy-kcal_100g"] ?? 0).toFixed(0)}kcal
         </Text>
         <Text style={{ color: isDark ? "#ccc" : "#555" }}>
           <Ionicons
@@ -45,7 +54,7 @@ export default function ProductItem({ product }: { product: Product }) {
             color={isDark ? ThemeColors.dark.text : ThemeColors.light.text}
             style={{ marginRight: 4 }}
           />
-          {product.nutriments?.["proteins_100g"]?.toFixed(0) || 0}g
+          {(product.nutriments?.["proteins_100g"] ?? 0).toFixed(0)}g
         </Text>
         <Text style={{ color: isDark ? "#ccc" : "#555" }}>
           <Ionicons
@@ -54,7 +63,7 @@ export default function ProductItem({ product }: { product: Product }) {
             color={isDark ? ThemeColors.dark.text : ThemeColors.light.text}
             style={{ marginRight: 4 }}
           />
-          {product.nutriments?.["carbohydrates_100g"]?.toFixed(0) || 0}g
+          {(product.nutriments?.["carbohydrates_100g"] ?? 0).toFixed(0)}g
         </Text>
         <Text style={{ color: isDark ? "#ccc" : "#555" }}>
           <Ionicons
@@ -63,10 +72,21 @@ export default function ProductItem({ product }: { product: Product }) {
             color={isDark ? ThemeColors.dark.text : ThemeColors.light.text}
             style={{ marginRight: 4 }}
           />
-          {product.nutriments?.["fat_100g"]?.toFixed(0) || 0}g
+          {(product.nutriments?.["fat_100g"] ?? 0).toFixed(0)}g
         </Text>
       </View>
-      <TouchableOpacity style={{ ...styles.addButton }} onPress={() => {}}>
+      <TouchableOpacity
+        style={{ ...styles.addButton }}
+        onPress={async () => {
+          // add the product to meals with 100g as default
+          if (date === undefined || mealType === undefined) return;
+          try {
+            await addMeal(product.code, mealType, date, 100);
+          } catch (error) {
+            console.error("Failed to add meal:", error);
+          }
+        }}
+      >
         <Text style={{ color: "#fff", textAlign: "center" }}>Add 100g</Text>
       </TouchableOpacity>
     </TouchableOpacity>
