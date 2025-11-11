@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, TouchableOpacity, Button } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useBottomSheetContext } from "@/hooks/use-bottomSheet-context";
-import DailyTrainingList from "./DailyTrainingList";
+import WorkoutSheet from "./WorkoutSheet";
 
 export default function DailyTraining() {
   const { openSheet } = useBottomSheetContext();
@@ -9,7 +9,7 @@ export default function DailyTraining() {
     <View>
       <Text style={styles.text}>Workouts:</Text>
       <View style={styles.container}>
-        <TouchableOpacity onPress={() => openSheet(<DailyTrainingList />)}>
+        <TouchableOpacity onPress={() => openSheet(<WorkoutSheet />)}>
           <Ionicons
             name="add-circle-outline"
             size={24}

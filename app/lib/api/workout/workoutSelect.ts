@@ -9,6 +9,14 @@ export async function getWorkouts(): Promise<Result<Workout[]>> {
   return { data: data as Workout[], error: null };
 }
 
+export async function getWorkout(workoutid: number): Promise<Result<Workout>> {
+  const { data, error } = await supabase.from("workouts").select("*").eq("id", workoutid).single();
+
+  if (error) return { data: null, error: error.message };
+
+  return { data: data as Workout, error: null };
+}
+
 export async function getWorkoutExercises(
   workoutId: number
 ): Promise<Result<WorkoutExercise[]>> {

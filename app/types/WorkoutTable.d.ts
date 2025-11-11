@@ -18,7 +18,7 @@ interface WorkoutExercise {
   set_index: number;
   reps_target?: number;
   rest_seconds?: number;
-  weight?: number;
+  weight_kg?: number;
   order_index: number;
   created_at: string;
 }

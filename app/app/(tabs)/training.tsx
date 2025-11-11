@@ -8,20 +8,23 @@ import {
   getWorkouts,
 } from "@/lib/api/workout/workoutSelect";
 import { ScrollView } from "react-native-gesture-handler";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Modalize } from "react-native-modalize";
 import { useAuthContext } from "@/hooks/use-auth-context";
 import { deleteWorkout } from "@/lib/api/workout/workoutDelete";
 import ExerciseItem, {
   WorkoutExerciseItem,
 } from "@/components/training/exercises/ExerciseItem";
+import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import { router } from "expo-router";
 
 export default function TrainingScreen() {
   const theme = getThemeColor(useColorScheme());
   const [fullWorkout, setFullWorkout] = useState<Workout[]>([]);
-  const modalizeRef = useRef<Modalize>(null);
   const [exercises, setExercises] = useState<WorkoutExercise[]>([]);
-  const { session } = useAuthContext();
+  const bottomSheetRef = useRef<BottomSheet>(null);
+
+  const snapPoints = useMemo(() => ["100%"], []);
 
   useEffect(() => {
     const workouts = async () => {
@@ -43,7 +46,7 @@ export default function TrainingScreen() {
     if (data) {
       setExercises(data);
     }
-    modalizeRef.current?.open();
+    bottomSheetRef.current?.expand();
   };
 
   const handleDeleteWorkout = async (workout: Workout) => {
@@ -99,29 +102,42 @@ export default function TrainingScreen() {
         )}
       </ScrollView>
 
-      <Modalize
-        ref={modalizeRef}
-        modalStyle={{ backgroundColor: theme.background }}
+      <BottomSheet
+        ref={bottomSheetRef}
+        index={-1}
+        snapPoints={snapPoints}
+        backgroundStyle={{ backgroundColor: theme.background }}
+        enablePanDownToClose={true}
       >
-        <ScrollView style={{ padding: 16 }}>
-          {exercises.map((exercise) => (
-            <View
-              key={exercise.id}
-              style={{
-                padding: 10,
-                borderBottomWidth: 1,
-                borderColor: theme.text + "20",
-                marginBottom: 8,
-              }}
-            >
-              <WorkoutExerciseItem
-                exercise={exercise.exercise_id as Exercise}
-                workoutId={String(exercise.workout_id)}
-              />
-            </View>
-          ))}
-        </ScrollView>
-      </Modalize>
+        <BottomSheetScrollView
+          contentContainerStyle={{
+            flexGrow: 1,
+            paddingBottom: 20,
+          }}
+        >
+          <View style={{alignItems: "center"}}>
+            <GymHeader style={{ color: theme.text, justifyContent: "center" }}>
+              Exercises
+            </GymHeader>
+            {exercises.map((exercise) => (
+              <View
+                key={exercise.id}
+                style={{
+                  padding: 10,
+                  borderBottomWidth: 1,
+                  borderColor: theme.text + "20",
+                  marginBottom: 8,
+                }}
+              >
+                <WorkoutExerciseItem
+                  exercise={exercise.exercise_id as Exercise}
+                  workoutId={String(exercise.workout_id)}
+                />
+              </View>
+            ))}
+          </View>
+        </BottomSheetScrollView>
+      </BottomSheet>
     </GymView>
   );
 }

@@ -1,12 +1,15 @@
-import { getWorkoutExercises, getWorkouts } from "@/lib/api/workout/workoutSelect";
+import { useBottomSheetContext } from "@/hooks/use-bottomSheet-context";
+import {
+  getWorkoutExercises,
+  getWorkouts,
+} from "@/lib/api/workout/workoutSelect";
 import { BottomSheetView } from "@gorhom/bottom-sheet";
 import { useCallback, useEffect, useState } from "react";
-import { Alert, View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { useBottomSheetContext } from "../../../hooks/use-bottomSheet-context";
+import { Alert, TouchableOpacity, View, Text, StyleSheet } from "react-native";
+import ExerciseSheet from "./ExerciseSheet";
 
-export default function DailyTrainingList() {
+export default function WorkoutSheet() {
   const [workouts, setWorkouts] = useState<Workout[]>([]);
-  const [exercises, setExercises] = useState<WorkoutExercise[]>([]);
   const { openSheet } = useBottomSheetContext();
 
   useEffect(() => {
@@ -21,53 +24,47 @@ export default function DailyTrainingList() {
     getItems();
   }, []);
 
+  const handleExercisePress = useCallback((item: WorkoutExercise) => {
+    openSheet(<ExerciseSheet exercise={item} />);
+  }, []);
+
   const handleWorkoutPress = useCallback(
-    (item: Workout) => {
-      const getItems = async () => {
-        const {data, error} = await getWorkoutExercises(item.id);
-        if (error) {
-          Alert.alert(error);
-          return;
-        }
-        setExercises(data ?? []);
+    async (item: Workout) => {
+      const { data, error } = await getWorkoutExercises(item.id);
+
+      if (error) {
+        Alert.alert(error);
+        return;
       }
-      getItems();
+
+      const workoutExercises = data ?? [];
       openSheet(
         <View style={styles.exerciseSheet}>
           <Text style={styles.exerciseTitle}>{item.name}</Text>
-          <BottomSheetView>{exercises.map(renderExercises)}</BottomSheetView>
+          <BottomSheetView>
+            {workoutExercises.length > 0 ? (
+              workoutExercises.map((exercise) => (
+                <View key={exercise.id} style={styles.list}>
+                  <TouchableOpacity
+                    style={styles.card}
+                    onPress={() => handleExercisePress(exercise)}
+                  >
+                    <Text style={styles.cardText}>
+                      {exercise.exercise_id.name}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              ))
+            ) : (
+              <Text style={styles.exerciseDescription}>
+                No exercises found for this workout
+              </Text>
+            )}
+          </BottomSheetView>
         </View>
       );
     },
     [openSheet]
-  );
-
-  const handleExercisePress = useCallback(
-    (item: WorkoutExercise) => {
-      openSheet(
-        <View style={styles.exerciseSheet}>
-          <Text style={styles.exerciseTitle}>{item.name}</Text>
-          <Text style={styles.exerciseDescription}>
-            Exercises for this workout will appear here
-          </Text>
-        </View>
-      );
-    },
-    [openSheet]
-  );
-
-  const renderExercises = useCallback(
-    (item: WorkoutExercise) => (
-      <View key={item.id} style={styles.list}>
-        <TouchableOpacity
-          style={styles.card}
-          onPress={() => handleExercisePress(item)}
-        >
-          <Text style={styles.cardText}>{item.exercise_id.name}</Text>
-        </TouchableOpacity>
-      </View>
-    ),
-    [handleExercisePress]
   );
 
   const renderWorkouts = useCallback(
@@ -118,6 +115,7 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   exerciseDescription: {
+    alignSelf: "center",
     fontSize: 14,
     color: "#666",
   },

@@ -9,12 +9,12 @@ export async function updateWorkout(
 
   if (update.name !== undefined) upWorkout.name = update.name;
   if (update.description !== undefined)
-    upWorkout.discription = update.description;
+    upWorkout.description = update.description;
 
   const { data, error } = await supabase
     .from("workouts")
     .update(upWorkout)
-    .eq("workout_id", workoutId)
+    .eq("id", workoutId)
     .select()
     .single();
 
@@ -53,8 +53,12 @@ export async function updateWorkoutExerciseLogSet(
 ): Promise<Result<WorkoutLog>> {
   const upExercise: any = {};
 
+  upExercise.workout_id = update.workout_id;
+  upExercise.exercise_id = update.exercise_id;
+  upExercise.set_index = update.set_index;
+  upExercise.created_at = update.created_at;
   if (update.reps_completed !== undefined)
-    upExercise.reps_target = update.reps_completed;
+    upExercise.reps_completed = update.reps_completed;
   if (update.weight_kg !== undefined) upExercise.weight_kg = update.weight_kg;
 
   const { data, error } = await supabase
@@ -63,7 +67,7 @@ export async function updateWorkoutExerciseLogSet(
     .eq("workout_id", update.workout_id)
     .eq("exercise_id", update.exercise_id)
     .eq("created_at", update.created_at)
-    .eq("set_indes", update.set_index)
+    .eq("set_index", update.set_index)
     .select()
     .single();
 
