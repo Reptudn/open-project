@@ -1,5 +1,4 @@
 import { ThemeColors } from "@/constants/theme";
-import { getFoodDataByBarcode, searchFood } from "@/lib/api/calories_tracking";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {
   View,
@@ -19,8 +18,11 @@ import ProductItem from "./ProductItem";
 import { Product } from "@/types/FoodData";
 import { useState, useEffect } from "react";
 import DayNutritionOverview from "./DayNutritionOverview";
-import { getDayData } from "@/lib/api/calorie_day_tracking";
 import Meals from "./Meal";
+import WeightEntry from "./WeightEntry";
+import { getWorkoutSessionByDate } from "@/lib/api/daily/daily";
+import { getFoodDataByBarcode, searchFood } from "@/lib/api/daily/food_data";
+import { getMealsByDate } from "@/lib/api/daily/food_tracking";
 
 export default function DayItem({
   date,
@@ -43,7 +45,8 @@ export default function DayItem({
   const [searchText, setSearchText] = useState("");
 
   const [products, setProducts] = useState<Product[]>([]);
-  const [dayData, setDayData] = useState({});
+  const [foods, setFoods] = useState<Product[]>([]);
+  const [training, setTraining] = useState<any>(null);
 
   const handleBarcodeScanned = async (barcode: string) => {
     console.log("Barcode scanned:", barcode);
@@ -69,8 +72,16 @@ export default function DayItem({
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await getDayData(date);
-      setDayData(data);
+      try {
+        setFoods(await getMealsByDate(date));
+      } catch (error) {
+        console.error("Failed to fetch meals:", error);
+      }
+      try {
+        setTraining(await getWorkoutSessionByDate(date));
+      } catch (error) {
+        console.error("Failed to fetch workout session:", error);
+      }
     };
     fetchData();
 
@@ -121,10 +132,10 @@ export default function DayItem({
               {date.getDate() === currDate.getDate()
                 ? "Today"
                 : date.getDate() === currDate.getDate() - 1
-                ? "Yesterday"
-                : date.getDate() === currDate.getDate() + 1
-                ? "Tomorrow"
-                : date.toDateString()}
+                  ? "Yesterday"
+                  : date.getDate() === currDate.getDate() + 1
+                    ? "Tomorrow"
+                    : date.toDateString()}
             </Text>
             <TouchableOpacity onPress={() => goToDayOffset(1)}>
               <Ionicons
@@ -167,6 +178,7 @@ export default function DayItem({
           >
             <DayNutritionOverview eaten={631} burnt={200} toGo={1923} />
             <Meals />
+            <WeightEntry date={date} />
             {products && products.length > 0 ? (
               products.map((product) => (
                 <ProductItem key={product.code} product={product} />

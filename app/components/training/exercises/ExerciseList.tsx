@@ -4,20 +4,25 @@ import {
   ActivityIndicator,
   View,
   Text,
+  Dimensions,
 } from "react-native";
 import ExerciseItem from "./ExerciseItem";
 import { useState, useEffect, useCallback } from "react";
-import { Exercise } from "@/types/Exercise";
 import { getExerciseEdge } from "@/lib/api/exercise";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { ThemeColors } from "@/constants/theme";
+import { getThemeColor, ThemeColors } from "@/constants/theme";
+import { GymText } from "@/components/ui/Text";
 
-export default function ExerciseList() {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+interface ExerciseListProps {
+  workoutId: string;
+}
+
+export default function ExerciseList({ workoutId }: ExerciseListProps) {
+  const theme = getThemeColor(useColorScheme());
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const { height, width } = Dimensions.get("window");
 
   const handleSearch = useCallback(async (query: string) => {
     setLoading(true);
@@ -55,39 +60,35 @@ export default function ExerciseList() {
 
   const displayExercises = exercises.length > 0 ? exercises : [];
 
-  function loadExercise(ex: Exercise) {
-    alert("test");
-  }
-
   return (
     <>
       <TextInput
         placeholder="Search Exercises..."
+        placeholderTextColor={theme.icon}
         value={searchQuery}
         onChangeText={setSearchQuery}
         onSubmitEditing={(e) => handleSearch(e.nativeEvent.text)}
         style={{
-          color: isDark ? ThemeColors.dark.text : ThemeColors.light.text,
+          color: theme.text,
           margin: 10,
-          backgroundColor: isDark
-            ? ThemeColors.dark.background
-            : ThemeColors.light.background,
+          backgroundColor: theme.background,
           borderRadius: 5,
           height: 45,
           paddingHorizontal: 15,
+          borderColor: theme.text,
+          borderWidth: 1,
         }}
       />
       {loading ? (
         <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          style={{
+            flex: 1,
+            justifyContent: "flex-start",
+            alignItems: "center",
+            minHeight: height,
+          }}
         >
-          <Text
-            style={{
-              color: isDark ? ThemeColors.dark.text : ThemeColors.light.text,
-            }}
-          >
-            Loading exercises...
-          </Text>
+          <GymText>Loading exercises...</GymText>
           <ActivityIndicator size="large" />
         </View>
       ) : (
@@ -98,12 +99,22 @@ export default function ExerciseList() {
           {displayExercises.length > 0 ? (
             displayExercises.map((ex, index) => (
               <ExerciseItem
-                key={ex.exerciseId || `exercise-${index}`}
+                key={ex.exercise_id || `exercise-${index}`}
                 exercise={ex}
+                workoutId={workoutId}
               />
             ))
           ) : (
-            <Text>No exercises found.</Text>
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "flex-start",
+                alignItems: "center",
+                minHeight: height,
+              }}
+            >
+              <GymText>No exercises found.</GymText>
+            </View>
           )}
         </ScrollView>
       )}

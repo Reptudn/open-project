@@ -64,7 +64,7 @@ export function GymButtonSmall({ children, ...props }: TouchableOpacityProps) {
 /**
  * Medium button component
  */
-export function GymButtonFullMedium({
+export function GymButtonMedium({
   children,
   ...props
 }: TouchableOpacityProps) {
@@ -90,7 +90,7 @@ export function GymButtonFullMedium({
 /**
  * Large button component
  */
-export function GymButtonFullLarge({
+export function GymButtonLarge({
   children,
   ...props
 }: TouchableOpacityProps) {
