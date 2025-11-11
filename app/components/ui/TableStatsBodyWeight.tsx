@@ -16,7 +16,7 @@ import { getDailyStats } from "@/lib/api/stats/weightSelect";
 type DataPoint = { x: string; y: number };
 type Range = "week" | "month" | "threemonths";
 
-export default function TableStats() {
+export default function TableStatsBodyWeight() {
   const [range, setRange] = useState<Range>("week");
 
   const [weightData, setWeightData] = useState<{
