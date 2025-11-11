@@ -13,6 +13,8 @@ import { getThemeColor, ThemeColors } from "@/constants/theme";
 import { router } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { GymText } from "@/components/ui/Text";
+import { addExercise } from "@/lib/api/workout/workoutInsert";
+import { useAuthContext } from "@/hooks/use-auth-context";
 
 interface ExerciseItemProps {
   exercise: Exercise;
@@ -25,6 +27,26 @@ export default function ExerciseItem({
 }: ExerciseItemProps) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
+  const {session} = useAuthContext();
+
+  async function handleButtonPress() {
+    const { data, error } = await addExercise(
+      [
+        {
+          workout_id: Number(workoutId),
+          exercise_id: exercise.exercise_id,
+          order_index: 0,
+        },
+      ],
+      session
+    );
+    if (error) alert(`Error in exInfo ${error}`);
+    router.push({
+      pathname: "/(training)/createWorkout",
+      params: { workoutId: workoutId },
+    });
+  }
+
   return (
     <TouchableOpacity
       style={{
@@ -139,7 +161,13 @@ export default function ExerciseItem({
         </View>
       </View>
       <View style={{ alignItems: "flex-end" }}>
-        <AddExerciseSmall exerciseId={exercise.exercise_id} />
+        <TouchableOpacity onPress={handleButtonPress}>
+          <Ionicons
+            name="add-outline"
+            size={24}
+            color={isDark ? ThemeColors.dark.icon : ThemeColors.light.icon}
+          />
+        </TouchableOpacity>
       </View>
     </TouchableOpacity>
   );

@@ -13,6 +13,7 @@ export const ThemeColors = {
   light: {
     text: "#242c40",
     background: "#fff",
+    secondaryBackground: "#F8F8FF",
     button: "#f0f0f0",
     tint: tintColorLight,
     icon: "#687076",
@@ -27,6 +28,7 @@ export const ThemeColors = {
   dark: {
     text: "#d0d0c0",
     background: "#151718",
+    secondaryBackground: "#DCDCDC",
     button: "#404040",
     tint: tintColorDark,
     icon: "#9BA1A6",

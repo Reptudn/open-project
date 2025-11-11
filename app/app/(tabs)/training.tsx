@@ -78,10 +78,19 @@ export default function TrainingScreen() {
           fullWorkout.map((workout) => (
             <TouchableOpacity
               key={workout.id}
-              className="border border-r-8 m-2 rounded-lg"
-              style={{ borderColor: theme.text }}
               onPress={() => openWorkoutInfo(workout.id)}
               onLongPress={() => handleDeleteWorkout(workout)}
+              style={{
+                marginBottom: 20,
+                padding: 5,
+                borderRadius: 10,
+                flexDirection: "row",
+                alignItems: "flex-start",
+                gap: 15,
+                width: "100%",
+                borderColor: theme.text,
+                borderWidth: 1,
+              }}
             >
               <GymView>
                 <GymHeader>{workout.name}</GymHeader>
@@ -115,7 +124,7 @@ export default function TrainingScreen() {
             paddingBottom: 20,
           }}
         >
-          <View style={{alignItems: "center"}}>
+          <View style={{ alignItems: "center" }}>
             <GymHeader style={{ color: theme.text, justifyContent: "center" }}>
               Exercises
             </GymHeader>

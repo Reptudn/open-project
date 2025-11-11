@@ -39,15 +39,6 @@ export default function ExerciseInfo() {
     }
   }, []);
 
-  // Convert params to strings
-  const exerciseName = Array.isArray(name) ? name[0] : name || "";
-  const exerciseOverview = Array.isArray(overview)
-    ? overview[0]
-    : overview || "";
-  const exerciseImageUrl = Array.isArray(imageUrl)
-    ? imageUrl[0]
-    : imageUrl || "";
-
   const workoutIdNumber = Array.isArray(workoutId)
     ? Number(workoutId[0])
     : Number(workoutId);

@@ -93,7 +93,7 @@ export default function TabLayout() {
         name="training"
         options={{
           title: "Training",
-          headerTitle: "Workout Training",
+          headerTitle: "Workouts",
           headerRight: () => (
             <TouchableOpacity
               style={{

@@ -3,7 +3,6 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import { getThemeColor } from "@/constants/theme";
 import React, {
   useCallback,
-  useDeferredValue,
   useEffect,
   useMemo,
   useRef,
@@ -16,7 +15,6 @@ import { WorkoutExerciseItem } from "@/components/training/exercises/ExerciseIte
 import {
   getWorkout,
   getWorkoutExercises,
-  getWorkouts,
 } from "@/lib/api/workout/workoutSelect";
 import { updateWorkout } from "@/lib/api/workout/workoutUpdate";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
@@ -31,7 +29,6 @@ export default function TrainingScreen() {
   const { workoutId } = useLocalSearchParams();
   const [exercises, setExercises] = useState<WorkoutExercise[]>([]);
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const prevWorkoutId = useRef<string | null>(null);
 
 
   const snapPoints = useMemo(() => ["90%"], []);

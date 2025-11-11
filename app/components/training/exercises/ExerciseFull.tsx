@@ -1,11 +1,11 @@
-import { ThemeColors } from "@/constants/theme";
+import { getThemeColor } from "@/constants/theme";
 import { View, Text, useColorScheme, Image, ScrollView } from "react-native";
-import AddExerciseFull from "./AddExercise";
 import ExerciseTag, { ExerciseTagType } from "./ExerciseTag";
 import { VideoView, useVideoPlayer } from "expo-video";
 import { useEffect, useState, useCallback } from "react";
 import ExerciseItem from "./ExerciseItem";
 import { supabase } from "@/lib/supabase";
+import { GymHeader, GymTitle } from "@/components/ui/Text";
 
 export default function ExerciseFull({
   exercise,
@@ -14,8 +14,7 @@ export default function ExerciseFull({
   exercise: Exercise;
   workoutId: string;
 }) {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const theme = getThemeColor(useColorScheme());
 
   const [relatedExercises, setRelatedExercises] = useState<Exercise[]>([]);
   const [loadingRelated, setLoadingRelated] = useState(false);
@@ -86,36 +85,47 @@ export default function ExerciseFull({
   }, [fetchRelatedExercises]);
 
   return (
-    <>
-      <Text
-        style={{
-          color: isDark ? ThemeColors.dark.text : ThemeColors.light.text,
-          textAlign: "center",
-          fontSize: 24,
-          fontWeight: "bold",
-          marginVertical: 12,
-        }}
+    <View className="p-10">
+      <GymTitle style={{textAlign: "center", color: theme.text}}
       >
         {exercise.name}
-      </Text>
+      </GymTitle>
       <ScrollView
         style={{
-          backgroundColor: isDark
-            ? ThemeColors.dark.background
-            : ThemeColors.light.background,
+          backgroundColor: theme.background,
+          padding: 16,
         }}
-        showsVerticalScrollIndicator={true}
+        showsVerticalScrollIndicator={false}
       >
-        <Image
-          source={{ uri: exercise.image_url }}
-          style={{
-            width: "100%",
-            height: 400,
-            borderRadius: 12,
-            marginVertical: 12,
-          }}
-          resizeMode="cover"
-        />
+        <View>
+          {exercise.video_url ? (
+            <>
+              <View style={{ marginBottom: 16 }}>
+                <VideoView
+                  style={{
+                    width: "100%",
+                    height: 200,
+                    borderRadius: 12,
+                  }}
+                  player={player}
+                  allowsPictureInPicture
+                  contentFit="contain"
+                />
+              </View>
+            </>
+          ) : (
+            <Image
+              source={{ uri: exercise.image_url }}
+              style={{
+                width: "100%",
+                height: 200,
+                borderRadius: 12,
+                marginVertical: 12,
+              }}
+              resizeMode="cover"
+            />
+          )}
+        </View>
         <View
           style={{
             flexDirection: "row",
@@ -166,9 +176,7 @@ export default function ExerciseFull({
             <>
               <Text
                 style={{
-                  color: isDark
-                    ? ThemeColors.dark.text
-                    : ThemeColors.light.text,
+                  color: theme.text,
                   fontWeight: "bold",
                   marginBottom: 8,
                 }}
@@ -177,9 +185,7 @@ export default function ExerciseFull({
               </Text>
               <Text
                 style={{
-                  color: isDark
-                    ? ThemeColors.dark.text
-                    : ThemeColors.light.text,
+                  color: theme.text,
                   marginBottom: 8,
                 }}
               >
@@ -196,9 +202,7 @@ export default function ExerciseFull({
               <Text
                 key={index}
                 style={{
-                  color: isDark
-                    ? ThemeColors.dark.text
-                    : ThemeColors.light.text,
+                  color: theme.text,
                   marginBottom: 8,
                 }}
               >
@@ -208,7 +212,7 @@ export default function ExerciseFull({
           ) : (
             <Text
               style={{
-                color: isDark ? ThemeColors.dark.text : ThemeColors.light.text,
+                color: theme.text,
               }}
             >
               No instructions available.
@@ -220,9 +224,7 @@ export default function ExerciseFull({
             <>
               <Text
                 style={{
-                  color: isDark
-                    ? ThemeColors.dark.text
-                    : ThemeColors.light.text,
+                  color: theme.text,
                   fontWeight: "bold",
                   marginBottom: 8,
                 }}
@@ -233,9 +235,7 @@ export default function ExerciseFull({
                 <Text
                   key={index}
                   style={{
-                    color: isDark
-                      ? ThemeColors.dark.text
-                      : ThemeColors.light.text,
+                    color: theme.text,
                     marginBottom: 8,
                   }}
                 >
@@ -250,9 +250,7 @@ export default function ExerciseFull({
             <>
               <Text
                 style={{
-                  color: isDark
-                    ? ThemeColors.dark.text
-                    : ThemeColors.light.text,
+                  color: theme.text,
                   fontWeight: "bold",
                   marginBottom: 8,
                 }}
@@ -263,9 +261,7 @@ export default function ExerciseFull({
                 <Text
                   key={index}
                   style={{
-                    color: isDark
-                      ? ThemeColors.dark.text
-                      : ThemeColors.light.text,
+                    color: theme.text,
                     marginBottom: 8,
                   }}
                 >
@@ -281,9 +277,7 @@ export default function ExerciseFull({
               <>
                 <Text
                   style={{
-                    color: isDark
-                      ? ThemeColors.dark.text
-                      : ThemeColors.light.text,
+                    color: theme.text,
                     fontWeight: "bold",
                     marginBottom: 8,
                   }}
@@ -293,9 +287,7 @@ export default function ExerciseFull({
                 {loadingRelated ? (
                   <Text
                     style={{
-                      color: isDark
-                        ? ThemeColors.dark.text
-                        : ThemeColors.light.text,
+                      color: theme.text,
                       fontStyle: "italic",
                       marginBottom: 8,
                     }}
@@ -313,9 +305,7 @@ export default function ExerciseFull({
                 ) : (
                   <Text
                     style={{
-                      color: isDark
-                        ? ThemeColors.dark.text
-                        : ThemeColors.light.text,
+                      color: theme.text,
                       fontStyle: "italic",
                       marginBottom: 8,
                     }}
@@ -326,38 +316,7 @@ export default function ExerciseFull({
               </>
             )}
         </View>
-        <View>
-          {exercise.video_url && (
-            <>
-              <Text
-                style={{
-                  color: isDark
-                    ? ThemeColors.dark.text
-                    : ThemeColors.light.text,
-                  fontWeight: "bold",
-                  marginBottom: 8,
-                }}
-              >
-                Video:
-              </Text>
-              <View style={{ marginBottom: 16 }}>
-                <VideoView
-                  style={{
-                    width: "100%",
-                    height: 200,
-                    borderRadius: 12,
-                    backgroundColor: isDark ? "#333" : "#f0f0f0",
-                  }}
-                  player={player}
-                  allowsFullscreen
-                  allowsPictureInPicture
-                  contentFit="contain"
-                />
-              </View>
-            </>
-          )}
-        </View>
       </ScrollView>
-    </>
+    </View>
   );
 }
