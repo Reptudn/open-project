@@ -1,8 +1,9 @@
 import { FoodsTableEntry } from "@/types/Meals";
-import { View, Text, useColorScheme } from "react-native";
+import { View, Text, useColorScheme, TouchableOpacity } from "react-native";
 import GymView from "../ui/GymView";
 import { GymHeader, GymText, GymTitle } from "../ui/Text";
 import { getThemeColor } from "@/constants/theme";
+import { router } from "expo-router";
 
 export default function MealEntry(props: FoodsTableEntry) {
   const theme = getThemeColor(useColorScheme());
@@ -18,11 +19,17 @@ export default function MealEntry(props: FoodsTableEntry) {
   }
 
   return (
-    <View
+    <TouchableOpacity
       style={{
         padding: 15,
         borderRadius: 10,
         backgroundColor: theme.button,
+      }}
+      onPress={() => {
+        router.push({
+          pathname: "/(meal)/foodInfo",
+          params: { product: JSON.stringify(props) },
+        });
       }}
     >
       <GymHeader>{product.name || "Unknown Food Item"}</GymHeader>
@@ -38,6 +45,6 @@ export default function MealEntry(props: FoodsTableEntry) {
           : "N/A"}{" "}
         kcal
       </GymText>
-    </View>
+    </TouchableOpacity>
   );
 }

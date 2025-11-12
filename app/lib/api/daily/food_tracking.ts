@@ -8,7 +8,7 @@ export async function addMeal(
   date: string,
   amount_in_g?: number
 ) {
-  console.info("Adding meal:", { barcode, mealType, date, amount_in_g });
+  console.log("Adding meal:", { barcode, mealType, date, amount_in_g });
 
   const {
     data: { user },

@@ -29,7 +29,13 @@ import { GymHeader, GymTitle } from "@/components/ui/Text";
 import { ScrollView } from "react-native-gesture-handler";
 import { SemiCircleChart } from "@tubinex/react-native-charts";
 
-function AddMeal({ visible }: { visible: boolean }) {
+function AddMeal({
+  visible,
+  mealType,
+}: {
+  visible: boolean;
+  mealType: MealType;
+}) {
   const theme = getThemeColor(useColorScheme());
   const insets = useSafeAreaInsets();
   const [showScanner, setShowScanner] = useState(false);
@@ -145,7 +151,7 @@ function AddMeal({ visible }: { visible: boolean }) {
                 key={prod.code}
                 product={prod}
                 date={new Date()}
-                mealType={MealType.BREAKFAST}
+                mealType={mealType}
               />
             ); // pass actual date later
           })
@@ -310,7 +316,7 @@ export default function Meal() {
           )}
         </ScrollView>
       </SafeAreaView>
-      <AddMeal visible={openSearch === "true"} />
+      <AddMeal visible={openSearch === "true"} mealType={mealTypeEnum} />
     </View>
   );
 }
@@ -335,7 +341,6 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   searchContainer: {
-    // padding: 16,
     paddingBottom: 8,
     borderTopWidth: 1,
     borderTopColor: "#00000010",

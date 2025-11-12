@@ -45,7 +45,7 @@ export default function ProductItem({
             color={isDark ? ThemeColors.dark.text : ThemeColors.light.text}
             style={{ marginRight: 4 }}
           />
-          {(product.nutriments?.["energy-kcal_100g"] ?? 0).toFixed(0)}kcal
+          {Number(product.nutriments?.["energy-kcal_100g"] ?? 0).toFixed(0)}kcal
         </Text>
         <Text style={{ color: isDark ? "#ccc" : "#555" }}>
           <Ionicons
@@ -54,7 +54,7 @@ export default function ProductItem({
             color={isDark ? ThemeColors.dark.text : ThemeColors.light.text}
             style={{ marginRight: 4 }}
           />
-          {(product.nutriments?.["proteins_100g"] ?? 0).toFixed(0)}g
+          {Number(product.nutriments?.["proteins_100g"] ?? 0).toFixed(0)}g
         </Text>
         <Text style={{ color: isDark ? "#ccc" : "#555" }}>
           <Ionicons
@@ -63,7 +63,7 @@ export default function ProductItem({
             color={isDark ? ThemeColors.dark.text : ThemeColors.light.text}
             style={{ marginRight: 4 }}
           />
-          {(product.nutriments?.["carbohydrates_100g"] ?? 0).toFixed(0)}g
+          {Number(product.nutriments?.["carbohydrates_100g"] ?? 0).toFixed(0)}g
         </Text>
         <Text style={{ color: isDark ? "#ccc" : "#555" }}>
           <Ionicons
@@ -72,7 +72,7 @@ export default function ProductItem({
             color={isDark ? ThemeColors.dark.text : ThemeColors.light.text}
             style={{ marginRight: 4 }}
           />
-          {(product.nutriments?.["fat_100g"] ?? 0).toFixed(0)}g
+          {Number(product.nutriments?.["fat_100g"] ?? 0).toFixed(0)}g
         </Text>
       </View>
       <TouchableOpacity
@@ -80,6 +80,7 @@ export default function ProductItem({
         onPress={async () => {
           // add the product to meals with 100g as default
           if (date === undefined || mealType === undefined) return;
+          console.log("meal type is: " + mealType);
           try {
             await addMeal(
               product.code,

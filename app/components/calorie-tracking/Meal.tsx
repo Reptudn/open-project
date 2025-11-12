@@ -1,4 +1,5 @@
 import { ThemeColors } from "@/constants/theme";
+import { MealType } from "@/types/FoodData.d";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { router } from "expo-router";
 import {
@@ -22,6 +23,22 @@ function MealItem({
   const isDark = colorScheme === "dark";
   const progress = Math.min(eaten / toEat, 1);
   const isComplete = eaten >= toEat;
+
+  const mealTypeEnum: MealType = (() => {
+    switch (title) {
+      case "Breakfast":
+        return MealType.BREAKFAST;
+      case "Lunch":
+        return MealType.LUNCH;
+      case "Dinner":
+        return MealType.DINNER;
+      case "Snacks":
+        return MealType.SNACK;
+      default:
+        return MealType.SNACK;
+    }
+  })();
+
   return (
     <TouchableOpacity
       style={{
@@ -34,7 +51,7 @@ function MealItem({
         router.push({
           pathname: "/(meal)/meal",
           params: {
-            mealType: title,
+            mealType: mealTypeEnum,
             openSearch: "false",
           },
         });
