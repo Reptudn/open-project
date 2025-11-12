@@ -81,7 +81,12 @@ export default function ProductItem({
           // add the product to meals with 100g as default
           if (date === undefined || mealType === undefined) return;
           try {
-            await addMeal(product.code, mealType, date, 100);
+            await addMeal(
+              product.code,
+              mealType,
+              date.toISOString().split("T")[0],
+              100
+            );
           } catch (error) {
             console.error("Failed to add meal:", error);
           }

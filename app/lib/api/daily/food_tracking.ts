@@ -5,7 +5,7 @@ import { FoodsTableEntry } from "@/types/Meals";
 export async function addMeal(
   barcode: string,
   mealType: MealType,
-  date: Date,
+  date: string,
   amount_in_g?: number
 ) {
   console.info("Adding meal:", { barcode, mealType, date, amount_in_g });
@@ -53,18 +53,19 @@ export async function getMealsByDate(date: Date): Promise<FoodsTableEntry[]> {
 
 export async function getMealsByType(
   type: MealType,
-  date?: Date
+  date?: string
 ): Promise<FoodsTableEntry[]> {
+  console.log("Fetching meals by type:", { type, date });
   const { data, error } = date
     ? await supabase
         .from("user_calorie_stats")
-        .select("*")
+        .select("*, barcode_id(*)")
         .eq("type", type)
         .eq("created_at", date)
         .order("type", { ascending: true })
     : await supabase
         .from("user_calorie_stats")
-        .select("*")
+        .select("*, barcode_id(*)")
         .eq("type", type)
         .order("type", { ascending: true });
 

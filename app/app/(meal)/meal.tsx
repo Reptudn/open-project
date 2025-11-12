@@ -27,6 +27,7 @@ import { FoodsTableEntry } from "@/types/Meals.d";
 import { GymButtonFullWidth } from "@/components/ui/Button";
 import { GymHeader, GymTitle } from "@/components/ui/Text";
 import { ScrollView } from "react-native-gesture-handler";
+import { SemiCircleChart } from "@tubinex/react-native-charts";
 
 function AddMeal({ visible }: { visible: boolean }) {
   const theme = getThemeColor(useColorScheme());
@@ -81,7 +82,6 @@ function AddMeal({ visible }: { visible: boolean }) {
           styles.searchContainer,
           {
             backgroundColor: theme.background,
-            paddingTop: 16,
           },
         ]}
       >
@@ -216,7 +216,10 @@ export default function Meal() {
   const fetchMeals = useCallback(async () => {
     let meals: FoodsTableEntry[] = [];
     try {
-      meals = await getMealsByType(mealTypeEnum, new Date()); // replace with the actual date of that day later
+      meals = await getMealsByType(
+        mealTypeEnum,
+        new Date().toISOString().split("T")[0]
+      ); // replace with the actual date of that day later
     } catch (error) {
       console.error("Failed to fetch added meals:", error);
       meals = [];
@@ -253,9 +256,42 @@ export default function Meal() {
           </TouchableOpacity>
           <GymTitle style={{ color: theme.text }}>{mealType}</GymTitle>
         </View>
+        <SemiCircleChart
+          segments={addedMeals.map((meal) => ({
+            value: meal.barcode_id.nutriments?.["energy-kcal_100g"] || 0,
+            color:
+              meal.barcode_id.nutriments?.["energy-kcal_100g"]! > 500
+                ? "#FF5C5C"
+                : meal.barcode_id.nutriments?.["energy-kcal_100g"]! > 300
+                  ? "#FFB800"
+                  : "#7ED957",
+            label: meal.barcode_id.name,
+          }))}
+          size={250}
+          strokeWidth={30}
+          segmentGap={2}
+          centerContent={
+            <View style={{ alignItems: "center" }}>
+              <GymHeader style={{ fontSize: 14, color: theme.text }}>
+                Total Calories (kcal)
+              </GymHeader>
+              <GymTitle
+                style={{ fontSize: 36, fontWeight: "700", color: theme.tint }}
+              >
+                {addedMeals.reduce(
+                  (total, meal) =>
+                    total +
+                    (meal.barcode_id.nutriments?.["energy-kcal_100g"] || 0),
+                  0
+                )}
+              </GymTitle>
+            </View>
+          }
+          contentAlignment="flex-end"
+        />
         <ScrollView
-          style={{ flex: 1 }}
-          contentContainerStyle={{ flexGrow: 1 }}
+          style={{ flex: 1, gap: 12 }}
+          contentContainerStyle={{ flexGrow: 1, gap: 12 }}
           refreshControl={
             <RefreshControl
               refreshing={refreshing}
@@ -299,7 +335,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   searchContainer: {
-    padding: 16,
+    // padding: 16,
     paddingBottom: 8,
     borderTopWidth: 1,
     borderTopColor: "#00000010",
