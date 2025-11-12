@@ -31,7 +31,6 @@ export default function TrainingScreen() {
   const [exercises, setExercises] = useState<WorkoutExercise[]>([]);
   const bottomSheetRef = useRef<BottomSheet>(null);
 
-
   const snapPoints = useMemo(() => ["90%"], []);
 
   const handleSheetChanges = useCallback((index: number) => {
@@ -48,7 +47,7 @@ export default function TrainingScreen() {
   }, []);
 
   useEffect(() => {
-    if (id != workoutId){
+    if (id != workoutId) {
       name = "";
       description = "";
     }
@@ -119,13 +118,12 @@ export default function TrainingScreen() {
     }
     console.log(data);
     if (data) {
-      console.log("here")
+      console.log("here");
       if (data.name === "" || data.name === "Untitled") {
         deleteWorkout(Number(workoutId));
         console.log("deleted");
       }
-    }
-    else{
+    } else {
       console.log("not here");
     }
   };
@@ -133,7 +131,7 @@ export default function TrainingScreen() {
   return (
     <BottomSheet
       ref={bottomSheetRef}
-      index={0}
+      index={1}
       snapPoints={snapPoints}
       onChange={handleSheetChanges}
       backgroundStyle={{ backgroundColor: theme.background }}
@@ -146,15 +144,10 @@ export default function TrainingScreen() {
           paddingBottom: 20,
         }}
       >
-        <View
-          style={{
-            flex: 1,
-            backgroundColor: theme.background,
-            padding: 50,
-            margin: 20
-          }}
-        >
-          <GymTitle style={{ color: theme.text, marginBottom: 20, textAlign: "center" }}>
+        <View>
+          <GymTitle
+            style={{ color: theme.text, marginBottom: 20, textAlign: "center" }}
+          >
             Build your workout
           </GymTitle>
           <View
@@ -163,7 +156,8 @@ export default function TrainingScreen() {
               borderColor: theme.text,
               borderWidth: 1,
               borderRadius: 5,
-              marginBottom: 20,
+              margin: 20,
+              backgroundColor: theme.secondaryBackground,
             }}
           >
             <GymText>Workout Name</GymText>
@@ -177,11 +171,12 @@ export default function TrainingScreen() {
           </View>
           <View
             style={{
+              padding: 10,
               borderColor: theme.text,
               borderWidth: 1,
-              marginBottom: 20,
               borderRadius: 5,
-              padding: 10,
+              margin: 20,
+              backgroundColor: theme.secondaryBackground,
             }}
           >
             <GymText>Workout Description</GymText>
@@ -197,11 +192,12 @@ export default function TrainingScreen() {
           </View>
           <View
             style={{
+              padding: 10,
               borderColor: theme.text,
               borderWidth: 1,
-              marginBottom: 20,
               borderRadius: 5,
-              padding: 10,
+              margin: 20,
+              backgroundColor: theme.secondaryBackground,
             }}
           >
             <GymHeader>Exercises: </GymHeader>
@@ -222,12 +218,14 @@ export default function TrainingScreen() {
               </View>
             ))}
           </View>
-          <GymButtonMedium onPress={handleButtonPress}>
-            Add Exercise
-          </GymButtonMedium>
-          <GymButtonMedium onPress={handleFinishWorkout}>
-            Finish Workout
-          </GymButtonMedium>
+          <View style={{ rowGap: 20 }}>
+            <GymButtonMedium onPress={handleButtonPress}>
+              Add Exercise
+            </GymButtonMedium>
+            <GymButtonMedium onPress={handleFinishWorkout}>
+              Finish Workout
+            </GymButtonMedium>
+          </View>
         </View>
       </BottomSheetScrollView>
     </BottomSheet>

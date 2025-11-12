@@ -28,7 +28,7 @@ export const ThemeColors = {
   dark: {
     text: "#d0d0c0",
     background: "#151718",
-    secondaryBackground: "#DCDCDC",
+    secondaryBackground: "#696969",
     button: "#404040",
     tint: tintColorDark,
     icon: "#9BA1A6",

@@ -81,21 +81,21 @@ export default function TrainingScreen() {
               onPress={() => openWorkoutInfo(workout.id)}
               onLongPress={() => handleDeleteWorkout(workout)}
               style={{
+                flex: 1,
                 marginBottom: 20,
-                padding: 5,
+                padding: 20,
                 borderRadius: 10,
-                flexDirection: "row",
+                flexDirection: "column",
                 alignItems: "flex-start",
                 gap: 15,
                 width: "100%",
                 borderColor: theme.text,
                 borderWidth: 1,
+                backgroundColor: theme.secondaryBackground
               }}
             >
-              <GymView>
                 <GymHeader>{workout.name}</GymHeader>
                 <GymText>{workout.description}</GymText>
-              </GymView>
             </TouchableOpacity>
           ))
         ) : (
