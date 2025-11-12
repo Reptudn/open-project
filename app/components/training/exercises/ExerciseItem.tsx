@@ -3,11 +3,8 @@ import {
   Text,
   Image,
   View,
-  StyleSheet,
-  Dimensions,
 } from "react-native";
 import ExerciseTag, { ExerciseTagType } from "./ExerciseTag";
-import { AddExerciseSmall } from "./AddExercise";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { getThemeColor, ThemeColors } from "@/constants/theme";
 import { router } from "expo-router";

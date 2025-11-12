@@ -9,7 +9,7 @@ import React, {
   useState,
 } from "react";
 import { router, useLocalSearchParams } from "expo-router";
-import { GymHeader, GymText } from "@/components/ui/Text";
+import { GymHeader, GymText, GymTitle } from "@/components/ui/Text";
 import { GymButtonMedium } from "@/components/ui/Button";
 import { WorkoutExerciseItem } from "@/components/training/exercises/ExerciseItem";
 import {
@@ -18,6 +18,7 @@ import {
 } from "@/lib/api/workout/workoutSelect";
 import { updateWorkout } from "@/lib/api/workout/workoutUpdate";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import { deleteWorkout } from "@/lib/api/workout/workoutDelete";
 
 let name: string;
 let description: string;
@@ -110,6 +111,25 @@ export default function TrainingScreen() {
     }
   };
 
+  const handleSheetClose = async () => {
+    const { data, error } = await getWorkout(Number(workoutId));
+    if (error) {
+      alert(`Error in fetchWorkout: ${error}`);
+      return;
+    }
+    console.log(data);
+    if (data) {
+      console.log("here")
+      if (data.name === "" || data.name === "Untitled") {
+        deleteWorkout(Number(workoutId));
+        console.log("deleted");
+      }
+    }
+    else{
+      console.log("not here");
+    }
+  };
+
   return (
     <BottomSheet
       ref={bottomSheetRef}
@@ -118,6 +138,7 @@ export default function TrainingScreen() {
       onChange={handleSheetChanges}
       backgroundStyle={{ backgroundColor: theme.background }}
       enablePanDownToClose={true}
+      onClose={handleSheetClose}
     >
       <BottomSheetScrollView
         contentContainerStyle={{
@@ -130,11 +151,12 @@ export default function TrainingScreen() {
             flex: 1,
             backgroundColor: theme.background,
             padding: 50,
+            margin: 20
           }}
         >
-          <GymHeader style={{ color: theme.text, marginBottom: 20 }}>
+          <GymTitle style={{ color: theme.text, marginBottom: 20, textAlign: "center" }}>
             Build your workout
-          </GymHeader>
+          </GymTitle>
           <View
             style={{
               padding: 10,

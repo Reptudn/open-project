@@ -35,7 +35,7 @@ export default function TrainingScreen() {
       if (data) setFullWorkout(data);
     };
     workouts();
-  }, []);
+  }, [fullWorkout]);
 
   const openWorkoutInfo = async (workoutid: number) => {
     const { data, error } = await getWorkoutExercises(workoutid);
