@@ -1,11 +1,14 @@
 import { supabase } from "@/lib/supabase";
 import { MealType } from "@/types/FoodData";
 import { FoodsTableEntry } from "@/types/Meals";
+import { toDbDateString } from "@/utils/database";
+
+// TODO: handle user adds same meal multiple times a day for lunch for example
 
 export async function addMeal(
   barcode: string,
   mealType: MealType,
-  date: string,
+  date: Date,
   amount_in_g?: number
 ) {
   console.log("Adding meal:", { barcode, mealType, date, amount_in_g });
@@ -17,7 +20,7 @@ export async function addMeal(
   const { error } = await supabase.from("user_calorie_stats").insert({
     barcode_id: barcode,
     type: mealType,
-    created_at: date,
+    created_at: toDbDateString(date),
     amount_in_g,
     profile: user?.id || null,
   });
@@ -42,8 +45,9 @@ export async function getMealsByDate(date: Date): Promise<FoodsTableEntry[]> {
   const { data, error } = await supabase
     .from("user_calorie_stats")
     .select("*")
-    .eq("created_at", date)
+    .eq("created_at", toDbDateString(date))
     .order("type", { ascending: true });
+  console.log("Fetching meals by date:", { date, data });
   if (error) {
     throw new Error(`Error fetching meals: ${error.message}`);
   }
@@ -53,7 +57,7 @@ export async function getMealsByDate(date: Date): Promise<FoodsTableEntry[]> {
 
 export async function getMealsByType(
   type: MealType,
-  date?: string
+  date?: Date
 ): Promise<FoodsTableEntry[]> {
   console.log("Fetching meals by type:", { type, date });
   const { data, error } = date
@@ -61,7 +65,7 @@ export async function getMealsByType(
         .from("user_calorie_stats")
         .select("*, barcode_id(*)")
         .eq("type", type)
-        .eq("created_at", date)
+        .eq("created_at", toDbDateString(date))
         .order("type", { ascending: true })
     : await supabase
         .from("user_calorie_stats")
@@ -69,6 +73,7 @@ export async function getMealsByType(
         .eq("type", type)
         .order("type", { ascending: true });
 
+  console.log("Fetched meals by type:", { type, date, data });
   if (error) {
     throw new Error(`Error fetching meals: ${error.message}`);
   }

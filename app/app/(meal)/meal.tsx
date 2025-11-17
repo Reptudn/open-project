@@ -16,7 +16,6 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import BottomSheet, {
-  BottomSheetFooterContainer,
   BottomSheetScrollView,
   BottomSheetTextInput,
 } from "@gorhom/bottom-sheet";
@@ -24,7 +23,7 @@ import { getMealsByType } from "@/lib/api/daily/food_tracking";
 import MealEntry from "@/components/calorie-tracking/MealEntry";
 import { MealType, Product } from "@/types/FoodData.d";
 import { FoodsTableEntry } from "@/types/Meals.d";
-import { GymButtonFullWidth } from "@/components/ui/Button";
+
 import { GymHeader, GymTitle } from "@/components/ui/Text";
 import { ScrollView } from "react-native-gesture-handler";
 import { SemiCircleChart } from "@tubinex/react-native-charts";
@@ -32,9 +31,11 @@ import { SemiCircleChart } from "@tubinex/react-native-charts";
 function AddMeal({
   visible,
   mealType,
+  date,
 }: {
   visible: boolean;
   mealType: MealType;
+  date: Date;
 }) {
   const theme = getThemeColor(useColorScheme());
   const insets = useSafeAreaInsets();
@@ -82,34 +83,31 @@ function AddMeal({
       handleIndicatorStyle={{ backgroundColor: theme.text }}
       backgroundStyle={{ backgroundColor: theme.background }}
       enablePanDownToClose={false}
+      enableHandlePanningGesture={true}
+      enableContentPanningGesture={false}
     >
+      {/* Enhanced Search Container */}
       <View
-        style={[
-          styles.searchContainer,
-          {
-            backgroundColor: theme.background,
-          },
-        ]}
+        style={[styles.searchContainer, { backgroundColor: theme.background }]}
       >
         <View
           style={[
             styles.searchInputContainer,
-            {
-              backgroundColor: theme.button,
-            },
+            { backgroundColor: theme.button },
           ]}
         >
+          <Ionicons
+            name="search"
+            size={18}
+            color={theme.text}
+            style={{ marginLeft: 12, opacity: 0.6 }}
+          />
           <BottomSheetTextInput
-            placeholder="Search food or enter barcode"
-            placeholderTextColor={theme.text}
+            placeholder="Search food or enter barcode..."
+            placeholderTextColor={`${theme.text}80`}
             value={searchText}
             onChangeText={setSearchText}
-            style={[
-              styles.searchInput,
-              {
-                color: theme.text,
-              },
-            ]}
+            style={[styles.searchInput, { color: theme.text }]}
             onSubmitEditing={async () => {
               if (!searchText.trim()) {
                 setProducts([]);
@@ -125,7 +123,7 @@ function AddMeal({
             }}
           />
           <TouchableOpacity onPress={openScanner} style={styles.barcodeButton}>
-            <Ionicons name="barcode-outline" size={24} color={theme.text} />
+            <Ionicons name="barcode-outline" size={20} color={theme.tint} />
           </TouchableOpacity>
         </View>
       </View>
@@ -143,77 +141,138 @@ function AddMeal({
             backgroundColor: theme.background,
           },
         ]}
+        showsVerticalScrollIndicator={false}
       >
         {products.length > 0 ? (
-          products.map((prod) => {
-            return (
-              <ProductItem
-                key={prod.code}
-                product={prod}
-                date={new Date()}
-                mealType={mealType}
-              />
-            ); // pass actual date later
-          })
+          <View style={styles.resultsContainer}>
+            <Text style={[styles.resultsHeader, { color: theme.text }]}>
+              Found {products.length} result{products.length !== 1 ? "s" : ""}
+            </Text>
+            {products.map((prod) => {
+              return (
+                <ProductItem
+                  key={prod.code}
+                  product={prod}
+                  date={date}
+                  mealType={mealType}
+                />
+              );
+            })}
+          </View>
+        ) : searchText.trim() ? (
+          // No results for search
+          <View style={styles.emptyStateContainer}>
+            <View
+              style={[
+                styles.emptyStateIcon,
+                { backgroundColor: `${theme.tint}20` },
+              ]}
+            >
+              <Ionicons name="search" size={32} color={theme.tint} />
+            </View>
+            <Text style={[styles.emptyStateTitle, { color: theme.text }]}>
+              No results found
+            </Text>
+            <Text style={[styles.emptyStateText, { color: theme.text }]}>
+              Try searching for &ldquo;{searchText}&rdquo; with different
+              keywords or scan a barcode
+            </Text>
+            <TouchableOpacity
+              style={[styles.scanButton, { backgroundColor: theme.tint }]}
+              onPress={openScanner}
+            >
+              <Ionicons name="barcode-outline" size={18} color="#fff" />
+              <Text style={styles.scanButtonText}>Scan Barcode</Text>
+            </TouchableOpacity>
+          </View>
         ) : (
-          <View
-            style={[
-              styles.header,
-              {
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                height: 500,
-              },
-            ]}
-          >
-            <GymTitle style={{ color: theme.text, marginTop: 8 }}>
-              Search for products
-            </GymTitle>
-            <GymHeader style={{ color: theme.text }}>
-              by name or barcode
-            </GymHeader>
-            <Ionicons
-              name="search-outline"
-              size={64}
-              color={theme.text}
-              style={{ alignSelf: "center", marginTop: 20 }}
-            />
+          // Initial empty state
+          <View style={styles.emptyStateContainer}>
+            <View
+              style={[
+                styles.emptyStateIcon,
+                { backgroundColor: `${theme.tint}15` },
+              ]}
+            >
+              <Ionicons name="restaurant" size={32} color={theme.tint} />
+            </View>
+            <Text style={[styles.emptyStateTitle, { color: theme.text }]}>
+              Find Your Food
+            </Text>
+            <Text style={[styles.emptyStateText, { color: theme.text }]}>
+              Search by name or scan a barcode to add food to your{" "}
+              {mealType?.toLowerCase()} meal
+            </Text>
+
+            <View style={styles.quickActions}>
+              <TouchableOpacity
+                style={[
+                  styles.quickActionButton,
+                  { backgroundColor: theme.tint },
+                ]}
+                onPress={openScanner}
+              >
+                <Ionicons name="barcode-outline" size={18} color="#fff" />
+                <Text style={styles.quickActionText}>Scan Barcode</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[
+                  styles.quickActionButton,
+                  {
+                    backgroundColor: "transparent",
+                    borderColor: theme.tint,
+                    borderWidth: 1,
+                  },
+                ]}
+                onPress={() => {
+                  // You can add popular foods functionality here
+                }}
+              >
+                <Ionicons name="star-outline" size={18} color={theme.tint} />
+                <Text style={[styles.quickActionText, { color: theme.tint }]}>
+                  Popular Foods
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
         )}
       </BottomSheetScrollView>
-      <BottomSheetFooterContainer
-        footerComponent={() => (
-          <GymButtonFullWidth
-            onPress={() => {
-              sheetRef.current?.collapse();
-            }}
-          >
-            <Text style={{ color: theme.text }}>Close</Text>
-          </GymButtonFullWidth>
-        )}
-      />
     </BottomSheet>
   );
 }
 
 export default function Meal() {
   const theme = getThemeColor(useColorScheme());
-  const { mealType, openSearch } = useLocalSearchParams();
+  const { mealType, openSearch, date } = useLocalSearchParams<{
+    mealType?: string;
+    openSearch?: string;
+    date?: string;
+  }>();
 
   const [addedMeals, setAddedMeals] = useState<FoodsTableEntry[]>([]);
   const [refreshing, setRefreshing] = useState(false);
+  const actualDate = useMemo(() => {
+    if (date) {
+      return new Date(date);
+    }
+    return new Date();
+  }, [date]);
 
   const mealTypeEnum = useMemo(() => {
     switch (mealType) {
       case "Breakfast":
+      case "breakfast":
+      case "BREAKFAST":
         return MealType.BREAKFAST;
       case "Lunch":
+      case "lunch":
+      case "LUNCH":
         return MealType.LUNCH;
       case "Dinner":
+      case "dinner":
+      case "DINNER":
         return MealType.DINNER;
-      case "Snacks":
-        return MealType.SNACK;
       default:
         return MealType.SNACK;
     }
@@ -222,16 +281,13 @@ export default function Meal() {
   const fetchMeals = useCallback(async () => {
     let meals: FoodsTableEntry[] = [];
     try {
-      meals = await getMealsByType(
-        mealTypeEnum,
-        new Date().toISOString().split("T")[0]
-      ); // replace with the actual date of that day later
+      meals = await getMealsByType(mealTypeEnum, actualDate);
     } catch (error) {
       console.error("Failed to fetch added meals:", error);
       meals = [];
     }
     setAddedMeals(meals);
-  }, [mealTypeEnum]);
+  }, [mealTypeEnum, actualDate]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -241,7 +297,7 @@ export default function Meal() {
 
   useEffect(() => {
     fetchMeals();
-  }, [fetchMeals]);
+  }, [fetchMeals, mealTypeEnum, actualDate]);
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.background }}>
@@ -316,7 +372,11 @@ export default function Meal() {
           )}
         </ScrollView>
       </SafeAreaView>
-      <AddMeal visible={openSearch === "true"} mealType={mealTypeEnum} />
+      <AddMeal
+        visible={openSearch === "true"}
+        mealType={mealTypeEnum}
+        date={actualDate}
+      />
     </View>
   );
 }
@@ -325,6 +385,32 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: "100%",
+  },
+  sheetHeader: {
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(0, 0, 0, 0.1)",
+    paddingBottom: 12,
+  },
+  headerContent: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingTop: 8,
+  },
+  headerTitleSection: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+  },
+  closeButton: {
+    padding: 8,
+    borderRadius: 16,
+    backgroundColor: "rgba(0, 0, 0, 0.05)",
   },
   header: {
     alignItems: "center",
@@ -341,24 +427,99 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   searchContainer: {
-    paddingBottom: 8,
-    borderTopWidth: 1,
-    borderTopColor: "#00000010",
-    width: "100%",
+    padding: 16,
+    paddingBottom: 12,
   },
   searchInputContainer: {
     flexDirection: "row",
     alignItems: "center",
     borderRadius: 12,
     paddingRight: 12,
-    justifyContent: "flex-end",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
   searchInput: {
     flex: 1,
-    padding: 16,
+    padding: 14,
     fontSize: 16,
   },
   barcodeButton: {
-    padding: 8,
+    padding: 10,
+    marginLeft: 8,
+    borderRadius: 8,
+    backgroundColor: "rgba(0, 0, 0, 0.05)",
+  },
+  resultsContainer: {
+    paddingHorizontal: 8,
+  },
+  resultsHeader: {
+    fontSize: 14,
+    fontWeight: "500",
+    marginBottom: 12,
+    marginLeft: 8,
+    opacity: 0.8,
+  },
+  emptyStateContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 32,
+    paddingVertical: 48,
+    minHeight: 400,
+  },
+  emptyStateIcon: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 24,
+  },
+  emptyStateTitle: {
+    fontSize: 20,
+    fontWeight: "600",
+    marginBottom: 12,
+    textAlign: "center",
+  },
+  emptyStateText: {
+    fontSize: 16,
+    textAlign: "center",
+    opacity: 0.7,
+    lineHeight: 24,
+    marginBottom: 32,
+  },
+  scanButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 8,
+    gap: 8,
+  },
+  scanButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  quickActions: {
+    flexDirection: "row",
+    gap: 12,
+    marginTop: 8,
+  },
+  quickActionButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 8,
+    gap: 6,
+  },
+  quickActionText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#fff",
   },
 });

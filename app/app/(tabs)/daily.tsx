@@ -6,9 +6,6 @@ import DayItem from "@/components/calorie-tracking/DayItem";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 
-function DailyWorkout() {}
-function DailyCalories() {}
-
 export default function CalorieTrackerScreen() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";

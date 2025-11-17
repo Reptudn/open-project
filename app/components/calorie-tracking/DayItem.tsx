@@ -111,9 +111,11 @@ export default function DayItem({
               </Text>
             </TouchableOpacity>
           )}
-          <DayNutritionOverview eaten={631} burnt={200} toGo={1923} />
-          <Meals />
-          <WeightEntry date={date} />
+          <View style={{ width: "100%", paddingHorizontal: 16 }}>
+            <DayNutritionOverview eaten={631} burnt={200} toGo={1923} />
+            <Meals />
+            <WeightEntry date={date} />
+          </View>
           {/*  */}
 
           {/*  */}
