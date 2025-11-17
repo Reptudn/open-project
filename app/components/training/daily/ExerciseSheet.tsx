@@ -3,8 +3,18 @@ import { addExerciseLog } from "@/lib/api/workout/workoutInsert";
 import { getWorkoutLogs } from "@/lib/api/workout/workoutSelect";
 import { updateWorkoutExerciseLogSet } from "@/lib/api/workout/workoutUpdate";
 import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
+import { preventAutoHideAsync } from "expo-router/build/utils/splash";
 import { useEffect, useState } from "react";
-import { View, TextInput, Button, Text, StyleSheet, Alert, TouchableWithoutFeedback, Keyboard } from "react-native";
+import {
+  View,
+  TextInput,
+  Button,
+  Text,
+  StyleSheet,
+  Alert,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from "react-native";
 
 type SetRow = {
   setNumber: number;
@@ -15,6 +25,37 @@ type SetRow = {
 export default function ExerciseSheet(test: { exercise: WorkoutExercise }) {
   const [sets, setSets] = useState<SetRow[]>([]);
   const { session } = useAuthContext();
+
+  useEffect(() => {
+    const getSets = async () => {
+      const newSets: SetRow[] = [];
+      const { data, error } = await getWorkoutLogs(
+        test.exercise.workout_id.id,
+        new Date().toISOString().split("T")[0] // Change later to the corret date
+      );
+
+      if (error) {
+        Alert.alert(error);
+        return;
+      }
+
+      if (data) {
+        data.forEach((set) => {
+          if (
+            set.exercise_id.exercise_id ===
+            test.exercise.exercise_id.exercise_id
+          )
+            newSets.push({
+              setNumber: set.set_index,
+              reps: set.reps_completed?.toString() ?? "",
+              weight: set.weight_kg?.toString() ?? "",
+            });
+        });
+      }
+      setSets((prev) => [...prev, ...newSets]);
+    };
+    getSets();
+  }, []);
 
   const addSet = async () => {
     const created_at = new Date().toISOString().split("T")[0];
@@ -59,19 +100,23 @@ export default function ExerciseSheet(test: { exercise: WorkoutExercise }) {
 
     console.log(`value = ${value}`);
     console.log(`field = ${field}`);
-    const { error } = await updateWorkoutExerciseLogSet(field === "reps" ?{
-      workout_id: test.exercise.workout_id.id,
-      exercise_id: test.exercise.exercise_id.exercise_id,
-      set_index: index,
-      reps_completed: Number(value),
-      created_at: new Date().toISOString().split("T")[0],
-    } : {
-      workout_id: test.exercise.workout_id.id,
-      exercise_id: test.exercise.exercise_id.exercise_id,
-      set_index: index,
-      weight_kg: Number(value),
-      created_at: new Date().toISOString().split("T")[0],
-    });
+    const { error } = await updateWorkoutExerciseLogSet(
+      field === "reps"
+        ? {
+            workout_id: test.exercise.workout_id.id,
+            exercise_id: test.exercise.exercise_id.exercise_id,
+            set_index: index,
+            reps_completed: Number(value),
+            created_at: new Date().toISOString().split("T")[0],
+          }
+        : {
+            workout_id: test.exercise.workout_id.id,
+            exercise_id: test.exercise.exercise_id.exercise_id,
+            set_index: index,
+            weight_kg: Number(value),
+            created_at: new Date().toISOString().split("T")[0],
+          }
+    );
 
     if (error) {
       Alert.alert(error);

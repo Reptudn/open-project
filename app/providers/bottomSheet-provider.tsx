@@ -39,12 +39,10 @@ export default function BottomSheetProvider({ children }: PropsWithChildren) {
           keyboardBehavior="interactive"
           keyboardBlurBehavior="restore"
           ref={bottomSheetModalRef}
-          snapPoints={["25%", "50%", "90%"]}
+          snapPoints={["25%", "50%"]}
           index={1}
         >
-          <BottomSheetView style={styles.contentContainer}>
-            {content}
-          </BottomSheetView>
+          {content}
         </BottomSheetModal>
       </BottomSheetModalProvider>
     </BottomSheetContext.Provider>

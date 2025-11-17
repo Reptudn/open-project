@@ -3,7 +3,7 @@ import {
   getWorkoutExercises,
   getWorkouts,
 } from "@/lib/api/workout/workoutSelect";
-import { BottomSheetView } from "@gorhom/bottom-sheet";
+import { BottomSheetScrollView, BottomSheetView } from "@gorhom/bottom-sheet";
 import { useCallback, useEffect, useState } from "react";
 import { Alert, TouchableOpacity, View, Text, StyleSheet } from "react-native";
 import ExerciseSheet from "./ExerciseSheet";
@@ -41,7 +41,7 @@ export default function WorkoutSheet() {
       openSheet(
         <View style={styles.exerciseSheet}>
           <Text style={styles.exerciseTitle}>{item.name}</Text>
-          <BottomSheetView>
+          <BottomSheetScrollView>
             {workoutExercises.length > 0 ? (
               workoutExercises.map((exercise) => (
                 <View key={exercise.id} style={styles.list}>
@@ -60,7 +60,7 @@ export default function WorkoutSheet() {
                 No exercises found for this workout
               </Text>
             )}
-          </BottomSheetView>
+          </BottomSheetScrollView>
         </View>
       );
     },
@@ -81,7 +81,7 @@ export default function WorkoutSheet() {
     [handleWorkoutPress]
   );
 
-  return <BottomSheetView>{workouts.map(renderWorkouts)}</BottomSheetView>;
+  return <BottomSheetScrollView contentContainerStyle={styles.list}>{workouts.map(renderWorkouts)}</BottomSheetScrollView>;
 }
 
 const styles = StyleSheet.create({

@@ -39,7 +39,8 @@ export async function getWorkoutLogs(
     .from("workout_logs")
     .select("*, exercise_id(*), workout_id(*)")
     .eq("workout_id", workoutId)
-    .eq("created_at", date);
+    .eq("created_at", date)
+    .order("set_index", {ascending: true});
 
   if (error) return { data: null, error: error.message };
 
