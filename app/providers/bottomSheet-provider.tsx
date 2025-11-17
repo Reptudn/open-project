@@ -1,7 +1,11 @@
 import { getThemeColor } from "@/constants/theme";
 import { BottomSheetContext } from "@/hooks/use-bottomSheet-context";
-import { BottomSheetModal, BottomSheetView, BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import { PropsWithChildren, useRef, useState } from "react";
+import {
+  BottomSheetModal,
+  BottomSheetView,
+  BottomSheetModalProvider,
+} from "@gorhom/bottom-sheet";
+import { PropsWithChildren, ReactNode, useRef, useState } from "react";
 import { useColorScheme, StyleSheet, Text } from "react-native";
 
 export default function BottomSheetProvider({ children }: PropsWithChildren) {
@@ -11,7 +15,7 @@ export default function BottomSheetProvider({ children }: PropsWithChildren) {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
   const openSheet = (content: ReactNode) => {
-    setContent(content)
+    setContent(content);
     bottomSheetModalRef.current?.present();
   };
 
@@ -21,11 +25,19 @@ export default function BottomSheetProvider({ children }: PropsWithChildren) {
 
   return (
     <BottomSheetContext.Provider
-      value={{ openSheet, closeSheet, bottomSheetModalRef, content, setContent }}
+      value={{
+        openSheet,
+        closeSheet,
+        bottomSheetModalRef,
+        content,
+        setContent,
+      }}
     >
       {children}
       <BottomSheetModalProvider>
         <BottomSheetModal
+          keyboardBehavior="interactive"
+          keyboardBlurBehavior="restore"
           ref={bottomSheetModalRef}
           snapPoints={["25%", "50%", "90%"]}
           index={1}

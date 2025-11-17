@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity, Button } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useBottomSheetContext } from "@/hooks/use-bottomSheet-context";
 import WorkoutSheet from "./WorkoutSheet";

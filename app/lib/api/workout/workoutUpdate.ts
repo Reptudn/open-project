@@ -50,16 +50,17 @@ export async function updateWorkoutExerciseSet(
 
 export async function updateWorkoutExerciseLogSet(
   update: InsertWorkoutLog
-): Promise<Result<WorkoutLog>> {
+): Promise<Result<WorkoutLog[]>> {
   const upExercise: any = {};
 
   upExercise.workout_id = update.workout_id;
   upExercise.exercise_id = update.exercise_id;
   upExercise.set_index = update.set_index;
-  upExercise.created_at = update.created_at;
   if (update.reps_completed !== undefined)
     upExercise.reps_completed = update.reps_completed;
   if (update.weight_kg !== undefined) upExercise.weight_kg = update.weight_kg;
+
+  console.log(upExercise);
 
   const { data, error } = await supabase
     .from("workout_logs")
@@ -69,11 +70,12 @@ export async function updateWorkoutExerciseLogSet(
     .eq("created_at", update.created_at)
     .eq("set_index", update.set_index)
     .select()
-    .single();
 
   if (error) return { data: null, error: error.message };
 
-  return { data: data as WorkoutLog, error: null };
+  console.log(data);
+
+  return { data: data as WorkoutLog[], error: null };
 }
 
 //TODO need to check if i want to update all sets or only one set

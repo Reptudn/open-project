@@ -81,7 +81,7 @@ export default function WorkoutSheet() {
     [handleWorkoutPress]
   );
 
-  return <BottomSheetView> {workouts.map(renderWorkouts)}</BottomSheetView>;
+  return <BottomSheetView>{workouts.map(renderWorkouts)}</BottomSheetView>;
 }
 
 const styles = StyleSheet.create({

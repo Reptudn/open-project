@@ -2,9 +2,9 @@ import { useAuthContext } from "@/hooks/use-auth-context";
 import { addExerciseLog } from "@/lib/api/workout/workoutInsert";
 import { getWorkoutLogs } from "@/lib/api/workout/workoutSelect";
 import { updateWorkoutExerciseLogSet } from "@/lib/api/workout/workoutUpdate";
+import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
 import { useEffect, useState } from "react";
-import { View, TextInput, Button, Text, StyleSheet, Alert } from "react-native";
-import { setShouldAnimateExitingForTag } from "react-native-reanimated/lib/typescript/core";
+import { View, TextInput, Button, Text, StyleSheet, Alert, TouchableWithoutFeedback, Keyboard } from "react-native";
 
 type SetRow = {
   setNumber: number;
@@ -57,13 +57,20 @@ export default function ExerciseSheet(test: { exercise: WorkoutExercise }) {
       return copy;
     });
 
-    const { error } = await updateWorkoutExerciseLogSet({
+    console.log(`value = ${value}`);
+    console.log(`field = ${field}`);
+    const { error } = await updateWorkoutExerciseLogSet(field === "reps" ?{
       workout_id: test.exercise.workout_id.id,
       exercise_id: test.exercise.exercise_id.exercise_id,
       set_index: index,
-      reps_completed: Number(sets[index - 1].reps),
-      weight_kg: Number(sets[index - 1].weight),
-      created_at: new Date().toISOString(),
+      reps_completed: Number(value),
+      created_at: new Date().toISOString().split("T")[0],
+    } : {
+      workout_id: test.exercise.workout_id.id,
+      exercise_id: test.exercise.exercise_id.exercise_id,
+      set_index: index,
+      weight_kg: Number(value),
+      created_at: new Date().toISOString().split("T")[0],
     });
 
     if (error) {
@@ -81,7 +88,7 @@ export default function ExerciseSheet(test: { exercise: WorkoutExercise }) {
           <Text style={styles.label}>Satz {item.setNumber}</Text>
 
           <Text style={styles.label}> Reps</Text>
-          <TextInput
+          <BottomSheetTextInput
             style={styles.input}
             value={item.reps}
             onChangeText={(value) => updateSet(item.setNumber, "reps", value)}
@@ -90,7 +97,7 @@ export default function ExerciseSheet(test: { exercise: WorkoutExercise }) {
           />
 
           <Text style={styles.label}> Weight</Text>
-          <TextInput
+          <BottomSheetTextInput
             style={styles.input}
             value={item.weight}
             onChangeText={(value) => updateSet(item.setNumber, "weight", value)}
