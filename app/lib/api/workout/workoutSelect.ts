@@ -46,3 +46,17 @@ export async function getWorkoutLogs(
 
   return { data: data, error: null };
 }
+
+export async function getAllWorkoutLogsByDate(
+  date: string
+): Promise<Result<WorkoutLog[]>> {
+  const { data, error } = await supabase
+    .from("workout_logs")
+    .select("*, exercise_id(*), workout_id(*)")
+    .eq("created_at", date)
+    .order("set_index", {ascending: true});
+
+  if (error) return { data: null, error: error.message };
+
+  return { data: data, error: null };
+}
