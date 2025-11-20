@@ -1,6 +1,7 @@
 import { getThemeColor } from "@/constants/theme";
 import { useColorScheme, View, Text, StyleSheet } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { useEffect, useState } from "react";
 
 export default function DayNutritionOverview({
   eaten,
@@ -14,8 +15,14 @@ export default function DayNutritionOverview({
   const colorScheme = useColorScheme();
   const theme = getThemeColor(colorScheme);
 
-  const remaining = Math.max(toGo - eaten, 0);
-  const progress = eaten / (eaten + remaining);
+  const [remaining, setRemaining] = useState<number>(0);
+  const [progress, setProgress] = useState<number>(0);
+
+  useEffect(() => {
+    // Placeholder for any side effects if needed in the future
+    setRemaining(Math.max(toGo - eaten, 0));
+    setProgress(eaten / (eaten + remaining));
+  }, [eaten, burnt, toGo, remaining]);
 
   const nutritionStats = [
     {

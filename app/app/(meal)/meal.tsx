@@ -32,10 +32,12 @@ function AddMeal({
   visible,
   mealType,
   date,
+  onRefresh,
 }: {
   visible: boolean;
   mealType: MealType;
   date: Date;
+  onRefresh: () => Promise<void>;
 }) {
   const theme = getThemeColor(useColorScheme());
   const insets = useSafeAreaInsets();
@@ -155,6 +157,11 @@ function AddMeal({
                   product={prod}
                   date={date}
                   mealType={mealType}
+                  onAdd={async (success: boolean) => {
+                    if (!success) return;
+                    sheetRef.current?.close();
+                    await onRefresh();
+                  }}
                 />
               );
             })}
@@ -376,6 +383,7 @@ export default function Meal() {
         visible={openSearch === "true"}
         mealType={mealTypeEnum}
         date={actualDate}
+        onRefresh={onRefresh}
       />
     </View>
   );

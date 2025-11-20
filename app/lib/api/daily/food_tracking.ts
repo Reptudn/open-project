@@ -11,7 +11,7 @@ export async function addMeal(
   date: Date,
   amount_in_g?: number
 ) {
-  console.log("Adding meal:", { barcode, mealType, date, amount_in_g });
+  // console.log("Adding meal:", { barcode, mealType, date, amount_in_g });
 
   const {
     data: { user },
@@ -47,7 +47,7 @@ export async function getMealsByDate(date: Date): Promise<FoodsTableEntry[]> {
     .select("*")
     .eq("created_at", toDbDateString(date))
     .order("type", { ascending: true });
-  console.log("Fetching meals by date:", { date, data });
+  // console.log("Fetching meals by date:", { date, data });
   if (error) {
     throw new Error(`Error fetching meals: ${error.message}`);
   }
@@ -59,7 +59,7 @@ export async function getMealsByType(
   type: MealType,
   date?: Date
 ): Promise<FoodsTableEntry[]> {
-  console.log("Fetching meals by type:", { type, date });
+  // console.log("Fetching meals by type:", { type, date });
   const { data, error } = date
     ? await supabase
         .from("user_calorie_stats")
@@ -73,7 +73,7 @@ export async function getMealsByType(
         .eq("type", type)
         .order("type", { ascending: true });
 
-  console.log("Fetched meals by type:", { type, date, data });
+  // console.log("Fetched meals by type:", { type, date, data });
   if (error) {
     throw new Error(`Error fetching meals: ${error.message}`);
   }

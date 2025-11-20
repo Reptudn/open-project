@@ -16,10 +16,12 @@ export default function ProductItem({
   product,
   date,
   mealType,
+  onAdd,
 }: {
   product: Product;
   date?: Date;
   mealType?: MealType;
+  onAdd?: (success: boolean) => void;
 }) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
@@ -81,7 +83,11 @@ export default function ProductItem({
       onPress={() => {
         router.push({
           pathname: "/(meal)/foodInfo",
-          params: { product: JSON.stringify(product) },
+          params: {
+            product: JSON.stringify(product),
+            mealType,
+            date: date ? toDbDateString(date) : undefined,
+          },
         });
       }}
     >
@@ -177,8 +183,10 @@ export default function ProductItem({
           console.log("meal type is: " + mealType);
           try {
             await addMeal(product.code, mealType, date, 100);
+            if (onAdd) onAdd(true);
           } catch (error) {
             console.error("Failed to add meal:", error);
+            if (onAdd) onAdd(false);
           }
         }}
       >
