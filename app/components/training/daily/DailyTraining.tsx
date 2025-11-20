@@ -11,11 +11,12 @@ import { useBottomSheetContext } from "@/hooks/use-bottomSheet-context";
 import WorkoutSheet from "./WorkoutSheet";
 import { useEffect, useState } from "react";
 import { getAllWorkoutLogsByDate } from "@/lib/api/workout/workoutSelect";
+import ExerciseSheet from "./ExerciseSheet";
+import WorkoutCard from "./WorkoutCard";
+import ExerciseList from "./ExerciseList";
 
 export default function DailyTraining() {
-  const [workout, setWorkout] = useState<
-    { workoutId: number; workoutName: string | undefined }[]
-  >([]);
+  const [workouts, setWorkout] = useState<Map<number, WorkoutLog[]>>(new Map());
   const { openSheet } = useBottomSheetContext();
 
   useEffect(() => {
@@ -28,16 +29,13 @@ export default function DailyTraining() {
         Alert.alert(error);
         return;
       }
-      console.log("data =", data);
       if (data) {
-        const uniqueWorkouts = Array.from(
-          new Map(data.map((item) => [item.workout_id.id, item])).values()
-        ).map((item) => ({
-          workoutId: item.workout_id.id,
-          workoutName: item.workout_id.name,
-        }));
-        console.log("test map", uniqueWorkouts);
-        setWorkout(uniqueWorkouts);
+        const map = new Map<number, WorkoutLog[]>();
+        data.forEach((item) => {
+          if (!map.has(item.workout_id.id)) map.set(item.workout_id.id, []);
+          map.get(item.workout_id.id)?.push(item);
+        });
+        setWorkout(map);
       }
     };
     getWorkouts();
@@ -47,22 +45,21 @@ export default function DailyTraining() {
     <View>
       <Text style={styles.text}>Workouts:</Text>
       <View style={styles.container}>
-        <ScrollView>
-          {workout.map((item) => (
-            <View key={item.workoutId} style={styles.list}>
-              <TouchableOpacity style={styles.card} onPress={() => {}}>
-                <Text style={styles.cardText}>{item.workoutName}</Text>
-              </TouchableOpacity>
+        <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
+          {[...workouts.entries()].map(([workoutId, logs]) => (
+            <View key={workoutId}>
+              <WorkoutCard
+                workout={logs[0].workout_id}
+                onPress={() => openSheet(<ExerciseList exercises={logs}/>)}
+              />
             </View>
           ))}
         </ScrollView>
-        <TouchableOpacity onPress={() => openSheet(<WorkoutSheet />)}>
-          <TouchableOpacity
-            style={styles.floatingButton}
-            onPress={() => openSheet(<WorkoutSheet />)}
-          >
-            <Ionicons name="add" size={32} color="white" />
-          </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() => openSheet(<WorkoutSheet />)}
+        >
+          <Ionicons name="add" size={28} color="white" />
         </TouchableOpacity>
       </View>
     </View>
@@ -70,55 +67,44 @@ export default function DailyTraining() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    position: "relative",
-    flexDirection: "row",
-    borderRadius: 10,
-    marginBottom: 20,
-    borderWidth: 1,
-    borderColor: "#dddddd51",
-    justifyContent: "center",
-  },
   text: {
-    color: "#ffffffff",
-    fontFamily: "system-ui",
+    color: "#fff",
     fontSize: 20,
+    marginBottom: 10,
   },
-  list: {
-    padding: 2,
-  },
-  card: {
-    height: 48,
+
+  container: {
     width: "100%",
-    maxWidth: 350,
-    borderWidth: 2,
-    borderColor: "#333",
-    borderRadius: 8,
-    backgroundColor: "white",
-    justifyContent: "center",
     alignItems: "center",
-    alignSelf: "center",
   },
-  cardText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#333",
+
+  scroll: {
+    maxHeight: 400,
+    width: "100%",
   },
-  floatingButton: {
-    position: "absolute",
-    bottom: 20,
-    alignSelf: "center",
+
+  scrollContent: {
+    paddingBottom: 12,
+    gap: 10,
+  },
+
+  addButton: {
+    marginTop: 20,
     backgroundColor: "#333",
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    justifyContent: "center",
+    flexDirection: "row",
     alignItems: "center",
-    elevation: 5, // Android shadow
-    shadowColor: "#000",
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
+    justifyContent: "center",
+
+    paddingVertical: 12,
+    paddingHorizontal: 18,
+
+    borderRadius: 12,
+  },
+
+  addButtonText: {
+    color: "white",
+    fontSize: 16,
+    marginLeft: 8,
+    fontWeight: "600",
   },
 });

@@ -3,17 +3,13 @@ import { addExerciseLog } from "@/lib/api/workout/workoutInsert";
 import { getWorkoutLogs } from "@/lib/api/workout/workoutSelect";
 import { updateWorkoutExerciseLogSet } from "@/lib/api/workout/workoutUpdate";
 import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
-import { preventAutoHideAsync } from "expo-router/build/utils/splash";
 import { useEffect, useState } from "react";
 import {
   View,
-  TextInput,
   Button,
   Text,
   StyleSheet,
   Alert,
-  TouchableWithoutFeedback,
-  Keyboard,
 } from "react-native";
 
 type SetRow = {

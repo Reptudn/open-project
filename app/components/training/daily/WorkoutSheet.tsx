@@ -7,6 +7,8 @@ import { BottomSheetScrollView, BottomSheetView } from "@gorhom/bottom-sheet";
 import { useCallback, useEffect, useState } from "react";
 import { Alert, TouchableOpacity, View, Text, StyleSheet } from "react-native";
 import ExerciseSheet from "./ExerciseSheet";
+import WorkoutCard from "./WorkoutCard";
+import ExerciseList from "./ExerciseList";
 
 export default function WorkoutSheet() {
   const [workouts, setWorkouts] = useState<Workout[]>([]);
@@ -38,50 +40,25 @@ export default function WorkoutSheet() {
       }
 
       const workoutExercises = data ?? [];
-      openSheet(
-        <View style={styles.exerciseSheet}>
-          <Text style={styles.exerciseTitle}>{item.name}</Text>
-          <BottomSheetScrollView>
-            {workoutExercises.length > 0 ? (
-              workoutExercises.map((exercise) => (
-                <View key={exercise.id} style={styles.list}>
-                  <TouchableOpacity
-                    style={styles.card}
-                    onPress={() => handleExercisePress(exercise)}
-                  >
-                    <Text style={styles.cardText}>
-                      {exercise.exercise_id.name}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              ))
-            ) : (
-              <Text style={styles.exerciseDescription}>
-                No exercises found for this workout
-              </Text>
-            )}
-          </BottomSheetScrollView>
-        </View>
-      );
+      openSheet(<ExerciseList exercises={workoutExercises} />);
     },
     [openSheet]
   );
 
   const renderWorkouts = useCallback(
     (item: Workout) => (
-      <View key={item.id} style={styles.list}>
-        <TouchableOpacity
-          style={styles.card}
-          onPress={() => handleWorkoutPress(item)}
-        >
-          <Text style={styles.cardText}>{item.name}</Text>
-        </TouchableOpacity>
+      <View key={item.id}>
+        <WorkoutCard workout={item} onPress={() => handleWorkoutPress(item)} />
       </View>
     ),
     [handleWorkoutPress]
   );
 
-  return <BottomSheetScrollView contentContainerStyle={styles.list}>{workouts.map(renderWorkouts)}</BottomSheetScrollView>;
+  return (
+    <BottomSheetScrollView contentContainerStyle={styles.list}>
+      {workouts.map(renderWorkouts)}
+    </BottomSheetScrollView>
+  );
 }
 
 const styles = StyleSheet.create({

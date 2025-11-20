@@ -2,11 +2,10 @@ import { getThemeColor } from "@/constants/theme";
 import { BottomSheetContext } from "@/hooks/use-bottomSheet-context";
 import {
   BottomSheetModal,
-  BottomSheetView,
   BottomSheetModalProvider,
 } from "@gorhom/bottom-sheet";
 import { PropsWithChildren, ReactNode, useRef, useState } from "react";
-import { useColorScheme, StyleSheet, Text } from "react-native";
+import { useColorScheme, StyleSheet } from "react-native";
 
 export default function BottomSheetProvider({ children }: PropsWithChildren) {
   const theme = getThemeColor(useColorScheme());
