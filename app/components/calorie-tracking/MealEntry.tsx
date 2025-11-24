@@ -9,13 +9,19 @@ import {
 import { ThemeColors } from "@/constants/theme";
 import { router } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { MealType } from "@/types/FoodData";
 
-export default function MealEntry(props: FoodsTableEntry) {
+export default function MealEntry({
+  entry,
+  mealType,
+}: {
+  entry: FoodsTableEntry;
+  mealType: MealType;
+}) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
 
-  const product = props.barcode_id;
-
+  const product = entry.barcode_id;
   if (product == null) {
     return (
       <View
@@ -39,7 +45,7 @@ export default function MealEntry(props: FoodsTableEntry) {
   }
 
   // Calculate scaled nutrients based on amount
-  const scaleFactor = (props.amount_in_g || 100) / 100;
+  const scaleFactor = (entry.amount_in_g || 100) / 100;
   const scaledCalories = product.nutriments?.["energy-kcal_100g"]
     ? (product.nutriments["energy-kcal_100g"] * scaleFactor).toFixed(0)
     : "0";
@@ -65,7 +71,7 @@ export default function MealEntry(props: FoodsTableEntry) {
       onPress={() => {
         router.push({
           pathname: "/(meal)/foodInfo",
-          params: { product: JSON.stringify(props) },
+          params: { product: JSON.stringify(entry), mealType: mealType },
         });
       }}
     >
@@ -100,7 +106,7 @@ export default function MealEntry(props: FoodsTableEntry) {
                 },
               ]}
             >
-              {props.amount_in_g}g
+              {entry.amount_in_g}g
             </Text>
           </View>
           <View style={styles.caloriesContainer}>

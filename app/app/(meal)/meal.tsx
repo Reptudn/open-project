@@ -22,7 +22,7 @@ import BottomSheet, {
 import { getMealsByType } from "@/lib/api/daily/food_tracking";
 import MealEntry from "@/components/calorie-tracking/MealEntry";
 import { MealType, Product } from "@/types/FoodData.d";
-import { FoodsTableEntry } from "@/types/Meals.d";
+import { DBProduct, FoodsTableEntry } from "@/types/Meals.d";
 
 import { GymHeader, GymTitle } from "@/components/ui/Text";
 import { ScrollView } from "react-native-gesture-handler";
@@ -43,7 +43,7 @@ function AddMeal({
   const insets = useSafeAreaInsets();
   const [showScanner, setShowScanner] = useState(false);
   const [searchText, setSearchText] = useState("");
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<DBProduct[]>([]);
 
   const openScanner = () => {
     setShowScanner(true);
@@ -116,8 +116,8 @@ function AddMeal({
                 return;
               }
               try {
-                const result = await searchFood(searchText);
-                setProducts(result || []);
+                // const result = await searchFood(searchText);
+                // setProducts(result || []);
               } catch (error) {
                 console.error("Search failed:", error);
                 setProducts([]);
@@ -153,7 +153,7 @@ function AddMeal({
             {products.map((prod) => {
               return (
                 <ProductItem
-                  key={prod.code}
+                  key={prod.barcode}
                   product={prod}
                   date={date}
                   mealType={mealType}
@@ -375,7 +375,9 @@ export default function Meal() {
               No meals added yet.
             </GymHeader>
           ) : (
-            addedMeals.map((meal, index) => <MealEntry key={index} {...meal} />)
+            addedMeals.map((meal, index) => (
+              <MealEntry key={index} entry={meal} mealType={mealTypeEnum} />
+            ))
           )}
         </ScrollView>
       </SafeAreaView>

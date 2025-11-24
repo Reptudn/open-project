@@ -1,3 +1,12 @@
+export interface DBProduct {
+  barcode: string;
+  name?: string;
+  brand?: string;
+  image_url?: string;
+  nutriments?: ProductNutriments;
+  source?: string;
+}
+
 export interface FoodsTableEntry {
   id: number;
   created_at: Date;

@@ -1,6 +1,7 @@
 import { ThemeColors } from "@/constants/theme";
 import { addMeal } from "@/lib/api/daily/food_tracking";
 import { MealType, Product } from "@/types/FoodData";
+import { DBProduct } from "@/types/Meals";
 import { toDbDateString } from "@/utils/database";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { router } from "expo-router";
@@ -18,7 +19,7 @@ export default function ProductItem({
   mealType,
   onAdd,
 }: {
-  product: Product;
+  product: DBProduct;
   date?: Date;
   mealType?: MealType;
   onAdd?: (success: boolean) => void;
@@ -40,6 +41,8 @@ export default function ProductItem({
     color?: string;
   }) => {
     if (!value && value !== 0) return null;
+
+    console.log("value for " + label + ": " + value);
 
     return (
       <View style={styles.nutrientRow}>
@@ -102,26 +105,14 @@ export default function ProductItem({
               },
             ]}
           >
-            {product.product_name || "Unknown Product"}
+            {product.name || "Unknown Product"}
           </Text>
-          {product.brands && (
+          {product.brand && (
             <Text style={[styles.brand, { color: isDark ? "#888" : "#666" }]}>
-              {product.brands}
+              {product.brand}
             </Text>
           )}
         </View>
-        {product.nutriscore_grade && (
-          <View
-            style={[
-              styles.nutriscoreContainer,
-              { backgroundColor: getNutriscoreColor(product.nutriscore_grade) },
-            ]}
-          >
-            <Text style={styles.nutriscoreText}>
-              {product.nutriscore_grade.toUpperCase()}
-            </Text>
-          </View>
-        )}
       </View>
 
       {/* Main Nutrients */}
@@ -182,7 +173,7 @@ export default function ProductItem({
           if (date === undefined || mealType === undefined) return;
           console.log("meal type is: " + mealType);
           try {
-            await addMeal(product.code, mealType, date, 100);
+            await addMeal(product.barcode, mealType, date, 100);
             if (onAdd) onAdd(true);
           } catch (error) {
             console.error("Failed to add meal:", error);
@@ -220,7 +211,7 @@ const getNutriscoreColor = (grade: string): string => {
 };
 
 // this is going to be the full page of the product if you want more information
-export function ProductItemFull({ product }: { product: Product }) {
+export function ProductItemFull({ product }: { product: DBProduct }) {
   return <ProductItem product={product} />;
 }
 

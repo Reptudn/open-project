@@ -1,39 +1,58 @@
 import { supabase } from "@/lib/supabase";
-import { FoodData, Product, SearchResponse } from "@/types/FoodData";
+import { Product, SearchResponse } from "@/types/FoodData";
+import { DBProduct } from "@/types/Meals";
 
+// TODO: make this send a fetch to our backend and not theirs
 export async function getFoodDataByBarcode(
   barcode: string
-): Promise<Product | null> {
-  const response = await fetch(
-    `https://world.openfoodfacts.org/api/v0/product/${barcode}.json`
+): Promise<DBProduct | null> {
+  const res = await fetch(
+    "https://tegfwlejpnjfcyyppogf.supabase.co/functions/v1/food",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ barcode }),
+    }
   );
 
-  if (!response.ok) {
-    throw new Error(
-      `Failed to fetch food data: ${response.status} ${response.statusText}`
-    );
-  }
+  if (!res.ok) return null;
 
-  try {
-    const data = (await response.json()) as FoodData;
-    console.info("Fetched food data by barcode:", data);
-    if (data.product) {
-      await supabase.from("foods").upsert({
-        barcode: data.product.code,
-        name: data.product.product_name,
-        brand: data.product.brands,
-        image_url: data.product.image_url,
-        nutriments: data.product.nutriments,
-        categories: data.product.categories_tags,
-        source: "OpenFoodFacts",
-        created_at: new Date(),
-      });
-    }
-    return data.product ? data.product : null;
-  } catch (error) {
-    console.error("Failed to parse JSON:", error);
-    return null;
-  }
+  const data = (await res.json()) as DBProduct | null;
+
+  console.log("data:", data);
+
+  // console.log("Fetched food data by barcode:", data);
+  return data;
+  // const response = await fetch(
+  //   `https://world.openfoodfacts.org/api/v0/product/${barcode}.json`
+  // );
+
+  // if (!response.ok) {
+  //   throw new Error(
+  //     `Failed to fetch food data: ${response.status} ${response.statusText}`
+  //   );
+  // }
+
+  // try {
+  //   const data = (await response.json()) as FoodData;
+  //   console.info("Fetched food data by barcode:", data);
+  //   if (data.product) {
+  //     await supabase.from("foods").upsert({
+  //       barcode: data.product.code,
+  //       name: data.product.product_name,
+  //       brand: data.product.brands,
+  //       image_url: data.product.image_url,
+  //       nutriments: data.product.nutriments,
+  //       categories: data.product.categories_tags,
+  //       source: "OpenFoodFacts",
+  //       created_at: new Date(),
+  //     });
+  //   }
+  //   return data.product ? data.product : null;
+  // } catch (error) {
+  //   console.error("Failed to parse JSON:", error);
+  //   return null;
+  // }
 }
 
 export async function searchFood(

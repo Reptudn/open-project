@@ -27,9 +27,8 @@ import { GymButtonFullWidth } from "@/components/ui/Button";
 export default function FoodInfo() {
   const theme = getThemeColor(useColorScheme());
   const isDark = useColorScheme() === "dark";
-  const { product, dbProduct, mealType, date } = useLocalSearchParams<{
+  const { product, mealType, date } = useLocalSearchParams<{
     product?: string;
-    dbProduct?: string;
     mealType?: string;
     date?: string;
   }>();
@@ -40,95 +39,42 @@ export default function FoodInfo() {
 
   const bottomSheetRef = useRef<BottomSheet>(null);
 
-  let prod: Product | FoodsTableEntry;
   let nutriments: any;
-  let isDbProduct = false;
 
-  if (dbProduct) {
-    prod = JSON.parse(dbProduct as string) as FoodsTableEntry;
-    nutriments = prod.barcode_id.nutriments;
-    isDbProduct = true;
-  } else {
-    prod = JSON.parse(product as string) as Product;
-    nutriments = prod.nutriments;
-    isDbProduct = false;
-  }
+  const prod = JSON.parse(product as string) as FoodsTableEntry;
+  nutriments = prod.barcode_id.nutriments;
 
   // Helper functions to safely access properties
   const getProductName = () => {
-    if (isDbProduct) {
-      const dbProd = prod as FoodsTableEntry;
-      return dbProd.barcode_id.name || "Unknown Product";
-    } else {
-      const apiProd = prod as Product;
-      return apiProd.product_name || apiProd.generic_name || "Unknown Product";
-    }
+    return prod.barcode_id.name || "Unknown Product";
   };
 
   const getBrands = () => {
-    if (isDbProduct) {
-      const dbProd = prod as FoodsTableEntry;
-      return dbProd.barcode_id.brand || "N/A";
-    } else {
-      const apiProd = prod as Product;
-      return apiProd.brands || "N/A";
-    }
+    return prod.barcode_id.brand || "N/A";
   };
 
   const getQuantity = () => {
-    if (isDbProduct) {
-      return null; // DB products don't have quantity info
-    } else {
-      const apiProd = prod as Product;
-      return apiProd.quantity;
-    }
+    return null;
   };
 
   const getNutriScore = () => {
-    if (isDbProduct) {
-      return null; // DB products don't have nutriscore in this structure
-    } else {
-      const apiProd = prod as Product;
-      return apiProd.nutriscore_grade;
-    }
+    return null;
   };
 
   const getNovaGroup = () => {
-    if (isDbProduct) {
-      return null; // DB products don't have nova group in this structure
-    } else {
-      const apiProd = prod as Product;
-      return apiProd.nova_group;
-    }
+    return null;
   };
 
   const getCategories = () => {
-    if (isDbProduct) {
-      const dbProd = prod as FoodsTableEntry;
-      return dbProd.barcode_id.categories?.join(", ");
-    } else {
-      const apiProd = prod as Product;
-      return apiProd.categories;
-    }
+    return prod.barcode_id.categories?.join(", ");
   };
 
   const getIngredients = () => {
-    if (isDbProduct) {
-      return null; // DB products don't have ingredients in this structure
-    } else {
-      const apiProd = prod as Product;
-      return apiProd.ingredients_text;
-    }
+    return null;
   };
 
   const getProductCode = () => {
-    if (isDbProduct) {
-      const dbProd = prod as FoodsTableEntry;
-      return dbProd.barcode_id.barcode;
-    } else {
-      const apiProd = prod as Product;
-      return apiProd.code;
-    }
+    return prod.barcode_id.barcode;
   };
 
   // Add meal functionality
@@ -283,9 +229,7 @@ export default function FoodInfo() {
                 { backgroundColor: getScoreColor(getNutriScore()!) },
               ]}
             >
-              <Text style={styles.scoreText}>
-                {getNutriScore()!.toUpperCase()}
-              </Text>
+              <Text style={styles.scoreText}>{getNutriScore()!}</Text>
             </View>
           </View>
         )}
@@ -435,9 +379,7 @@ export default function FoodInfo() {
                 ]}
                 numberOfLines={2}
               >
-                {isDbProduct
-                  ? getCategories()
-                  : getCategories()?.split(",").slice(0, 3).join(", ")}
+                {getCategories()}
               </Text>
             </View>
           )}
