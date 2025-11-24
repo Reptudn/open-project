@@ -11,7 +11,6 @@ import { useBottomSheetContext } from "@/hooks/use-bottomSheet-context";
 import WorkoutSheet from "./WorkoutSheet";
 import { useEffect, useState } from "react";
 import { getAllWorkoutLogsByDate } from "@/lib/api/workout/workoutSelect";
-import ExerciseSheet from "./ExerciseSheet";
 import WorkoutCard from "./WorkoutCard";
 import ExerciseList from "./ExerciseList";
 

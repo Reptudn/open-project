@@ -6,7 +6,6 @@ import {
 import { BottomSheetScrollView, BottomSheetView } from "@gorhom/bottom-sheet";
 import { useCallback, useEffect, useState } from "react";
 import { Alert, TouchableOpacity, View, Text, StyleSheet } from "react-native";
-import ExerciseSheet from "./ExerciseSheet";
 import WorkoutCard from "./WorkoutCard";
 import ExerciseList from "./ExerciseList";
 
@@ -26,9 +25,9 @@ export default function WorkoutSheet() {
     getItems();
   }, []);
 
-  const handleExercisePress = useCallback((item: WorkoutExercise) => {
-    openSheet(<ExerciseSheet exercise={item} />);
-  }, []);
+  // const handleExercisePress = useCallback((item: WorkoutExercise) => {
+  //   openSheet(<ExerciseSheet exercise={item} />);
+  // }, []);
 
   const handleWorkoutPress = useCallback(
     async (item: Workout) => {

@@ -23,6 +23,12 @@ export default function ExerciseList({
   const mapExercises = new Map<string, Logs[]>([]);
   const { openSheet } = useBottomSheetContext();
 
+  function isWorkoutLogArray(
+    arr: WorkoutLog[] | WorkoutExercise[]
+  ): arr is WorkoutExercise[] {
+    return "order_index" in arr[0];
+  }
+
   exercises.forEach((item) => {
     const id = item.exercise_id.exercise_id;
 
@@ -39,7 +45,7 @@ export default function ExerciseList({
         <View key={exerciseId}>
           <ExerciseCard
             exercise={logs[0].exercise_id}
-            onPress={() => openSheet(<SetList sets={logs}/>)}
+            onPress={() => openSheet(<SetList sets={!isWorkoutLogArray ? logs : null} />)}
           />
         </View>
       ))}

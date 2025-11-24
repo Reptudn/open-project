@@ -13,8 +13,8 @@ export default function WorkoutList({ workouts }: { workouts: Workout[] }) {
     >
       {workouts.map((item) => (
         <View key={item.id}>
-			<WorkoutCard workout={item} onPress={}/>
-		</View>
+          <WorkoutCard workout={item} onPress={} />
+        </View>
       ))}
     </BottomSheetScrollView>
   );
