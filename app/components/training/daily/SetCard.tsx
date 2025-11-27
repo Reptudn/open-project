@@ -11,133 +11,65 @@ import { X } from "lucide-react-native";
 import { useAuthContext } from "@/hooks/use-auth-context";
 import { addExerciseLog } from "@/lib/api/workout/workoutInsert";
 import { getWorkoutLogs } from "@/lib/api/workout/workoutSelect";
-import { updateWorkoutExerciseLogSet } from "@/lib/api/workout/workoutUpdate";
-
-type SetRow = {
-  setNumber: number;
-  reps: string;
-  weight: string;
-};
+import {
+  updateWorkoutExerciseLogSet,
+  updateWorkoutExerciseSet,
+} from "@/lib/api/workout/workoutUpdate";
+import { removeWorkoutLogSet } from "@/lib/api/workout/workoutDelete";
 
 export default function SetCard({
   set,
   onDelete,
 }: {
   set: WorkoutLog;
-  onDelete: () => void;
+  onDelete: (id: number) => void;
 }) {
   const [edit, setEdit] = useState(false);
-
-  const [reps, setReps] = useState(set.reps_completed?.toString());
-  const [weight, setWeight] = useState(set.weight_kg?.toString());
-
-  // const [sets, setSets] = useState<SetRow[]>([]);
-  // const { session } = useAuthContext();
-
-  // useEffect(() => {
-  //   const getSets = async () => {
-  //     const newSets: SetRow[] = [];
-  //     const { data, error } = await getWorkoutLogs(
-  //       test.exercise.workout_id.id,
-  //       new Date().toISOString().split("T")[0] // Change later to the corret date
-  //     );
-
-  //     if (error) {
-  //       Alert.alert(error);
-  //       return;
-  //     }
-
-  //     if (data) {
-  //       data.forEach((set) => {
-  //         if (
-  //           set.exercise_id.exercise_id ===
-  //           test.exercise.exercise_id.exercise_id
-  //         )
-  //           newSets.push({
-  //             setNumber: set.set_index,
-  //             reps: set.reps_completed?.toString() ?? "",
-  //             weight: set.weight_kg?.toString() ?? "",
-  //           });
-  //       });
-  //     }
-  //     setSets((prev) => [...prev, ...newSets]);
-  //   };
-  //   getSets();
-  // }, []);
-
-  // const addSet = async () => {
-  //   const created_at = new Date().toISOString().split("T")[0];
-
-  //   setSets((prev) => {
-  //     const newSetNumber = prev.length + 1;
-
-  //     const newSet = {
-  //       setNumber: newSetNumber,
-  //       reps: "",
-  //       weight: "",
-  //     };
-
-  //     addExerciseLog(
-  //       [
-  //         {
-  //           workout_id: test.exercise.workout_id.id,
-  //           exercise_id: test.exercise.exercise_id.exercise_id,
-  //           set_index: newSetNumber,
-  //           reps_completed: 0,
-  //           weight_kg: 0,
-  //           created_at,
-  //         },
-  //       ],
-  //       session
-  //     ).catch((err) => Alert.alert(err.message));
-
-  //     return [...prev, newSet];
-  //   });
-  // };
-
-  // const updateSet = async (
-  //   index: number,
-  //   field: keyof SetRow,
-  //   value: string
-  // ) => {
-  //   setSets((prev) => {
-  //     const copy = [...prev];
-  //     copy[index - 1] = { ...copy[index - 1], [field]: value };
-  //     return copy;
-  //   });
-
-  //   console.log(`value = ${value}`);
-  //   console.log(`field = ${field}`);
-  //   const { error } = await updateWorkoutExerciseLogSet(
-  //     field === "reps"
-  //       ? {
-  //           workout_id: test.exercise.workout_id.id,
-  //           exercise_id: test.exercise.exercise_id.exercise_id,
-  //           set_index: index,
-  //           reps_completed: Number(value),
-  //           created_at: new Date().toISOString().split("T")[0],
-  //         }
-  //       : {
-  //           workout_id: test.exercise.workout_id.id,
-  //           exercise_id: test.exercise.exercise_id.exercise_id,
-  //           set_index: index,
-  //           weight_kg: Number(value),
-  //           created_at: new Date().toISOString().split("T")[0],
-  //         }
-  //   );
-
-  //   if (error) {
-  //     Alert.alert(error);
-  //     return;
-  //   }
-  // };
+  const [reps, setReps] = useState<string | undefined>(
+    set.reps_completed?.toString()
+  );
+  const [weight, setWeight] = useState<string | undefined>(
+    set.weight_kg?.toString()
+  );
 
   const openEdit = () => setEdit(true);
   const closeEdit = () => setEdit(false);
 
-  const saveChanges = () => {
-    set.reps_completed = Number(reps);
-    set.weight_kg = Number(weight);
+  const deletSet = async () => {
+    const { error } = await removeWorkoutLogSet(
+      set.workout_id.id,
+      set.exercise_id.exercise_id,
+      set.set_index,
+      set.created_at
+    );
+
+    if (error) {
+      Alert.alert(error);
+      return;
+    }
+
+    onDelete(set.id);
+  };
+
+  const saveChanges = async () => {
+    set.reps_completed = reps != undefined ? Number(reps) : set.reps_completed;
+    set.weight_kg = weight != undefined ? Number(weight) : set.weight_kg;
+
+    const { error } = await updateWorkoutExerciseLogSet({
+      workout_id: set.workout_id.id,
+      exercise_id: set.exercise_id.exercise_id,
+      set_index: set.set_index,
+      reps_completed: set.reps_completed,
+      weight_kg: set.weight_kg,
+      created_at: set.created_at,
+    });
+
+    setReps(undefined);
+    setWeight(undefined);
+
+    if (error) {
+      Alert.alert(error);
+    }
     closeEdit();
   };
 
@@ -149,8 +81,7 @@ export default function SetCard({
             <View style={styles.headerRow}>
               <Text style={styles.setIndex}>Set {set.set_index}</Text>
 
-              {/* Delete Button */}
-              <TouchableOpacity onPress={onDelete}>
+              <TouchableOpacity onPress={deletSet}>
                 <X size={20} color="#b00" />
               </TouchableOpacity>
             </View>

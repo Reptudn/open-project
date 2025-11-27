@@ -3,6 +3,7 @@ import ExerciseCard from "./ExerciseCard";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { useBottomSheetContext } from "@/hooks/use-bottomSheet-context";
 import SetList from "./SetList";
+import AuthProvider from "@/providers/auth-provider";
 
 interface Logs {
   id: number;
@@ -45,7 +46,11 @@ export default function ExerciseList({
         <View key={exerciseId}>
           <ExerciseCard
             exercise={logs[0].exercise_id}
-            onPress={() => openSheet(<SetList sets={!isWorkoutLogArray ? logs : null} />)}
+            onPress={() =>
+              openSheet(
+                  <SetList info={logs} />
+              )
+            }
           />
         </View>
       ))}

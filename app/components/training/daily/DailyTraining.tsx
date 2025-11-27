@@ -9,10 +9,11 @@ import {
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useBottomSheetContext } from "@/hooks/use-bottomSheet-context";
 import WorkoutSheet from "./WorkoutSheet";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { getAllWorkoutLogsByDate } from "@/lib/api/workout/workoutSelect";
 import WorkoutCard from "./WorkoutCard";
 import ExerciseList from "./ExerciseList";
+import AuthProvider from "@/providers/auth-provider";
 
 export default function DailyTraining() {
   const [workouts, setWorkout] = useState<Map<number, WorkoutLog[]>>(new Map());
@@ -40,19 +41,24 @@ export default function DailyTraining() {
     getWorkouts();
   }, []);
 
+  const renderList = useCallback(([workoutId, logs]) => (
+    <View key={workoutId}>
+      <WorkoutCard
+        workout={logs[0].workout_id}
+        onPress={() => openSheet(<ExerciseList exercises={logs} />)}
+      />
+    </View>
+  ), []);
+
   return (
     <View>
       <Text style={styles.text}>Workouts:</Text>
       <View style={styles.container}>
-        <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
-          {[...workouts.entries()].map(([workoutId, logs]) => (
-            <View key={workoutId}>
-              <WorkoutCard
-                workout={logs[0].workout_id}
-                onPress={() => openSheet(<ExerciseList exercises={logs}/>)}
-              />
-            </View>
-          ))}
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.scrollContent}
+        >
+          {[...workouts.entries()].map(renderList)}
         </ScrollView>
         <TouchableOpacity
           style={styles.addButton}

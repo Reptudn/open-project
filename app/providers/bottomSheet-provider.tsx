@@ -6,6 +6,7 @@ import {
 } from "@gorhom/bottom-sheet";
 import { PropsWithChildren, ReactNode, useRef, useState } from "react";
 import { useColorScheme, StyleSheet } from "react-native";
+import AuthProvider from "./auth-provider";
 
 export default function BottomSheetProvider({ children }: PropsWithChildren) {
   const theme = getThemeColor(useColorScheme());
@@ -33,17 +34,19 @@ export default function BottomSheetProvider({ children }: PropsWithChildren) {
       }}
     >
       {children}
-      <BottomSheetModalProvider>
-        <BottomSheetModal
-          keyboardBehavior="interactive"
-          keyboardBlurBehavior="restore"
-          ref={bottomSheetModalRef}
-          snapPoints={["25%", "50%"]}
-          index={1}
-        >
-          {content}
-        </BottomSheetModal>
-      </BottomSheetModalProvider>
+      <AuthProvider>
+        <BottomSheetModalProvider>
+          <BottomSheetModal
+            keyboardBehavior="interactive"
+            keyboardBlurBehavior="restore"
+            ref={bottomSheetModalRef}
+            snapPoints={["25%", "50%"]}
+            index={1}
+          >
+            {content}
+          </BottomSheetModal>
+        </BottomSheetModalProvider>
+      </AuthProvider>
     </BottomSheetContext.Provider>
   );
 }

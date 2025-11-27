@@ -2,41 +2,78 @@ import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { View, StyleSheet, Alert, TouchableOpacity } from "react-native";
 import SetCard from "./SetCard";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import WorkoutSheet from "./WorkoutSheet";
+import { useAuthContext } from "@/hooks/use-auth-context";
+import { addExerciseLog } from "@/lib/api/workout/workoutInsert";
+import { useCallback, useEffect, useState } from "react";
 
-export default function SetList({ sets }: { sets: WorkoutLog[] | null }) {
-  console.log("workoutlogs = ", sets);
+export default function SetListAdd({ info }: { info: WorkoutLog[] }) {
+  const [sets, setSets] = useState<WorkoutLog[]>([]);
+  const { session } = useAuthContext();
+
+  useEffect(() => {
+    setSets(info);
+  }, [])
+
+  const deleteSet = (id: number) => {
+    setSets(prev => prev.filter(s => s.id != id))
+  }
+
+  const renderList = useCallback(
+    (item: WorkoutLog) => (
+      <View key={item.id}>
+        <SetCard set={item} onDelete={deleteSet} />
+      </View>
+    ),
+    [sets]
+  );
+
+  const addSet = async () => {
+    const created_at = new Date().toISOString().split("T")[0];
+
+    const index = sets.length + 1;
+    const { data, error } = await addExerciseLog(
+      [
+        {
+          workout_id: info[0].workout_id.id,
+          exercise_id: info[0].exercise_id.exercise_id,
+          set_index: index,
+          reps_completed: 0,
+          weight_kg: 0,
+          created_at: created_at,
+        },
+      ],
+      session
+    );
+
+    if (error) {
+      Alert.alert(error);
+      return;
+    }
+
+    setSets(prev => [...prev, ...(data ?? [])]);
+  };
+
   return (
     <BottomSheetScrollView>
-      {sets &&
-        sets.map((item) => (
-          <View key={item.id}>
-            <SetCard set={item} onDelete={() => Alert.alert("Delete Set")} />
-          </View>
-        ))}
-      {!sets && (
-        <TouchableOpacity
-          style={styles.addButton}
-          onPress={() => Alert.alert("Add Set")}
-        >
-          <Ionicons name="add" size={28} color="white" />
-        </TouchableOpacity>
-      )}
+      {sets.map(renderList)}
+      <TouchableOpacity style={styles.addButton} onPress={addSet}>
+        <Ionicons name="add" size={28} color="black" />
+      </TouchableOpacity>
     </BottomSheetScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   addButton: {
-    marginTop: 20,
-    backgroundColor: "#333",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-
-    paddingVertical: 12,
-    paddingHorizontal: 18,
-
+    backgroundColor: "#fff",
     borderRadius: 12,
+    padding: 12,
+    marginVertical: 6,
+    marginHorizontal: 16,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 3,
   },
 });

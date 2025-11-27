@@ -70,7 +70,8 @@ export async function removeWorkoutLog(
 export async function removeWorkoutLogSet(
   workoutId: number,
   exerciseId: string,
-  setIndex: number
+  setIndex: number,
+  created_at: string
 ): Promise<Result<WorkoutExercise>> {
   const { data, error } = await supabase
     .from("workout_logs")
@@ -78,6 +79,7 @@ export async function removeWorkoutLogSet(
     .eq("workout_id", workoutId)
     .eq("exercise_id", exerciseId)
     .eq("set_index", setIndex)
+    .eq("created_at", created_at)
     .select()
     .single();
 
