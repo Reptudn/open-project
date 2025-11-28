@@ -8,12 +8,8 @@ import {
   Alert,
 } from "react-native";
 import { X } from "lucide-react-native";
-import { useAuthContext } from "@/hooks/use-auth-context";
-import { addExerciseLog } from "@/lib/api/workout/workoutInsert";
-import { getWorkoutLogs } from "@/lib/api/workout/workoutSelect";
 import {
   updateWorkoutExerciseLogSet,
-  updateWorkoutExerciseSet,
 } from "@/lib/api/workout/workoutUpdate";
 import { removeWorkoutLogSet } from "@/lib/api/workout/workoutDelete";
 
@@ -54,6 +50,8 @@ export default function SetCard({
   const saveChanges = async () => {
     set.reps_completed = reps != undefined ? Number(reps) : set.reps_completed;
     set.weight_kg = weight != undefined ? Number(weight) : set.weight_kg;
+
+    console.log("set = ", set);
 
     const { error } = await updateWorkoutExerciseLogSet({
       workout_id: set.workout_id.id,

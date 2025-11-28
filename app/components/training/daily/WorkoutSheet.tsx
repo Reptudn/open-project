@@ -25,10 +25,6 @@ export default function WorkoutSheet() {
     getItems();
   }, []);
 
-  // const handleExercisePress = useCallback((item: WorkoutExercise) => {
-  //   openSheet(<ExerciseSheet exercise={item} />);
-  // }, []);
-
   const handleWorkoutPress = useCallback(
     async (item: Workout) => {
       const { data, error } = await getWorkoutExercises(item.id);

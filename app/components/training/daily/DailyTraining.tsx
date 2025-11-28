@@ -13,7 +13,6 @@ import { useCallback, useEffect, useState } from "react";
 import { getAllWorkoutLogsByDate } from "@/lib/api/workout/workoutSelect";
 import WorkoutCard from "./WorkoutCard";
 import ExerciseList from "./ExerciseList";
-import AuthProvider from "@/providers/auth-provider";
 
 export default function DailyTraining() {
   const [workouts, setWorkout] = useState<Map<number, WorkoutLog[]>>(new Map());
@@ -39,7 +38,7 @@ export default function DailyTraining() {
       }
     };
     getWorkouts();
-  }, []);
+  }, []); // not good
 
   const renderList = useCallback(([workoutId, logs]) => (
     <View key={workoutId}>

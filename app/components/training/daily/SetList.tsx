@@ -11,7 +11,8 @@ export default function SetListAdd({ info }: { info: WorkoutLog[] }) {
   const { session } = useAuthContext();
 
   useEffect(() => {
-    setSets(info);
+    if (info[0].set_index)
+      setSets(info);
   }, [])
 
   const deleteSet = (id: number) => {
@@ -31,6 +32,7 @@ export default function SetListAdd({ info }: { info: WorkoutLog[] }) {
     const created_at = new Date().toISOString().split("T")[0];
 
     const index = sets.length + 1;
+    console.log("info = ", info);
     const { data, error } = await addExerciseLog(
       [
         {
@@ -49,6 +51,8 @@ export default function SetListAdd({ info }: { info: WorkoutLog[] }) {
       Alert.alert(error);
       return;
     }
+
+    console.log("data = ", data);
 
     setSets(prev => [...prev, ...(data ?? [])]);
   };

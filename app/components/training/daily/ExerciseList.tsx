@@ -3,7 +3,8 @@ import ExerciseCard from "./ExerciseCard";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { useBottomSheetContext } from "@/hooks/use-bottomSheet-context";
 import SetList from "./SetList";
-import AuthProvider from "@/providers/auth-provider";
+import { getWorkoutLogs } from "@/lib/api/workout/workoutSelect";
+import { useEffect, useState } from "react";
 
 interface Logs {
   id: number;
@@ -21,7 +22,9 @@ export default function ExerciseList({
 }: {
   exercises: WorkoutExercise[] | WorkoutLog[];
 }) {
-  const mapExercises = new Map<string, Logs[]>([]);
+  const [mapExercises, setMapExercises] = useState<Map<string, Logs[]>>(
+    new Map()
+  );
   const { openSheet } = useBottomSheetContext();
 
   function isWorkoutLogArray(
@@ -30,12 +33,61 @@ export default function ExerciseList({
     return "order_index" in arr[0];
   }
 
-  exercises.forEach((item) => {
-    const id = item.exercise_id.exercise_id;
+  useEffect(() => {
+    const loadLogs = async () => {
+      if (isWorkoutLogArray(exercises)) {
+        const created_at = new Date().toISOString().split("T")[0];
 
-    if (!mapExercises.has(id)) mapExercises.set(id, []);
-    mapExercises.get(id)?.push(item);
-  });
+        const { data, error } = await getWorkoutLogs(
+          exercises[0].workout_id.id,
+          created_at
+        );
+
+        if (error) {
+          Alert.alert(error);
+          return;
+        }
+
+        console.log("data = ", data);
+        if (data) {
+          const newMap = new Map<string, Logs[]>();
+
+          data.forEach((item) => {
+            const id = item.exercise_id.exercise_id;
+            if (!newMap.has(id)) newMap.set(id, []);
+            newMap.get(id)?.push(item);
+          });
+
+          exercises.forEach((item) => {
+            const id = item.exercise_id.exercise_id;
+
+            if (!newMap.has(id)) {
+              newMap.set(id, []);
+              newMap.get(id)?.push(item);
+            }
+          });
+          setMapExercises(newMap);
+          return;
+        }
+      }
+      const newMap = new Map<string, Logs[]>();
+
+      exercises.forEach((item) => {
+        const id = item.exercise_id.exercise_id;
+        if (!newMap.has(id)) newMap.set(id, []);
+        newMap.get(id)?.push(item);
+      });
+      setMapExercises(newMap);
+    };
+    loadLogs();
+  }, []);
+
+  // exercises.forEach((item) => {
+  //   const id = item.exercise_id.exercise_id;
+
+  //   if (!mapExercises.has(id)) mapExercises.set(id, []);
+  //   mapExercises.get(id)?.push(item);
+  // });
 
   return (
     <BottomSheetScrollView
@@ -46,11 +98,7 @@ export default function ExerciseList({
         <View key={exerciseId}>
           <ExerciseCard
             exercise={logs[0].exercise_id}
-            onPress={() =>
-              openSheet(
-                  <SetList info={logs} />
-              )
-            }
+            onPress={() => openSheet(<SetList info={logs} />)}
           />
         </View>
       ))}
