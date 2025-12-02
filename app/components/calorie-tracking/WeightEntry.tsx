@@ -43,6 +43,7 @@ export default function WeightEntry({ date }: { date: Date }) {
       setWeight(prev);
     }
   };
+
   return (
     <GymView
       style={{

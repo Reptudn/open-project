@@ -38,7 +38,7 @@ export default function DailyTraining() {
       }
     };
     getWorkouts();
-  }, []); // not good
+  }, []);
 
   const renderList = useCallback(([workoutId, logs]) => (
     <View key={workoutId}>
@@ -47,7 +47,7 @@ export default function DailyTraining() {
         onPress={() => openSheet(<ExerciseList exercises={logs} />)}
       />
     </View>
-  ), []);
+  ), [workouts]);
 
   return (
     <View>

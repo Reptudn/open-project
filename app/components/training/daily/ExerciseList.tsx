@@ -82,13 +82,6 @@ export default function ExerciseList({
     loadLogs();
   }, []);
 
-  // exercises.forEach((item) => {
-  //   const id = item.exercise_id.exercise_id;
-
-  //   if (!mapExercises.has(id)) mapExercises.set(id, []);
-  //   mapExercises.get(id)?.push(item);
-  // });
-
   return (
     <BottomSheetScrollView
       contentContainerStyle={styles.scrollContent}
