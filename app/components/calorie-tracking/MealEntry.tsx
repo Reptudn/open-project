@@ -14,9 +14,13 @@ import { MealType } from "@/types/FoodData";
 export default function MealEntry({
   entry,
   mealType,
+  onLongPress,
+  editMeal,
 }: {
   entry: FoodsTableEntry;
   mealType: MealType;
+  onLongPress: () => void;
+  editMeal?: boolean;
 }) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
@@ -71,9 +75,14 @@ export default function MealEntry({
       onPress={() => {
         router.push({
           pathname: "/(meal)/foodInfo",
-          params: { product: JSON.stringify(entry), mealType: mealType },
+          params: {
+            product: JSON.stringify(entry),
+            mealType: mealType,
+            edit: editMeal ? "true" : "false",
+          },
         });
       }}
+      onLongPress={onLongPress}
     >
       {/* Header with inline calories */}
       <View style={styles.header}>

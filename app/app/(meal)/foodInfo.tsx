@@ -1,7 +1,7 @@
 import GymView from "@/components/ui/GymView";
 import { GymText, GymTitle } from "@/components/ui/Text";
 import { getThemeColor } from "@/constants/theme";
-import { Product, MealType } from "@/types/FoodData.d";
+import { MealType } from "@/types/FoodData.d";
 import { FoodsTableEntry } from "@/types/Meals.d";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { router, useLocalSearchParams } from "expo-router";
@@ -11,7 +11,6 @@ import {
   View,
   Text,
   StyleSheet,
-  TextInput,
   Alert,
   ActivityIndicator,
 } from "react-native";
@@ -23,19 +22,31 @@ import BottomSheet, {
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import { GymButtonFullWidth } from "@/components/ui/Button";
+import DropDownPicker from "react-native-dropdown-picker";
+import { GymBr } from "@/components/ui/Br";
 
 export default function FoodInfo() {
   const theme = getThemeColor(useColorScheme());
   const isDark = useColorScheme() === "dark";
-  const { product, mealType, date } = useLocalSearchParams<{
+  const { product, mealType, date, edit } = useLocalSearchParams<{
     product?: string;
     mealType?: string;
     date?: string;
+    edit?: "true" | "false";
   }>();
 
   const [amount, setAmount] = useState("100");
   const [unit, setUnit] = useState<"grams" | "portions">("grams");
   const [isAdding, setIsAdding] = useState(false);
+
+  const isEditMode = edit && edit === "true";
+
+  // unit dropdown picker
+  const [unitItems, setUnitItems] = useState([
+    { label: "Portions", value: "portions" },
+    { label: "Grams", value: "grams" },
+  ]);
+  const [openDropdownPicker, setOpenDropdownPicker] = useState(false);
 
   const bottomSheetRef = useRef<BottomSheet>(null);
 
@@ -107,12 +118,6 @@ export default function FoodInfo() {
       const targetMealType = getMealTypeFromParams();
       const productCode = getProductCode();
 
-      console.log("Adding meal with details:", {
-        productCode,
-        targetMealType,
-        targetDate,
-        amountInGrams,
-      });
       await addMeal(productCode, targetMealType, targetDate, amountInGrams);
       console.log("Added Meal Successfully");
 
@@ -400,290 +405,99 @@ export default function FoodInfo() {
             </View>
           )}
         </View>
-
-        {/* Quantity Selection */}
-        {mealType && (
-          <>
-            <SectionHeader title="Add to Meal" />
-            <View
-              style={[
-                styles.section,
-                { backgroundColor: isDark ? "#1e1e1e" : "#fff" },
-              ]}
-            >
-              <View style={styles.amountContainer}>
-                <Text style={[styles.amountLabel, { color: theme.text }]}>
-                  Amount:
-                </Text>
-                <View style={styles.inputContainer}>
-                  <TextInput
-                    style={[
-                      styles.amountInput,
-                      {
-                        borderColor: isDark ? "#444" : "#ddd",
-                        backgroundColor: isDark ? "#2a2a2a" : "#f8f8f8",
-                        color: theme.text,
-                      },
-                    ]}
-                    value={amount}
-                    onChangeText={setAmount}
-                    keyboardType="numeric"
-                    placeholder="100"
-                    placeholderTextColor={isDark ? "#666" : "#999"}
-                  />
-                  <View style={styles.unitToggle}>
-                    <TouchableOpacity
-                      style={[
-                        styles.unitButton,
-                        {
-                          backgroundColor:
-                            unit === "grams" ? theme.tint : "transparent",
-                          borderColor: theme.tint,
-                        },
-                      ]}
-                      onPress={() => setUnit("grams")}
-                    >
-                      <Text
-                        style={[
-                          styles.unitButtonText,
-                          { color: unit === "grams" ? "#fff" : theme.tint },
-                        ]}
-                      >
-                        g
-                      </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={[
-                        styles.unitButton,
-                        {
-                          backgroundColor:
-                            unit === "portions" ? theme.tint : "transparent",
-                          borderColor: theme.tint,
-                        },
-                      ]}
-                      onPress={() => setUnit("portions")}
-                    >
-                      <Text
-                        style={[
-                          styles.unitButtonText,
-                          { color: unit === "portions" ? "#fff" : theme.tint },
-                        ]}
-                      >
-                        portions
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              </View>
-
-              {/* Nutrition Preview */}
-              {amount && Number(amount) > 0 && (
-                <View
-                  style={[
-                    styles.nutritionPreview,
-                    { borderTopColor: isDark ? "#333" : "#eee" },
-                  ]}
-                >
-                  <Text style={[styles.previewTitle, { color: theme.text }]}>
-                    Nutrition Preview:
-                  </Text>
-                  <View style={styles.previewGrid}>
-                    <View style={styles.previewItem}>
-                      <Text
-                        style={[styles.previewLabel, { color: theme.text }]}
-                      >
-                        Calories
-                      </Text>
-                      <Text
-                        style={[styles.previewValue, { color: theme.text }]}
-                      >
-                        {calculateNutritionPreview().calories.toFixed(0)} kcal
-                      </Text>
-                    </View>
-                    <View style={styles.previewItem}>
-                      <Text
-                        style={[styles.previewLabel, { color: theme.text }]}
-                      >
-                        Protein
-                      </Text>
-                      <Text
-                        style={[styles.previewValue, { color: theme.text }]}
-                      >
-                        {calculateNutritionPreview().protein.toFixed(1)}g
-                      </Text>
-                    </View>
-                    <View style={styles.previewItem}>
-                      <Text
-                        style={[styles.previewLabel, { color: theme.text }]}
-                      >
-                        Carbs
-                      </Text>
-                      <Text
-                        style={[styles.previewValue, { color: theme.text }]}
-                      >
-                        {calculateNutritionPreview().carbs.toFixed(1)}g
-                      </Text>
-                    </View>
-                    <View style={styles.previewItem}>
-                      <Text
-                        style={[styles.previewLabel, { color: theme.text }]}
-                      >
-                        Fat
-                      </Text>
-                      <Text
-                        style={[styles.previewValue, { color: theme.text }]}
-                      >
-                        {calculateNutritionPreview().fat.toFixed(1)}g
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-              )}
-
-              {/* Add to Meal Button */}
-              <TouchableOpacity
-                style={[
-                  styles.addButton,
-                  { backgroundColor: theme.tint },
-                  isAdding && { opacity: 0.6 },
-                ]}
-                onPress={handleAddToMeal}
-                disabled={isAdding}
-              >
-                {isAdding ? (
-                  <ActivityIndicator size="small" color="#fff" />
-                ) : (
-                  <>
-                    <Ionicons
-                      name="add-circle"
-                      size={20}
-                      color="#fff"
-                      style={{ marginRight: 8 }}
-                    />
-                    <Text style={[styles.addButtonText, { color: "#fff" }]}>
-                      Add {amount}
-                      {unit === "grams" ? "g" : " portions"} to{" "}
-                      {mealType?.toLowerCase() || "meal"}
-                    </Text>
-                  </>
-                )}
-              </TouchableOpacity>
-            </View>
-          </>
-        )}
       </ScrollView>
-      <BottomSheet
-        ref={bottomSheetRef}
-        snapPoints={["25%", "50%"]}
-        android_keyboardInputMode="adjustResize"
-        enablePanDownToClose={false}
-        index={0}
-        handleIndicatorStyle={{ backgroundColor: theme.text }}
-        backgroundStyle={{ backgroundColor: theme.background }}
-      >
-        <BottomSheetView style={styles.bottomSheetContent}>
-          {/* Header */}
-          <View style={styles.bottomSheetHeader}>
-            <Text style={[styles.bottomSheetTitle, { color: theme.text }]}>
-              Add to {mealType?.toLowerCase() || "meal"}
-            </Text>
-          </View>
-
-          {/* Amount Input */}
-          <View style={styles.bottomSheetRow}>
-            <Text style={[styles.bottomSheetLabel, { color: theme.text }]}>
-              Amount:
-            </Text>
-            <BottomSheetTextInput
-              style={[
-                styles.bottomSheetInput,
-                {
-                  borderColor: isDark ? "#444" : "#ddd",
-                  backgroundColor: isDark ? "#2a2a2a" : "#f8f8f8",
-                  color: theme.text,
-                },
-              ]}
-              value={amount}
-              onChangeText={setAmount}
-              keyboardType="numeric"
-              placeholder="100"
-              placeholderTextColor={isDark ? "#666" : "#999"}
-            />
-          </View>
-
-          {/* Unit Toggle */}
-          <View style={styles.bottomSheetRow}>
-            <Text style={[styles.bottomSheetLabel, { color: theme.text }]}>
-              Unit:
-            </Text>
-            <View style={styles.unitToggleBottomSheet}>
-              <TouchableOpacity
-                style={[
-                  styles.unitButtonBottomSheet,
-                  {
-                    backgroundColor:
-                      unit === "grams" ? theme.tint : "transparent",
-                    borderColor: theme.tint,
-                  },
-                ]}
-                onPress={() => setUnit("grams")}
-              >
-                <Text
-                  style={[
-                    styles.unitButtonText,
-                    { color: unit === "grams" ? "#505050ff" : theme.tint },
-                  ]}
-                >
-                  Grams
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.unitButtonBottomSheet,
-                  {
-                    backgroundColor:
-                      unit === "portions" ? theme.tint : "transparent",
-                    borderColor: theme.tint,
-                  },
-                ]}
-                onPress={() => setUnit("portions")}
-              >
-                <Text
-                  style={[
-                    styles.unitButtonText,
-                    { color: unit === "portions" ? "#505050ff" : theme.tint },
-                  ]}
-                >
-                  Portions
-                </Text>
-              </TouchableOpacity>
+      {!isEditMode ? (
+        <BottomSheet
+          ref={bottomSheetRef}
+          snapPoints={["13%", "27%"]}
+          android_keyboardInputMode="adjustResize"
+          enablePanDownToClose={false}
+          index={0}
+          handleIndicatorStyle={{ backgroundColor: theme.text }}
+          backgroundStyle={{ backgroundColor: theme.background }}
+        >
+          {/* Add Button */}
+          <BottomSheetView style={styles.bottomSheetContent}>
+            <GymButtonFullWidth onPress={handleAddToMeal} disabled={isAdding}>
+              {isAdding ? (
+                <ActivityIndicator size="small" color="#fff" />
+              ) : (
+                <GymText>
+                  Add {amount}
+                  {unit === "grams" ? "g" : " portions"} to{" "}
+                  {mealType?.toLowerCase() || "meal"}
+                </GymText>
+              )}
+            </GymButtonFullWidth>
+            {/* Amount Input */}
+            <GymBr />
+            <View style={styles.bottomSheetRow}>
+              <View style={styles.inputRow}>
+                <BottomSheetTextInput
+                  style={{
+                    borderColor: isDark ? "#444" : "#ddd",
+                    backgroundColor: isDark ? "#2a2a2a" : "#f8f8f8",
+                    color: theme.text,
+                  }}
+                  value={amount}
+                  onChangeText={setAmount}
+                  keyboardType="numeric"
+                  placeholder="100"
+                  placeholderTextColor={isDark ? "#666" : "#999"}
+                />
+                <DropDownPicker
+                  open={openDropdownPicker}
+                  value={unit}
+                  items={unitItems}
+                  setOpen={setOpenDropdownPicker}
+                  setValue={setUnit}
+                  setItems={setUnitItems}
+                  style={{
+                    borderColor: isDark ? "#444" : "#ddd",
+                    backgroundColor: isDark ? "#2a2a2a" : "#f8f8f8",
+                  }}
+                  textStyle={{ color: theme.text }}
+                  dropDownContainerStyle={{
+                    borderColor: isDark ? "#444" : "#ddd",
+                    backgroundColor: isDark ? "#2a2a2a" : "#f8f8f8",
+                  }}
+                />
+              </View>
             </View>
-          </View>
 
-          {/* Nutrition Preview */}
-          {amount && Number(amount) > 0 && (
-            <View style={styles.nutritionPreviewBottomSheet}>
-              <Text style={[styles.previewTitle, { color: theme.text }]}>
+            {/* Nutrition Preview */}
+            {amount && Number(amount) > 0 && (
+              <GymText
+                style={{ marginTop: 8, textAlign: "center", color: theme.text }}
+              >
                 You will add: {calculateNutritionPreview().calories.toFixed(0)}{" "}
                 kcal
-              </Text>
-            </View>
-          )}
-
-          {/* Add Button */}
-          <GymButtonFullWidth onPress={handleAddToMeal} disabled={isAdding}>
+              </GymText>
+            )}
+          </BottomSheetView>
+        </BottomSheet>
+      ) : (
+        <BottomSheetView style={{ height: 16 }}>
+          {/* In edit mode */}
+          <BottomSheetTextInput value="100" />
+          <GymButtonFullWidth
+            onPress={() => {
+              router.back();
+            }}
+            disabled={isAdding}
+          >
             {isAdding ? (
               <ActivityIndicator size="small" color="#fff" />
             ) : (
-              <Text style={[styles.addButtonText, { color: "#fff" }]}>
-                Add {amount}
+              <GymText>
+                Update {amount}
                 {unit === "grams" ? "g" : " portions"} to{" "}
                 {mealType?.toLowerCase() || "meal"}
-              </Text>
+              </GymText>
             )}
           </GymButtonFullWidth>
         </BottomSheetView>
-      </BottomSheet>
+      )}
     </GymView>
   );
 }
@@ -719,23 +533,32 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   bottomSheetRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 16,
+    flexDirection: "column",
+    marginBottom: 20,
   },
   bottomSheetLabel: {
     fontSize: 16,
     fontWeight: "600",
-    width: 80,
+    marginBottom: 12,
+  },
+  inputRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
   },
   bottomSheetInput: {
-    flex: 1,
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 10,
     fontSize: 16,
-    marginLeft: 12,
+    width: 500,
+  },
+  dropdownPicker: {
+    flex: 1,
+    borderWidth: 1,
+    borderRadius: 8,
+    minHeight: 40,
   },
   unitToggleBottomSheet: {
     flexDirection: "row",

@@ -55,6 +55,28 @@ export async function getFoodDataByBarcode(
   // }
 }
 
+export async function searchFoodDb(query: string): Promise<DBProduct[] | null> {
+  const res = await fetch(
+    "https://tegfwlejpnjfcyyppogf.supabase.co/functions/v1/food",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query: query }),
+    }
+  );
+
+  if (!res.ok) {
+    console.info("Couldnt find food in db:", res.statusText);
+    return null;
+  }
+
+  const data = (await res.json()) as DBProduct[] | null;
+
+  console.log("data:", data);
+
+  return data;
+}
+
 export async function searchFood(
   query: string,
   limit: number = 15

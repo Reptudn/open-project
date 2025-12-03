@@ -1,7 +1,11 @@
 import BarcodeScanner from "@/components/calorie-tracking/BarcodeScanner";
 import ProductItem from "@/components/calorie-tracking/ProductItem";
 import { getThemeColor } from "@/constants/theme";
-import { getFoodDataByBarcode, searchFood } from "@/lib/api/daily/food_data";
+import {
+  getFoodDataByBarcode,
+  searchFood,
+  searchFoodDb,
+} from "@/lib/api/daily/food_data";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useLocalSearchParams, router } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -13,13 +17,14 @@ import {
   Text,
   SafeAreaView,
   RefreshControl,
+  Alert,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import BottomSheet, {
   BottomSheetScrollView,
   BottomSheetTextInput,
 } from "@gorhom/bottom-sheet";
-import { getMealsByType } from "@/lib/api/daily/food_tracking";
+import { deleteMeal, getMealsByType } from "@/lib/api/daily/food_tracking";
 import MealEntry from "@/components/calorie-tracking/MealEntry";
 import { MealType, Product } from "@/types/FoodData.d";
 import { DBProduct, FoodsTableEntry } from "@/types/Meals.d";
@@ -108,7 +113,20 @@ function AddMeal({
             placeholder="Search food or enter barcode..."
             placeholderTextColor={`${theme.text}80`}
             value={searchText}
-            onChangeText={setSearchText}
+            onChangeText={async (text) => {
+              setSearchText(text);
+              if (!text.trim()) {
+                setProducts([]);
+                return;
+              }
+              try {
+                const result = await searchFoodDb(text);
+                setProducts(result || []);
+              } catch (error) {
+                console.error("Search failed:", error);
+                setProducts([]);
+              }
+            }}
             style={[styles.searchInput, { color: theme.text }]}
             onSubmitEditing={async () => {
               if (!searchText.trim()) {
@@ -116,8 +134,8 @@ function AddMeal({
                 return;
               }
               try {
-                // const result = await searchFood(searchText);
-                // setProducts(result || []);
+                const result = await searchFoodDb(searchText);
+                setProducts(result || []);
               } catch (error) {
                 console.error("Search failed:", error);
                 setProducts([]);
@@ -376,7 +394,40 @@ export default function Meal() {
             </GymHeader>
           ) : (
             addedMeals.map((meal, index) => (
-              <MealEntry key={index} entry={meal} mealType={mealTypeEnum} />
+              <MealEntry
+                key={index}
+                entry={meal}
+                mealType={mealTypeEnum}
+                editMeal={true}
+                onLongPress={() => {
+                  Alert.alert(
+                    "Delete Entry",
+                    "Are you sure you want to delete this entry?",
+                    [
+                      {
+                        text: "Cancel",
+                        style: "cancel",
+                      },
+                      {
+                        text: "Delete",
+                        style: "destructive",
+                        onPress: async () => {
+                          try {
+                            // Assuming you have a function to delete the meal entry
+                            await deleteMeal(meal.id);
+                            await onRefresh();
+                          } catch (error) {
+                            console.error(
+                              "Failed to delete meal entry:",
+                              error
+                            );
+                          }
+                        },
+                      },
+                    ]
+                  );
+                }}
+              />
             ))
           )}
         </ScrollView>
