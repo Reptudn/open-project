@@ -1,5 +1,7 @@
-import { ThemeColors } from "@/constants/theme";
+import { getThemeColor } from "@/constants/theme";
+import { MealType } from "@/types/FoodData.d";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { router } from "expo-router";
 import {
   StyleSheet,
   View,
@@ -12,116 +14,312 @@ function MealItem({
   title,
   eaten,
   toEat,
+  date,
 }: {
   title: "Breakfast" | "Lunch" | "Dinner" | "Snacks";
   eaten: number;
   toEat: number;
+  date: Date;
 }) {
   const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const theme = getThemeColor(colorScheme);
   const progress = Math.min(eaten / toEat, 1);
   const isComplete = eaten >= toEat;
+  const remaining = Math.max(toEat - eaten, 0);
+
+  const mealTypeEnum: MealType = (() => {
+    switch (title) {
+      case "Breakfast":
+        return MealType.BREAKFAST;
+      case "Lunch":
+        return MealType.LUNCH;
+      case "Dinner":
+        return MealType.DINNER;
+      case "Snacks":
+        return MealType.SNACK;
+      default:
+        return MealType.SNACK;
+    }
+  })();
+
+  const getMealIcon = (mealTitle: string) => {
+    switch (mealTitle) {
+      case "Breakfast":
+        return "sunny";
+      case "Lunch":
+        return "restaurant";
+      case "Dinner":
+        return "moon";
+      case "Snacks":
+        return "fast-food";
+      default:
+        return "restaurant";
+    }
+  };
+
+  const getProgressColor = () => {
+    if (isComplete) return "#4CAF50";
+    if (progress > 0.7) return "#FF9800";
+    if (progress > 0.3) return theme.tint;
+    return "#E0E0E0";
+  };
+
   return (
-    <View
-      style={{
-        padding: 16,
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
+    <TouchableOpacity
+      style={[styles.mealItem, { backgroundColor: theme.background }]}
+      onPress={() => {
+        router.push({
+          pathname: "/(meal)/meal",
+          params: {
+            mealType: mealTypeEnum,
+            openSearch: "false",
+            date: date.toISOString(),
+          },
+        });
       }}
+      activeOpacity={0.7}
+      delayPressIn={100}
+      delayPressOut={50}
     >
-      <Ionicons
-        name="restaurant"
-        size={24}
-        color={isDark ? "white" : "black"}
-        style={{
-          marginRight: 8,
-          justifyContent: "flex-start",
-          padding: 5,
-          // borderRadius: 50,
-          // borderWidth: 5,
-          // borderColor: "rgba(34, 183, 209, 1)",
-        }}
-      />
-      <Text style={{ fontWeight: "bold", color: isDark ? "white" : "black" }}>
-        {title}{" "}
-      </Text>
-      <Text style={{ color: isDark ? "white" : "black" }}>
-        {eaten} / {toEat} calories eaten
-      </Text>
-      <TouchableOpacity
-        onPress={() => {
-          /* Handle add food action */
-        }}
-      >
-        <Ionicons
-          name="add-circle-outline"
-          size={24}
-          color={isDark ? "white" : "black"}
-          style={{
-            marginLeft: 8,
-            justifyContent: "flex-end",
-          }}
-        />
-      </TouchableOpacity>
+      {/* Background Progress */}
       <View
-        style={{
-          position: "absolute",
-          left: 0,
-          height: "200%",
-          borderRadius: 10,
-          backgroundColor: "rgba(68, 211, 236, 0.2)",
-          width: `${progress * 100}%`,
-        }}
+        style={[
+          styles.progressBackground,
+          {
+            backgroundColor: `${getProgressColor()}15`,
+            width: `${progress * 100}%`,
+          },
+        ]}
       />
-    </View>
+
+      {/* Content Container */}
+      <View style={styles.contentContainer}>
+        {/* Left Section - Icon and Title */}
+        <View style={styles.leftSection}>
+          <View
+            style={[
+              styles.iconContainer,
+              { backgroundColor: `${getProgressColor()}20` },
+            ]}
+          >
+            <Ionicons
+              name={getMealIcon(title) as any}
+              size={20}
+              color={getProgressColor()}
+            />
+          </View>
+          <View style={styles.titleContainer}>
+            <Text style={[styles.mealTitle, { color: theme.text }]}>
+              {title}
+            </Text>
+            <Text style={[styles.progressText, { color: theme.text }]}>
+              {eaten} / {toEat} kcal
+            </Text>
+          </View>
+        </View>
+
+        {/* Right Section - Progress and Add Button */}
+        <View style={styles.rightSection}>
+          <View style={styles.progressInfo}>
+            <View
+              style={[
+                styles.progressBar,
+                { backgroundColor: `${theme.text}20` },
+              ]}
+            >
+              <View
+                style={[
+                  styles.progressFill,
+                  {
+                    backgroundColor: getProgressColor(),
+                    width: `${progress * 100}%`,
+                  },
+                ]}
+              />
+            </View>
+            <Text style={[styles.remainingText, { color: theme.text }]}>
+              {isComplete ? "Complete!" : `${remaining} left`}
+            </Text>
+          </View>
+
+          <TouchableOpacity
+            style={[
+              styles.addButton,
+              {
+                backgroundColor: isComplete
+                  ? `${getProgressColor()}20`
+                  : theme.tint,
+              },
+            ]}
+            onPress={() => {
+              router.push({
+                pathname: "/(meal)/meal",
+                params: {
+                  mealType: title,
+                  openSearch: "true",
+                  date: date.toISOString(),
+                },
+              });
+            }}
+          >
+            <Ionicons
+              name={isComplete ? "checkmark" : "add"}
+              size={18}
+              color={
+                isComplete
+                  ? getProgressColor()
+                  : colorScheme === "dark"
+                    ? "#000000"
+                    : "#ffffff"
+              }
+            />
+          </TouchableOpacity>
+        </View>
+      </View>
+    </TouchableOpacity>
   );
 }
 
 export default function Meals() {
   const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const theme = getThemeColor(colorScheme);
+
+  const date = new Date();
+
+  // Mock data - in a real app, this would come from your database
+  const meals = [
+    { title: "Breakfast" as const, eaten: 320, toEat: 500 },
+    { title: "Lunch" as const, eaten: 580, toEat: 600 },
+    { title: "Dinner" as const, eaten: 450, toEat: 700 },
+    { title: "Snacks" as const, eaten: 180, toEat: 300 },
+  ];
+
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: isDark
-          ? ThemeColors.dark.background
-          : ThemeColors.light.background,
-        borderRadius: 10,
-        marginBottom: 20,
-        borderWidth: 1,
-        borderColor: isDark ? "#444" : "#ddd",
-        padding: 0,
-      }}
-    >
-      <MealItem title="Breakfast" eaten={300} toEat={500} />
-      <View
-        style={{
-          ...styles.horizontalLine,
-          backgroundColor: isDark ? "#444" : "#ddd",
-        }}
-      />
-      <MealItem title="Lunch" eaten={400} toEat={600} />
-      <View
-        style={{
-          ...styles.horizontalLine,
-          backgroundColor: isDark ? "#444" : "#ddd",
-        }}
-      />
-      <MealItem title="Dinner" eaten={500} toEat={700} />
-      <View
-        style={{
-          ...styles.horizontalLine,
-          backgroundColor: isDark ? "#444" : "#ddd",
-        }}
-      />
-      <MealItem title="Snacks" eaten={200} toEat={300} />
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
+      {/* Meal Items */}
+      <View style={styles.mealsContainer}>
+        {meals.map((meal, index) => (
+          <View key={meal.title}>
+            <MealItem
+              title={meal.title}
+              eaten={meal.eaten}
+              toEat={meal.toEat}
+              date={date}
+            />
+            {index < meals.length - 1 && (
+              <View
+                style={[
+                  styles.separator,
+                  { backgroundColor: `${theme.text}10` },
+                ]}
+              />
+            )}
+          </View>
+        ))}
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    width: "100%",
+    borderRadius: 12,
+    marginBottom: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: "rgba(0, 0, 0, 0.06)",
+  },
+
+  mealsContainer: {
+    backgroundColor: "transparent",
+  },
+  mealItem: {
+    position: "relative",
+    overflow: "hidden",
+  },
+  progressBackground: {
+    position: "absolute",
+    left: 0,
+    top: 0,
+    bottom: 0,
+    borderRadius: 0,
+  },
+  contentContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    position: "relative",
+    zIndex: 1,
+  },
+  leftSection: {
+    flexDirection: "row",
+    alignItems: "center",
+    flex: 1,
+  },
+  iconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 12,
+  },
+  titleContainer: {
+    flex: 1,
+  },
+  mealTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    marginBottom: 2,
+  },
+  progressText: {
+    fontSize: 12,
+    opacity: 0.7,
+    fontWeight: "500",
+  },
+  rightSection: {
+    alignItems: "flex-end",
+    minWidth: 100,
+  },
+  progressInfo: {
+    alignItems: "flex-end",
+    marginBottom: 8,
+  },
+  progressBar: {
+    width: 80,
+    height: 4,
+    borderRadius: 2,
+    marginBottom: 4,
+    overflow: "hidden",
+  },
+  progressFill: {
+    height: "100%",
+    borderRadius: 2,
+  },
+  remainingText: {
+    fontSize: 10,
+    opacity: 0.6,
+    fontWeight: "500",
+  },
+  addButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  separator: {
+    height: 1,
+    marginHorizontal: 20,
+  },
   horizontalLine: {
     width: "100%",
     height: 1,

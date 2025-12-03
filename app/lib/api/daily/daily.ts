@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import { toDbDateString } from "@/utils/database";
 // import { getMealsByDate } from "./food_tracking";
 
 // interface CalorieDayTracking {
@@ -56,26 +57,40 @@ import { supabase } from "@/lib/supabase";
 // }
 
 export async function getWeightByDate(date: Date): Promise<number | null> {
+  // First try to get weight for the exact date
   const { data, error } = await supabase
     .from("daily stats")
-    .select("weight")
-    .eq("date", date)
+    .select("weight_kg")
+    .eq("date", toDbDateString(date))
     .single();
 
-  if (error) {
-    console.error("Error fetching weight:", error);
+  if (!error && data?.weight_kg) {
+    return data.weight_kg;
+  }
+
+  // If no weight found for exact date, get the most recent weight before that date
+  const { data: previousData, error: previousError } = await supabase
+    .from("daily stats")
+    .select("weight_kg")
+    .lt("date", toDbDateString(date))
+    .not("weight_kg", "is", null)
+    .order("date", { ascending: false })
+    .limit(1)
+    .single();
+
+  if (previousError) {
+    console.error("Error fetching previous weight:", previousError);
     return null;
   }
 
-  return data.weight;
+  return previousData?.weight_kg || null;
 }
 
 export async function updateWeightByDate(newWeightInKg: number, date: Date) {
   const { error } = await supabase
     .from("daily stats")
-    .update({ weight: newWeightInKg })
-    .eq("date", date)
-    .single();
+    .update({ weight_kg: newWeightInKg })
+    .eq("date", toDbDateString(date));
 
   if (error) {
     console.error("Error updating weight:", error);
@@ -89,7 +104,7 @@ export async function getWorkoutSessionByDate(
   const { data, error } = await supabase
     .from("daily stats")
     .select("workout_session_id")
-    .eq("date", date)
+    .eq("date", toDbDateString(date))
     .single();
 
   if (error) {
@@ -106,7 +121,7 @@ export async function addWorkoutSession(workoutId: string, date: Date) {
     .update({
       workout_session_id: workoutId,
     })
-    .eq("date", date);
+    .eq("date", toDbDateString(date));
 
   if (error) {
     console.error("Error adding workout session:", error);
@@ -120,7 +135,7 @@ export async function removeWorkoutSession(date: Date) {
     .update({
       workout_session_id: null,
     })
-    .eq("date", date);
+    .eq("date", toDbDateString(date));
 
   if (error) {
     console.error("Error removing workout session:", error);

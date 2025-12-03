@@ -1,17 +1,13 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { GymButtonSmall } from "../ui/Button";
-import GymView from "../ui/GymView";
-import { GymHeader, GymText } from "../ui/Text";
 import { useEffect, useState } from "react";
-import { View, Text } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useColorScheme } from "@/hooks/use-color-scheme.web";
-import { ThemeColors } from "@/constants/theme";
+import { getThemeColor } from "@/constants/theme";
 import { getWeightByDate, updateWeightByDate } from "@/lib/api/daily/daily";
 
 export default function WeightEntry({ date }: { date: Date }) {
   const [weight, setWeight] = useState<number>(0);
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const theme = getThemeColor(useColorScheme());
 
   useEffect(() => {
     const fetchWeight = async () => {
@@ -45,45 +41,152 @@ export default function WeightEntry({ date }: { date: Date }) {
   };
 
   return (
-    <GymView
-      style={{
-        flex: 1,
-        borderRadius: 10,
-        marginBottom: 20,
-        borderWidth: 1,
-        borderColor: isDark ? "#444" : "#ddd",
-      }}
-    >
-      <GymHeader>Weight Entry Screen</GymHeader>
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: isDark
-            ? ThemeColors.dark.background
-            : ThemeColors.light.background,
-          padding: 20,
-          alignItems: "center",
-          flexDirection: "row",
-          justifyContent: "space-between",
-        }}
-      >
-        <GymButtonSmall
-          onPress={() => updateWeight(weight - 1)}
-          // style={{ alignItems: "flex-start" }}
-        >
-          <Ionicons name="remove" size={24} color="black" />
-        </GymButtonSmall>
-        <GymText>
-          <Text>{weight}kg </Text>
-        </GymText>
-        {/* Display weight in kg or pounds depending on user settings */}
-        <GymButtonSmall
-          onPress={() => updateWeight(weight + 1)}
-          // style={{ alignItems: "flex-end" }}
-        >
-          <Ionicons name="add" size={24} color="black" />
-        </GymButtonSmall>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
+      {/* Header */}
+      <View style={styles.header}>
+        <View style={styles.headerLeft}>
+          <View
+            style={[
+              styles.iconContainer,
+              { backgroundColor: `${theme.tint}20` },
+            ]}
+          >
+            <Ionicons name="fitness" size={16} color={theme.tint} />
+          </View>
+          <Text style={[styles.title, { color: theme.text }]}>Weight</Text>
+        </View>
       </View>
-    </GymView>
+
+      {/* Weight Display */}
+      <View style={styles.weightDisplay}>
+        <Text style={[styles.weightValue, { color: theme.text }]}>
+          {weight.toFixed(1)}
+        </Text>
+        <Text style={[styles.weightUnit, { color: theme.text }]}>kg</Text>
+      </View>
+
+      {/* Control Buttons */}
+      <View style={styles.controlsContainer}>
+        <View style={styles.controlsRow}>
+          <TouchableOpacity
+            style={[styles.controlButton, { backgroundColor: theme.button }]}
+            onPress={() => updateWeight(weight - 1)}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="remove" size={18} color={theme.text} />
+            <Text style={[styles.controlButtonText, { color: theme.text }]}>
+              1.0
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.controlButton, { backgroundColor: theme.button }]}
+            onPress={() => updateWeight(weight - 0.1)}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="remove" size={16} color={theme.text} />
+            <Text style={[styles.controlButtonText, { color: theme.text }]}>
+              0.1
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.controlButton, { backgroundColor: theme.button }]}
+            onPress={() => updateWeight(weight + 0.1)}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="add" size={16} color={theme.text} />
+            <Text style={[styles.controlButtonText, { color: theme.text }]}>
+              0.1
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.controlButton, { backgroundColor: theme.button }]}
+            onPress={() => updateWeight(weight + 1)}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="add" size={18} color={theme.text} />
+            <Text style={[styles.controlButtonText, { color: theme.text }]}>
+              1.0
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    borderRadius: 12,
+    marginBottom: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
+    overflow: "hidden",
+    padding: 14,
+    borderWidth: 1,
+    borderColor: "rgba(0, 0, 0, 0.06)",
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  headerLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  iconContainer: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  title: {
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  weightDisplay: {
+    flexDirection: "row",
+    alignItems: "baseline",
+    justifyContent: "center",
+    marginBottom: 14,
+    gap: 3,
+  },
+  weightValue: {
+    fontSize: 32,
+    fontWeight: "700",
+  },
+  weightUnit: {
+    fontSize: 14,
+    fontWeight: "500",
+    opacity: 0.8,
+  },
+  controlsContainer: {
+    alignItems: "center",
+  },
+  controlsRow: {
+    flexDirection: "row",
+    gap: 6,
+  },
+  controlButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 6,
+    gap: 3,
+    minWidth: 50,
+    justifyContent: "center",
+  },
+  controlButtonText: {
+    fontSize: 10,
+    fontWeight: "500",
+  },
+});

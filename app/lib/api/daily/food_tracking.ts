@@ -1,5 +1,9 @@
 import { supabase } from "@/lib/supabase";
 import { MealType } from "@/types/FoodData";
+import { FoodsTableEntry } from "@/types/Meals";
+import { toDbDateString } from "@/utils/database";
+
+// TODO: handle user adds same meal multiple times a day for lunch for example
 
 export async function addMeal(
   barcode: string,
@@ -7,11 +11,18 @@ export async function addMeal(
   date: Date,
   amount_in_g?: number
 ) {
-  const { error } = await supabase.from("meals").insert({
-    barcode,
-    meal_type: mealType,
-    date,
+  // console.log("Adding meal:", { barcode, mealType, date, amount_in_g });
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { error } = await supabase.from("user_calorie_stats").insert({
+    barcode_id: barcode,
+    type: mealType,
+    created_at: toDbDateString(date),
     amount_in_g,
+    profile: user?.id || null,
   });
 
   if (error) {
@@ -20,19 +31,23 @@ export async function addMeal(
 }
 
 export async function deleteMeal(mealId: number) {
-  const { error } = await supabase.from("meals").delete().eq("id", mealId);
+  const { error } = await supabase
+    .from("user_calorie_stats")
+    .delete()
+    .eq("id", mealId);
 
   if (error) {
     throw new Error(`Error deleting meal: ${error.message}`);
   }
 }
 
-export async function getMealsByDate(date: Date) {
+export async function getMealsByDate(date: Date): Promise<FoodsTableEntry[]> {
   const { data, error } = await supabase
-    .from("meals")
+    .from("user_calorie_stats")
     .select("*")
-    .eq("date", date)
-    .order("meal_type", { ascending: true });
+    .eq("created_at", toDbDateString(date))
+    .order("type", { ascending: true });
+  // console.log("Fetching meals by date:", { date, data });
   if (error) {
     throw new Error(`Error fetching meals: ${error.message}`);
   }
@@ -40,20 +55,25 @@ export async function getMealsByDate(date: Date) {
   return data;
 }
 
-export async function getMealsByType(type: MealType, date?: Date) {
+export async function getMealsByType(
+  type: MealType,
+  date?: Date
+): Promise<FoodsTableEntry[]> {
+  // console.log("Fetching meals by type:", { type, date });
   const { data, error } = date
     ? await supabase
-        .from("meals")
-        .select("*")
-        .eq("meal_type", type)
-        .eq("date", date)
-        .order("meal_type", { ascending: true })
+        .from("user_calorie_stats")
+        .select("*, barcode_id(*)")
+        .eq("type", type)
+        .eq("created_at", toDbDateString(date))
+        .order("type", { ascending: true })
     : await supabase
-        .from("meals")
-        .select("*")
-        .eq("meal_type", type)
-        .order("meal_type", { ascending: true });
+        .from("user_calorie_stats")
+        .select("*, barcode_id(*)")
+        .eq("type", type)
+        .order("type", { ascending: true });
 
+  // console.log("Fetched meals by type:", { type, date, data });
   if (error) {
     throw new Error(`Error fetching meals: ${error.message}`);
   }
@@ -66,7 +86,7 @@ export async function editMeal(
   updatedData: Partial<{ amount_in_g: number; meal_type: MealType }>
 ) {
   const { error } = await supabase
-    .from("meals")
+    .from("user_calorie_stats")
     .update(updatedData)
     .eq("id", mealId);
 

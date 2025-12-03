@@ -8,21 +8,13 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
   useColorScheme,
 } from "react-native";
-import BarcodeScanner from "./BarcodeScanner";
-import ProductItem from "./ProductItem";
-import { Product } from "@/types/FoodData";
-import { useState, useEffect } from "react";
 import DayNutritionOverview from "./DayNutritionOverview";
 import Meals from "./Meal";
 import WeightEntry from "./WeightEntry";
-import { getWorkoutSessionByDate } from "@/lib/api/daily/daily";
-import { getFoodDataByBarcode, searchFood } from "@/lib/api/daily/food_data";
-import { getMealsByDate } from "@/lib/api/daily/food_tracking";
 import DailyTraining from "@/components/training/daily/DailyTraining";
 
 export default function DayItem({
@@ -42,61 +34,10 @@ export default function DayItem({
 }) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
-  const [showScanner, setShowScanner] = useState(false);
-  const [searchText, setSearchText] = useState("");
-
-  const [products, setProducts] = useState<Product[]>([]);
-  const [foods, setFoods] = useState<Product[]>([]);
-  const [training, setTraining] = useState<any>(null);
-
-  const handleBarcodeScanned = async (barcode: string) => {
-    console.log("Barcode scanned:", barcode);
-    setSearchText(barcode);
-    setShowScanner(false);
-
-    try {
-      const result = await getFoodDataByBarcode(barcode);
-      if (result) {
-        setProducts([result]);
-      } else {
-        setProducts([]);
-      }
-    } catch (error) {
-      console.error("Barcode scan failed:", error);
-      setProducts([]);
-    }
-  };
-
-  const openScanner = () => {
-    setShowScanner(true);
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setFoods(await getMealsByDate(date));
-      } catch (error) {
-        console.error("Failed to fetch meals:", error);
-      }
-      try {
-        setTraining(await getWorkoutSessionByDate(date));
-      } catch (error) {
-        console.error("Failed to fetch workout session:", error);
-      }
-    };
-    fetchData();
-
-    if (isSelected) {
-      // load some data here
-    } else {
-      // unload stuff here
-    }
-  }, [isSelected, pageIndex, date]);
 
   return (
-    <View
-      style={[
-        styles.container,
+    <ScrollView
+      contentContainerStyle={[
         {
           backgroundColor: isDark
             ? ThemeColors.dark.background
@@ -171,120 +112,18 @@ export default function DayItem({
               </Text>
             </TouchableOpacity>
           )}
-          <ScrollView
-            style={styles.contentContainer}
-            contentContainerStyle={styles.scrollContent}
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
-          >
+          <View style={{ width: "100%", paddingHorizontal: 16 }}>
             <DayNutritionOverview eaten={631} burnt={200} toGo={1923} />
             <Meals />
             <DailyTraining />
             <WeightEntry date={date} />
-            {products && products.length > 0 ? (
-              products.map((product) => (
-                <ProductItem key={product.code} product={product} />
-              ))
-            ) : (
-              <View style={styles.emptyState}>
-                <Ionicons
-                  name="search-outline"
-                  size={48}
-                  color={
-                    isDark ? ThemeColors.dark.text : ThemeColors.light.text
-                  }
-                  style={{ opacity: 0.5 }}
-                />
-                <Text
-                  style={[
-                    styles.emptyText,
-                    {
-                      color: isDark
-                        ? ThemeColors.dark.text
-                        : ThemeColors.light.text,
-                    },
-                  ]}
-                >
-                  {searchText
-                    ? "No products found or loading..."
-                    : "Nothing added for that day!\nSearch for food products or scan a barcode."}
-                </Text>
-              </View>
-            )}
-          </ScrollView>
-
-          <View
-            style={[
-              styles.searchContainer,
-              {
-                backgroundColor: isDark
-                  ? ThemeColors.dark.background
-                  : ThemeColors.light.background,
-              },
-            ]}
-          >
-            <View
-              style={[
-                styles.searchInputContainer,
-                {
-                  backgroundColor: isDark
-                    ? ThemeColors.dark.button
-                    : ThemeColors.light.button,
-                },
-              ]}
-            >
-              <TextInput
-                placeholder="Search food or enter barcode"
-                placeholderTextColor={
-                  isDark ? ThemeColors.dark.text : ThemeColors.light.text
-                }
-                value={searchText}
-                onChangeText={setSearchText}
-                style={[
-                  styles.searchInput,
-                  {
-                    color: isDark
-                      ? ThemeColors.dark.text
-                      : ThemeColors.light.text,
-                  },
-                ]}
-                onSubmitEditing={async () => {
-                  if (!searchText.trim()) {
-                    setProducts([]);
-                    return;
-                  }
-                  try {
-                    const result = await searchFood(searchText);
-                    setProducts(result || []);
-                  } catch (error) {
-                    console.error("Search failed:", error);
-                    setProducts([]);
-                  }
-                }}
-              />
-              <TouchableOpacity
-                onPress={openScanner}
-                style={styles.barcodeButton}
-              >
-                <Ionicons
-                  name="barcode-outline"
-                  size={24}
-                  color={
-                    isDark ? ThemeColors.dark.text : ThemeColors.light.text
-                  }
-                />
-              </TouchableOpacity>
-            </View>
           </View>
+          {/*  */}
 
-          <BarcodeScanner
-            isVisible={showScanner}
-            onClose={() => setShowScanner(false)}
-            onBarcodeScanned={handleBarcodeScanned}
-          />
+          {/*  */}
         </KeyboardAvoidingView>
       </TouchableWithoutFeedback>
-    </View>
+    </ScrollView>
   );
 }
 

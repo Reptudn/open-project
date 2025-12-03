@@ -1,4 +1,3 @@
-import { SplashScreenController } from "@/components/auth/splash-screen-controller";
 import { ThemeColors } from "@/constants/theme";
 import { useAuthContext } from "@/hooks/use-auth-context";
 import AuthProvider from "@/providers/auth-provider";
@@ -8,14 +7,17 @@ import { ReactNode, useEffect } from "react";
 import { StyleSheet, View, useColorScheme } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "../global.css";
+import { GlobalTouchProvider } from "@tubinex/react-native-charts";
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <AuthProvider>
+      <GlobalTouchProvider>
+        <AuthProvider>
           <InnerLayout />
           <StatusBar style="auto" />
-      </AuthProvider>
+        </AuthProvider>
+      </GlobalTouchProvider>
     </GestureHandlerRootView>
   );
 }

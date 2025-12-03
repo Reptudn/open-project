@@ -1,8 +1,8 @@
-enum MealType {
-  BREAKFAST,
-  LUNCH,
-  DINNER,
-  SNACK,
+export enum MealType {
+  BREAKFAST = "BREAKFAST",
+  LUNCH = "LUNCH",
+  DINNER = "DINNER",
+  SNACK = "SNACK",
 }
 
 // Nutriments interface for nutritional information
@@ -240,9 +240,6 @@ interface SelectedImages {
 
 // Main Product interface
 interface Product {
-  // Basic identification
-  _id: string;
-  id: string;
   code: string;
 
   // Names and descriptions
