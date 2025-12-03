@@ -9,6 +9,14 @@ export async function getWorkouts(): Promise<Result<Workout[]>> {
   return { data: data as Workout[], error: null };
 }
 
+export async function getWorkout(workoutid: number): Promise<Result<Workout>> {
+  const { data, error } = await supabase.from("workouts").select("*").eq("id", workoutid).single();
+
+  if (error) return { data: null, error: error.message };
+
+  return { data: data as Workout, error: null };
+}
+
 export async function getWorkoutExercises(
   workoutId: number
 ): Promise<Result<WorkoutExercise[]>> {
@@ -31,7 +39,22 @@ export async function getWorkoutLogs(
     .from("workout_logs")
     .select("*, exercise_id(*), workout_id(*)")
     .eq("workout_id", workoutId)
-    .eq("created_at", date);
+    .eq("created_at", date)
+    .order("set_index", {ascending: true});
+
+  if (error) return { data: null, error: error.message };
+
+  return { data: data, error: null };
+}
+
+export async function getAllWorkoutLogsByDate(
+  date: string
+): Promise<Result<WorkoutLog[]>> {
+  const { data, error } = await supabase
+    .from("workout_logs")
+    .select("*, exercise_id(*), workout_id(*)")
+    .eq("created_at", date)
+    .order("set_index", {ascending: true});
 
   if (error) return { data: null, error: error.message };
 

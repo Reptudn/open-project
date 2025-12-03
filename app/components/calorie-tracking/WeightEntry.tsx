@@ -39,6 +39,7 @@ export default function WeightEntry({ date }: { date: Date }) {
       setWeight(prev);
     }
   };
+
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       {/* Header */}

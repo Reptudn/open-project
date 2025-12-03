@@ -1,35 +1,31 @@
 import {
-  TouchableOpacity,
-  Image,
-  View,
   StyleSheet,
   Dimensions,
-  ScrollView,
 } from "react-native";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { getThemeColor } from "@/constants/theme";
 import { router, useLocalSearchParams } from "expo-router";
-import { SafeAreaView } from "react-native-safe-area-context";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import { Modalize } from "react-native-modalize";
-import { useRef, useEffect, useState } from "react";
-import { GymButtonMedium } from "@/components/ui/Button";
-import { GymText, GymHeader } from "@/components/ui/Text";
-import { addExercise } from "@/lib/api/workout/workoutInsert";
-import { useAuthContext } from "@/hooks/use-auth-context";
+import { useRef, useEffect, useState, useMemo, useCallback } from "react";
 import ExerciseFull from "@/components/training/exercises/ExerciseFull";
+import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 
 export let excerciseList: string[] = [];
 
 export default function ExerciseInfo() {
-  const modalizeRef = useRef<Modalize>(null);
   const theme = getThemeColor(useColorScheme());
   const { width, height } = Dimensions.get("window");
   const { name, overview, imageUrl, excerciseId, workoutId, exercise } =
 	useLocalSearchParams();
   const exerciseT = JSON.parse(exercise as string) as Exercise;
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const { session } = useAuthContext();
+  const bottomSheetRef = useRef<BottomSheet>(null);
+
+  const snapPoints = useMemo(() => ["90%"], []);
+
+  const handleSheetChanges = useCallback((index: number) => {
+    if (index === -1) {
+      router.push("/(tabs)/training");
+    }
+  }, []);
 
   // Convert params to strings
   const exerciseName = Array.isArray(name) ? name[0] : name || "";
@@ -49,33 +45,38 @@ export default function ExerciseInfo() {
 	: String(excerciseId);
 
   useEffect(() => {
-	modalizeRef.current?.open();
+	bottomSheetRef.current?.expand();
   }, []);
 
-  const handleModalClose = () => {
-	setIsModalOpen(false);
-	router.push({
-	  pathname: "/(tabs)/training",
-	  params: { workoutId: workoutId },
-	});
+  const handleSheetClose = () => {
+    router.push({
+      pathname: "/(tabs)/training",
+      params: { workoutId: workoutId },
+    });
   };
 
   return (
-	<SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
-	  <Modalize
-		ref={modalizeRef}
-		onClose={handleModalClose}
-		modalHeight={height}
-		modalStyle={{ backgroundColor: theme.background }}
-		handleStyle={{ backgroundColor: theme.text }}
-		handlePosition="inside"
-	  >
-		<ExerciseFull
-		  exercise={exerciseT}
-		  workoutId={workoutId as string}
-		></ExerciseFull>
-	  </Modalize>
-	</SafeAreaView>
+      <BottomSheet
+        ref={bottomSheetRef}
+        index={0}
+        snapPoints={snapPoints}
+        onChange={handleSheetChanges}
+		onClose={handleSheetClose}
+        backgroundStyle={{ backgroundColor: theme.background }}
+        enablePanDownToClose={true}
+      >
+        <BottomSheetScrollView
+          contentContainerStyle={{
+            flexGrow: 1,
+            paddingBottom: 20,
+          }}
+        >
+          <ExerciseFull
+            exercise={exerciseT}
+            workoutId={workoutId as string}
+          ></ExerciseFull>
+        </BottomSheetScrollView>
+      </BottomSheet>
   );
 }
 

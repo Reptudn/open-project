@@ -15,6 +15,7 @@ import {
 import DayNutritionOverview from "./DayNutritionOverview";
 import Meals from "./Meal";
 import WeightEntry from "./WeightEntry";
+import DailyTraining from "@/components/training/daily/DailyTraining";
 
 export default function DayItem({
   date,
@@ -114,6 +115,7 @@ export default function DayItem({
           <View style={{ width: "100%", paddingHorizontal: 16 }}>
             <DayNutritionOverview eaten={631} burnt={200} toGo={1923} />
             <Meals />
+            <DailyTraining />
             <WeightEntry date={date} />
           </View>
           {/*  */}
