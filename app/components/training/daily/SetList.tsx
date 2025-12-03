@@ -9,6 +9,7 @@ import { useCallback, useEffect, useState } from "react";
 export default function SetListAdd({ info }: { info: WorkoutLog[] }) {
   const [sets, setSets] = useState<WorkoutLog[]>([]);
   const { session } = useAuthContext();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (info[0].set_index)
@@ -29,10 +30,10 @@ export default function SetListAdd({ info }: { info: WorkoutLog[] }) {
   );
 
   const addSet = async () => {
+    setLoading(true);
     const created_at = new Date().toISOString().split("T")[0];
 
     const index = sets.length + 1;
-    console.log("info = ", info);
     const { data, error } = await addExerciseLog(
       [
         {
@@ -49,18 +50,18 @@ export default function SetListAdd({ info }: { info: WorkoutLog[] }) {
 
     if (error) {
       Alert.alert(error);
+      setLoading(false);
       return;
     }
 
-    console.log("data = ", data);
-
     setSets(prev => [...prev, ...(data ?? [])]);
+    setLoading(false);
   };
 
   return (
     <BottomSheetScrollView>
       {sets.map(renderList)}
-      <TouchableOpacity style={styles.addButton} onPress={addSet}>
+      <TouchableOpacity style={styles.addButton} onPress={addSet} disabled={loading}>
         <Ionicons name="add" size={28} color="black" />
       </TouchableOpacity>
     </BottomSheetScrollView>
