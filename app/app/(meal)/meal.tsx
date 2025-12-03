@@ -177,7 +177,7 @@ function AddMeal({
                   mealType={mealType}
                   onAdd={async (success: boolean) => {
                     if (!success) return;
-                    sheetRef.current?.close();
+                    sheetRef.current?.collapse();
                     await onRefresh();
                   }}
                 />

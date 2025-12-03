@@ -1,6 +1,6 @@
 import { ThemeColors } from "@/constants/theme";
 import { addMeal } from "@/lib/api/daily/food_tracking";
-import { MealType, Product } from "@/types/FoodData";
+import { MealType } from "@/types/FoodData";
 import { DBProduct } from "@/types/Meals";
 import { toDbDateString } from "@/utils/database";
 import Ionicons from "@expo/vector-icons/Ionicons";

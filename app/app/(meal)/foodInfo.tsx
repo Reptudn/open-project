@@ -2,7 +2,7 @@ import GymView from "@/components/ui/GymView";
 import { GymText, GymTitle } from "@/components/ui/Text";
 import { getThemeColor } from "@/constants/theme";
 import { MealType } from "@/types/FoodData.d";
-import { DBProduct, FoodsTableEntry } from "@/types/Meals.d";
+import { DBProduct } from "@/types/Meals.d";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { router, useLocalSearchParams } from "expo-router";
 import {
@@ -296,17 +296,16 @@ export default function FoodInfo() {
           </>
         )}
       </ScrollView>
-      {!isEditMode ? (
-        <BottomSheet
-          ref={bottomSheetRef}
-          snapPoints={["13%", "27%"]}
-          android_keyboardInputMode="adjustResize"
-          enablePanDownToClose={false}
-          index={0}
-          handleIndicatorStyle={{ backgroundColor: theme.text }}
-          backgroundStyle={{ backgroundColor: theme.background }}
-        >
-          {/* Add Button */}
+      <BottomSheet
+        ref={bottomSheetRef}
+        snapPoints={["13%", "27%"]}
+        android_keyboardInputMode="adjustResize"
+        enablePanDownToClose={false}
+        index={0}
+        handleIndicatorStyle={{ backgroundColor: theme.text }}
+        backgroundStyle={{ backgroundColor: theme.background }}
+      >
+        {!isEditMode ? (
           <BottomSheetView style={styles.bottomSheetContent}>
             <GymButtonFullWidth onPress={handleAddToMeal} disabled={isAdding}>
               {isAdding ? (
@@ -365,29 +364,29 @@ export default function FoodInfo() {
               </GymText>
             )}
           </BottomSheetView>
-        </BottomSheet>
-      ) : (
-        <BottomSheetView style={{ height: 16 }}>
-          {/* In edit mode */}
-          <BottomSheetTextInput value="100" />
-          <GymButtonFullWidth
-            onPress={() => {
-              router.back();
-            }}
-            disabled={isAdding}
-          >
-            {isAdding ? (
-              <ActivityIndicator size="small" color="#fff" />
-            ) : (
-              <GymText>
-                Update {amount}
-                {unit === "grams" ? "g" : " portions"} to{" "}
-                {mealType?.toLowerCase() || "meal"}
-              </GymText>
-            )}
-          </GymButtonFullWidth>
-        </BottomSheetView>
-      )}
+        ) : (
+          <BottomSheetView style={{ height: 16 }}>
+            {/* In edit mode */}
+            <BottomSheetTextInput value="100" />
+            <GymButtonFullWidth
+              onPress={() => {
+                router.back();
+              }}
+              disabled={isAdding}
+            >
+              {isAdding ? (
+                <ActivityIndicator size="small" color="#fff" />
+              ) : (
+                <GymText>
+                  Update {amount}
+                  {unit === "grams" ? "g" : " portions"} to{" "}
+                  {mealType?.toLowerCase() || "meal"}
+                </GymText>
+              )}
+            </GymButtonFullWidth>
+          </BottomSheetView>
+        )}
+      </BottomSheet>
     </GymView>
   );
 }
