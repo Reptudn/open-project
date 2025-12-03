@@ -171,7 +171,7 @@ function AddMeal({
             {products.map((prod) => {
               return (
                 <ProductItem
-                  key={prod.barcode}
+                  key={prod.barcode + mealType + date.toISOString()}
                   product={prod}
                   date={date}
                   mealType={mealType}

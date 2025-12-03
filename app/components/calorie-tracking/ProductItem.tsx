@@ -42,8 +42,6 @@ export default function ProductItem({
   }) => {
     if (!value && value !== 0) return null;
 
-    console.log("value for " + label + ": " + value);
-
     return (
       <View style={styles.nutrientRow}>
         <View style={styles.nutrientLeft}>

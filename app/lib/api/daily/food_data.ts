@@ -72,8 +72,6 @@ export async function searchFoodDb(query: string): Promise<DBProduct[] | null> {
 
   const data = (await res.json()) as DBProduct[] | null;
 
-  console.log("data:", data);
-
   return data;
 }
 

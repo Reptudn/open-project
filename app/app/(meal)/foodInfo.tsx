@@ -2,7 +2,7 @@ import GymView from "@/components/ui/GymView";
 import { GymText, GymTitle } from "@/components/ui/Text";
 import { getThemeColor } from "@/constants/theme";
 import { MealType } from "@/types/FoodData.d";
-import { FoodsTableEntry } from "@/types/Meals.d";
+import { DBProduct, FoodsTableEntry } from "@/types/Meals.d";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { router, useLocalSearchParams } from "expo-router";
 import {
@@ -52,40 +52,20 @@ export default function FoodInfo() {
 
   let nutriments: any;
 
-  const prod = JSON.parse(product as string) as FoodsTableEntry;
-  nutriments = prod.barcode_id.nutriments;
+  const prod = JSON.parse(product as string) as DBProduct;
+  nutriments = prod.nutriments;
 
   // Helper functions to safely access properties
   const getProductName = () => {
-    return prod.barcode_id.name || "Unknown Product";
+    return prod.name || "Unknown Product";
   };
 
   const getBrands = () => {
-    return prod.barcode_id.brand || "N/A";
-  };
-
-  const getQuantity = () => {
-    return null;
-  };
-
-  const getNutriScore = () => {
-    return null;
-  };
-
-  const getNovaGroup = () => {
-    return null;
-  };
-
-  const getCategories = () => {
-    return prod.barcode_id.categories?.join(", ");
-  };
-
-  const getIngredients = () => {
-    return null;
+    return prod.brand || "N/A";
   };
 
   const getProductCode = () => {
-    return prod.barcode_id.barcode;
+    return prod.barcode;
   };
 
   // Add meal functionality
@@ -206,39 +186,12 @@ export default function FoodInfo() {
         <GymText style={{ color: theme.text, opacity: 0.7 }}>
           {getBrands()}
         </GymText>
-        {getQuantity() && (
-          <GymText style={{ color: theme.text, opacity: 0.6 }}>
-            Quantity: {getQuantity()}
-          </GymText>
-        )}
       </View>
 
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
       >
-        {/* Nutrition Score */}
-        {getNutriScore() && (
-          <View
-            style={[
-              styles.scoreCard,
-              { backgroundColor: isDark ? "#2a2a2a" : "#f5f5f5" },
-            ]}
-          >
-            <Text style={[styles.scoreTitle, { color: theme.text }]}>
-              Nutri-Score
-            </Text>
-            <View
-              style={[
-                styles.scoreBadge,
-                { backgroundColor: getScoreColor(getNutriScore()!) },
-              ]}
-            >
-              <Text style={styles.scoreText}>{getNutriScore()!}</Text>
-            </View>
-          </View>
-        )}
-
         {/* Basic Nutrition - Per 100g */}
         <SectionHeader title="Nutrition Facts (per 100g)" />
         <View
@@ -342,69 +295,6 @@ export default function FoodInfo() {
             </View>
           </>
         )}
-
-        {/* Additional Info */}
-        <SectionHeader title="Additional Information" />
-        <View
-          style={[
-            styles.section,
-            { backgroundColor: isDark ? "#1e1e1e" : "#fff" },
-          ]}
-        >
-          {getNovaGroup() && (
-            <View
-              style={[
-                styles.nutrientRow,
-                { borderBottomColor: isDark ? "#333" : "#eee" },
-              ]}
-            >
-              <Text style={[styles.nutrientLabel, { color: theme.text }]}>
-                NOVA Group
-              </Text>
-              <Text style={[styles.nutrientValue, { color: theme.text }]}>
-                {getNovaGroup()}
-              </Text>
-            </View>
-          )}
-
-          {getCategories() && (
-            <View
-              style={[
-                styles.nutrientRow,
-                { borderBottomColor: isDark ? "#333" : "#eee" },
-              ]}
-            >
-              <Text style={[styles.nutrientLabel, { color: theme.text }]}>
-                Categories
-              </Text>
-              <Text
-                style={[
-                  styles.nutrientValue,
-                  { color: theme.text, flex: 1, textAlign: "right" },
-                ]}
-                numberOfLines={2}
-              >
-                {getCategories()}
-              </Text>
-            </View>
-          )}
-
-          {getIngredients() && (
-            <View
-              style={[
-                styles.ingredientsContainer,
-                { borderTopColor: isDark ? "#333" : "#eee" },
-              ]}
-            >
-              <Text style={[styles.ingredientsTitle, { color: theme.text }]}>
-                Ingredients
-              </Text>
-              <Text style={[styles.ingredientsText, { color: theme.text }]}>
-                {getIngredients()}
-              </Text>
-            </View>
-          )}
-        </View>
       </ScrollView>
       {!isEditMode ? (
         <BottomSheet
@@ -500,23 +390,6 @@ export default function FoodInfo() {
       )}
     </GymView>
   );
-}
-
-function getScoreColor(grade: string): string {
-  switch (grade.toLowerCase()) {
-    case "a":
-      return "#00AA00";
-    case "b":
-      return "#79B814";
-    case "c":
-      return "#FFCC00";
-    case "d":
-      return "#FF6600";
-    case "e":
-      return "#FF0000";
-    default:
-      return "#999999";
-  }
 }
 
 const styles = StyleSheet.create({
