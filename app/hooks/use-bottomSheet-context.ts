@@ -4,9 +4,9 @@ import { createContext, ReactNode, useContext } from "react";
 export type BottomSheetData = {
   openSheet: (content: ReactNode) => void;
   closeSheet: () => void;
+  goBack: () => void;
   bottomSheetModalRef: React.RefObject<BottomSheetModal | null>;
   content: ReactNode;
-  setContent: (content: ReactNode) => void;
 };
 
 export const BottomSheetContext = createContext<BottomSheetData>({
@@ -16,11 +16,11 @@ export const BottomSheetContext = createContext<BottomSheetData>({
   closeSheet: () => {
     throw new Error("closeSheet not implemented");
   },
-  setContent: () => {
-    throw new Error("setContent not implemented");
+  goBack: () => {
+    throw new Error("goBack not implemented");
   },
   bottomSheetModalRef: { current: null },
-  content: null
+  content: null,
 });
 
 export const useBottomSheetContext = () => useContext(BottomSheetContext);

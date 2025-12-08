@@ -1,10 +1,11 @@
-import { View, StyleSheet, Alert } from "react-native";
+import { View, StyleSheet, Alert, TouchableOpacity } from "react-native";
 import ExerciseCard from "./ExerciseCard";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { useBottomSheetContext } from "@/hooks/use-bottomSheet-context";
 import SetList from "./SetList";
 import { getWorkoutLogs } from "@/lib/api/workout/workoutSelect";
 import { useEffect, useState } from "react";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 interface Logs {
   id: number;
@@ -25,7 +26,7 @@ export default function ExerciseList({
   const [mapExercises, setMapExercises] = useState<Map<string, Logs[]>>(
     new Map()
   );
-  const { openSheet } = useBottomSheetContext();
+  const { openSheet, goBack } = useBottomSheetContext();
 
   function isWorkoutLogArray(
     arr: WorkoutLog[] | WorkoutExercise[]
