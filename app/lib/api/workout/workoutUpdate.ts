@@ -49,6 +49,9 @@ export async function updateWorkoutExerciseSet(
 }
 
 export async function updateWorkoutExerciseLogSet(
+  workout_id: number,
+  exercise_id: string,
+  set_index: number,
   update: InsertWorkoutLog
 ): Promise<Result<WorkoutLog[]>> {
   const upExercise: any = {};
@@ -60,16 +63,14 @@ export async function updateWorkoutExerciseLogSet(
     upExercise.reps_completed = update.reps_completed;
   if (update.weight_kg !== undefined) upExercise.weight_kg = update.weight_kg;
 
-  console.log(upExercise);
-
   const { data, error } = await supabase
     .from("workout_logs")
     .update(upExercise)
-    .eq("workout_id", update.workout_id)
-    .eq("exercise_id", update.exercise_id)
+    .eq("workout_id", workout_id)
+    .eq("exercise_id", exercise_id)
     .eq("created_at", update.created_at)
-    .eq("set_index", update.set_index)
-    .select()
+    .eq("set_index", set_index)
+    .select();
 
   if (error) return { data: null, error: error.message };
 

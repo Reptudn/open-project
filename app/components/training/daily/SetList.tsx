@@ -5,6 +5,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useAuthContext } from "@/hooks/use-auth-context";
 import { addExerciseLog } from "@/lib/api/workout/workoutInsert";
 import { useCallback, useEffect, useState } from "react";
+import { updateWorkoutExerciseLogSet } from "@/lib/api/workout/workoutUpdate";
 
 export default function SetListAdd({ info }: { info: WorkoutLog[] }) {
   const [sets, setSets] = useState<WorkoutLog[]>([]);
@@ -12,13 +13,34 @@ export default function SetListAdd({ info }: { info: WorkoutLog[] }) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (info[0].set_index)
-      setSets(info);
-  }, [])
+    if (info[0].set_index) setSets(info);
+  }, []);
 
-  const deleteSet = (id: number) => {
-    setSets(prev => prev.filter(s => s.id != id))
-  }
+  const deleteSet = async (id: number) => {
+    if (id != sets.length - 1) {
+      sets.forEach((set) => {
+        if (set.id > id) {
+          const { error } = await updateWorkoutExerciseLogSet(
+            set.workout_id.id,
+            set.exercise_id.exercise_id,
+            set.set_index,
+            {
+              set_index: set.set_index - 1,
+              workout_id: set.workout_id.id,
+              exercise_id: set.exercise_id.exercise_id,
+              created_at: set.created_at,
+            }
+          );
+          if (error) {
+            Alert.alert(error);
+            return;
+          }
+          set.set_index = set.set_index - 1;
+        }
+      });
+    }
+    setSets((prev) => prev.filter((s) => s.id != id));
+  };
 
   const renderList = useCallback(
     (item: WorkoutLog) => (
@@ -54,14 +76,18 @@ export default function SetListAdd({ info }: { info: WorkoutLog[] }) {
       return;
     }
 
-    setSets(prev => [...prev, ...(data ?? [])]);
+    setSets((prev) => [...prev, ...(data ?? [])]);
     setLoading(false);
   };
 
   return (
     <BottomSheetScrollView>
       {sets.map(renderList)}
-      <TouchableOpacity style={styles.addButton} onPress={addSet} disabled={loading}>
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={addSet}
+        disabled={loading}
+      >
         <Ionicons name="add" size={28} color="black" />
       </TouchableOpacity>
     </BottomSheetScrollView>

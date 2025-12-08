@@ -48,10 +48,8 @@ export default function SetCard({
   };
 
   const saveChanges = async () => {
-    set.reps_completed = reps != undefined ? Number(reps) : set.reps_completed;
-    set.weight_kg = weight != undefined ? Number(weight) : set.weight_kg;
-
-    console.log("set = ", set);
+    set.reps_completed = reps != undefined ? parseFloat(reps.replace(',', '.')) : set.reps_completed;
+    set.weight_kg = weight != undefined ? parseFloat(weight.replace(',', '.')) : set.weight_kg;
 
     const { error } = await updateWorkoutExerciseLogSet({
       workout_id: set.workout_id.id,
