@@ -1,5 +1,7 @@
+import { useAuthContext } from "@/hooks/use-auth-context";
 import { supabase } from "@/lib/supabase";
 import { toDbDateString } from "@/utils/database";
+import { Session } from "@supabase/supabase-js";
 // import { getMealsByDate } from "./food_tracking";
 
 // interface CalorieDayTracking {
@@ -57,9 +59,24 @@ import { toDbDateString } from "@/utils/database";
 // }
 
 export async function getWeightByDate(date: Date): Promise<number | null> {
+  const { data, error } = await supabase
+    .from("daily_stats")
+    .select("weight_kg")
+    .eq("date", toDbDateString(date))
+    .single();
+
+  if (!error && data?.weight_kg) {
+    return data.weight_kg;
+  }
+  return null;
+}
+
+export async function getMostResentWeightByDate(
+  date: Date
+): Promise<number | null> {
   // First try to get weight for the exact date
   const { data, error } = await supabase
-    .from("daily stats")
+    .from("daily_stats")
     .select("weight_kg")
     .eq("date", toDbDateString(date))
     .single();
@@ -70,7 +87,7 @@ export async function getWeightByDate(date: Date): Promise<number | null> {
 
   // If no weight found for exact date, get the most recent weight before that date
   const { data: previousData, error: previousError } = await supabase
-    .from("daily stats")
+    .from("daily_stats")
     .select("weight_kg")
     .lt("date", toDbDateString(date))
     .not("weight_kg", "is", null)
@@ -86,9 +103,40 @@ export async function getWeightByDate(date: Date): Promise<number | null> {
   return previousData?.weight_kg || null;
 }
 
-export async function updateWeightByDate(newWeightInKg: number, date: Date) {
+export async function updateWeightByDate(
+  newWeightInKg: number,
+  date: Date,
+  session: Session | null
+) {
+  const check = await getWeightByDate(date);
+
+  console.log("check = ", check);
+  console.log("session = ", session);
+
+  if (!check) {
+    if (!session) return;
+
+    console.log("user_id = ", session.user.id);
+
+    const { error } = await supabase
+      .from("daily_stats")
+      .insert({
+        user_id: session.user.id,
+        weight_kg: newWeightInKg,
+        workout_session_id: null,
+        date: toDbDateString(date),
+      });
+
+    console.log("date = ", date);
+
+    if (error) {
+      console.error("Error updating weight:", error);
+      throw new Error(`Error updating weight: ${error.message}`);
+    }
+    return;
+  }
   const { error } = await supabase
-    .from("daily stats")
+    .from("daily_stats")
     .update({ weight_kg: newWeightInKg })
     .eq("date", toDbDateString(date));
 
@@ -102,7 +150,7 @@ export async function getWorkoutSessionByDate(
   date: Date
 ): Promise<string | null> {
   const { data, error } = await supabase
-    .from("daily stats")
+    .from("daily_stats")
     .select("workout_session_id")
     .eq("date", toDbDateString(date))
     .single();
@@ -117,7 +165,7 @@ export async function getWorkoutSessionByDate(
 
 export async function addWorkoutSession(workoutId: string, date: Date) {
   const { error } = await supabase
-    .from("daily stats")
+    .from("daily_stats")
     .update({
       workout_session_id: workoutId,
     })
@@ -131,7 +179,7 @@ export async function addWorkoutSession(workoutId: string, date: Date) {
 
 export async function removeWorkoutSession(date: Date) {
   const { error } = await supabase
-    .from("daily stats")
+    .from("daily_stats")
     .update({
       workout_session_id: null,
     })

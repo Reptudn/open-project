@@ -3,16 +3,18 @@ import { useEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useColorScheme } from "@/hooks/use-color-scheme.web";
 import { getThemeColor } from "@/constants/theme";
-import { getWeightByDate, updateWeightByDate } from "@/lib/api/daily/daily";
+import { getMostResentWeightByDate, updateWeightByDate } from "@/lib/api/daily/daily";
+import { useAuthContext } from "@/hooks/use-auth-context";
 
 export default function WeightEntry({ date }: { date: Date }) {
   const [weight, setWeight] = useState<number>(0);
   const theme = getThemeColor(useColorScheme());
+  const { session } = useAuthContext();
 
   useEffect(() => {
     const fetchWeight = async () => {
       try {
-        const weight = await getWeightByDate(date);
+        const weight = await getMostResentWeightByDate(date);
         setWeight(weight ? weight : 0);
       } catch (error) {
         console.error("Failed to fetch weight:", error);
@@ -32,7 +34,7 @@ export default function WeightEntry({ date }: { date: Date }) {
     const clapmedWeight = clampWeight(newWeight);
     setWeight(clapmedWeight);
     try {
-      await updateWeightByDate(clapmedWeight, date);
+      await updateWeightByDate(clapmedWeight, date, session);
       setWeight(clampWeight);
     } catch (error) {
       console.error("Failed to update weight:", error);
