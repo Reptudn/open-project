@@ -8,9 +8,7 @@ import {
   Alert,
 } from "react-native";
 import { X } from "lucide-react-native";
-import {
-  updateWorkoutExerciseLogSet,
-} from "@/lib/api/workout/workoutUpdate";
+import { updateWorkoutExerciseLogSet } from "@/lib/api/workout/workoutUpdate";
 import { removeWorkoutLogSet } from "@/lib/api/workout/workoutDelete";
 
 export default function SetCard({
@@ -18,7 +16,7 @@ export default function SetCard({
   onDelete,
 }: {
   set: WorkoutLog;
-  onDelete: (id: number) => void;
+  onDelete: (id: number) => Promise<void>;
 }) {
   const [edit, setEdit] = useState(false);
   const [reps, setReps] = useState<string | undefined>(
@@ -44,21 +42,29 @@ export default function SetCard({
       return;
     }
 
-    onDelete(set.id);
+    await onDelete(set.id);
   };
 
   const saveChanges = async () => {
-    set.reps_completed = reps != undefined ? parseFloat(reps.replace(',', '.')) : set.reps_completed;
-    set.weight_kg = weight != undefined ? parseFloat(weight.replace(',', '.')) : set.weight_kg;
+    set.reps_completed =
+      reps != undefined
+        ? Number.parseInt(reps)
+        : set.reps_completed;
+    set.weight_kg =
+      weight != undefined
+        ? parseFloat(weight.replace(",", "."))
+        : set.weight_kg;
 
-    const { error } = await updateWorkoutExerciseLogSet({
-      workout_id: set.workout_id.id,
-      exercise_id: set.exercise_id.exercise_id,
-      set_index: set.set_index,
-      reps_completed: set.reps_completed,
-      weight_kg: set.weight_kg,
-      created_at: set.created_at,
-    });
+    const { error } = await updateWorkoutExerciseLogSet(
+      set.workout_id.id,
+      set.exercise_id.exercise_id,
+      set.set_index,
+      set.created_at,
+      {
+        reps_completed: set.reps_completed,
+        weight_kg: set.weight_kg,
+      }
+    );
 
     setReps(undefined);
     setWeight(undefined);

@@ -52,13 +52,16 @@ export async function updateWorkoutExerciseLogSet(
   workout_id: number,
   exercise_id: string,
   set_index: number,
+  created_at: string,
   update: InsertWorkoutLog
 ): Promise<Result<WorkoutLog[]>> {
   const upExercise: any = {};
 
-  upExercise.workout_id = update.workout_id;
-  upExercise.exercise_id = update.exercise_id;
-  upExercise.set_index = update.set_index;
+  if (update.workout_id !== undefined)
+    upExercise.workout_id = update.workout_id;
+  if (update.exercise_id !== undefined)
+    upExercise.exercise_id = update.exercise_id;
+  if (update.set_index !== undefined) upExercise.set_index = update.set_index;
   if (update.reps_completed !== undefined)
     upExercise.reps_completed = update.reps_completed;
   if (update.weight_kg !== undefined) upExercise.weight_kg = update.weight_kg;
@@ -68,13 +71,11 @@ export async function updateWorkoutExerciseLogSet(
     .update(upExercise)
     .eq("workout_id", workout_id)
     .eq("exercise_id", exercise_id)
-    .eq("created_at", update.created_at)
+    .eq("created_at", created_at)
     .eq("set_index", set_index)
     .select();
 
   if (error) return { data: null, error: error.message };
-
-  console.log(data);
 
   return { data: data as WorkoutLog[], error: null };
 }

@@ -49,7 +49,6 @@ export default function ExerciseList({
           return;
         }
 
-        console.log("data = ", data);
         if (data) {
           const newMap = new Map<string, Logs[]>();
 

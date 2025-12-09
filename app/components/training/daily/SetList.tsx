@@ -17,29 +17,39 @@ export default function SetListAdd({ info }: { info: WorkoutLog[] }) {
   }, []);
 
   const deleteSet = async (id: number) => {
-    if (id != sets.length - 1) {
-      sets.forEach((set) => {
-        if (set.id > id) {
-          const { error } = await updateWorkoutExerciseLogSet(
-            set.workout_id.id,
-            set.exercise_id.exercise_id,
-            set.set_index,
-            {
-              set_index: set.set_index - 1,
-              workout_id: set.workout_id.id,
-              exercise_id: set.exercise_id.exercise_id,
-              created_at: set.created_at,
-            }
-          );
-          if (error) {
-            Alert.alert(error);
-            return;
-          }
-          set.set_index = set.set_index - 1;
+    let updateSet = [...sets];
+
+    const indexDel = updateSet.findIndex((set) => set.id === id);
+
+    updateSet = updateSet.filter((set) => set.id !== id);
+
+    const reinitSets: WorkoutLog[] = [];
+
+    for (let i = 0; i < updateSet.length; i++) {
+      const set = updateSet[i];
+
+      let newIndex = set.set_index;
+
+      if (set.set_index > indexDel) {
+        newIndex -= 1;
+
+        const { error } = await updateWorkoutExerciseLogSet(
+          set.workout_id.id,
+          set.exercise_id.exercise_id,
+          set.set_index,
+          set.created_at,
+          { set_index: newIndex }
+        );
+
+        if (error) {
+          Alert.alert(error);
+          return;
         }
-      });
+      }
+      reinitSets.push({ ...set, set_index: newIndex });
     }
-    setSets((prev) => prev.filter((s) => s.id != id));
+
+    setSets(reinitSets);
   };
 
   const renderList = useCallback(

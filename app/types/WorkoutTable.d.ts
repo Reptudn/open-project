@@ -44,10 +44,10 @@ interface WorkoutLog {
 }
 
 interface InsertWorkoutLog {
-  workout_id: number;
-  exercise_id: string;
-  set_index: number;
+  workout_id?: number;
+  exercise_id?: string;
+  set_index?: number;
   reps_completed?: number;
   weight_kg?: number;
-  created_at: string;
+  created_at?: string;
 }

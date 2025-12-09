@@ -4,13 +4,7 @@ import { getWorkoutLogs } from "@/lib/api/workout/workoutSelect";
 import { updateWorkoutExerciseLogSet } from "@/lib/api/workout/workoutUpdate";
 import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
 import { useEffect, useState } from "react";
-import {
-  View,
-  Button,
-  Text,
-  StyleSheet,
-  Alert,
-} from "react-native";
+import { View, Button, Text, StyleSheet, Alert } from "react-native";
 
 type SetRow = {
   setNumber: number;
@@ -94,23 +88,17 @@ export default function ExerciseSheet(test: { exercise: WorkoutExercise }) {
       return copy;
     });
 
-    console.log(`value = ${value}`);
-    console.log(`field = ${field}`);
     const { error } = await updateWorkoutExerciseLogSet(
+      test.exercise.workout_id.id,
+      test.exercise.exercise_id.exercise_id,
+      index,
+      new Date().toISOString().split("T")[0],
       field === "reps"
         ? {
-            workout_id: test.exercise.workout_id.id,
-            exercise_id: test.exercise.exercise_id.exercise_id,
-            set_index: index,
             reps_completed: Number(value),
-            created_at: new Date().toISOString().split("T")[0],
           }
         : {
-            workout_id: test.exercise.workout_id.id,
-            exercise_id: test.exercise.exercise_id.exercise_id,
-            set_index: index,
             weight_kg: Number(value),
-            created_at: new Date().toISOString().split("T")[0],
           }
     );
 
