@@ -25,6 +25,10 @@ export default function MealEntry({
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
 
+  if (!entry) {
+    return <Text>No Meal Entry</Text>;
+  }
+
   const product = entry.barcode_id;
   if (product == null) {
     return (

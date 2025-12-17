@@ -75,6 +75,8 @@ function AddMeal({
       }
     } catch (error) {
       console.error("Barcode scan failed:", error);
+    } finally {
+      sheetRef.current?.expand();
     }
   };
 
