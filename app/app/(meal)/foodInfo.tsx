@@ -2,7 +2,7 @@ import GymView from "@/components/ui/GymView";
 import { GymText, GymTitle } from "@/components/ui/Text";
 import { getThemeColor } from "@/constants/theme";
 import { MealType } from "@/types/FoodData.d";
-import { DBProduct } from "@/types/Meals.d";
+import { DBProduct, FoodsTableEntry } from "@/types/Meals.d";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { router, useLocalSearchParams } from "expo-router";
 import {
@@ -13,10 +13,11 @@ import {
   StyleSheet,
   Alert,
   ActivityIndicator,
+  SafeAreaView,
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { useRef, useState } from "react";
-import { addMeal } from "@/lib/api/daily/food_tracking";
+import { addMeal, editMeal } from "@/lib/api/daily/food_tracking";
 import BottomSheet, {
   BottomSheetTextInput,
   BottomSheetView,
@@ -24,6 +25,7 @@ import BottomSheet, {
 import { GymButtonFullWidth } from "@/components/ui/Button";
 import DropDownPicker from "react-native-dropdown-picker";
 import { GymBr } from "@/components/ui/Br";
+import { Router } from "lucide-react-native";
 
 export default function FoodInfo() {
   const theme = getThemeColor(useColorScheme());
@@ -52,20 +54,20 @@ export default function FoodInfo() {
 
   let nutriments: any;
 
-  const prod = JSON.parse(product as string) as DBProduct;
-  nutriments = prod.nutriments;
+  const prod = JSON.parse(product as string) as FoodsTableEntry;
+  nutriments = prod.barcode_id.nutriments;
 
   // Helper functions to safely access properties
   const getProductName = () => {
-    return prod.name || "Unknown Product";
+    return prod.barcode_id.name || "Unknown Product";
   };
 
   const getBrands = () => {
-    return prod.brand || "N/A";
+    return prod.barcode_id.brand || "N/A";
   };
 
   const getProductCode = () => {
-    return prod.barcode;
+    return prod.barcode_id.barcode;
   };
 
   // Add meal functionality
@@ -81,6 +83,32 @@ export default function FoodInfo() {
         return MealType.SNACK;
       default:
         return MealType.SNACK;
+    }
+  };
+
+  const handleEditMeal = async () => {
+    if (!amount || Number(amount) <= 0) {
+      Alert.alert("Invalid Amount", "Please enter a valid amount");
+      return;
+    }
+
+    setIsAdding(true);
+    try {
+      const amountInGrams =
+        unit === "grams" ? Number(amount) : Number(amount) * 100;
+      const targetDate = date ? new Date(date) : new Date();
+      const targetMealType = getMealTypeFromParams();
+
+      await editMeal(prod.id, {
+        amount_in_g: amountInGrams,
+      });
+      console.log("Edited Meal Successfully");
+      router.back();
+    } catch (error) {
+      console.error("Failed to edit meal:", error);
+      Alert.alert("Error", "Failed to edit food in meal");
+    } finally {
+      setIsAdding(false);
     }
   };
 
@@ -173,221 +201,272 @@ export default function FoodInfo() {
   );
 
   return (
-    <GymView>
-      <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-        <Ionicons name="arrow-back" size={24} color={theme.text} />
-      </TouchableOpacity>
-
-      <View style={styles.header}>
-        <GymTitle style={{ color: theme.text }}>
-          {getProductName()} (adding to{" "}
-          {mealType ? mealType.toLowerCase() : "unknown meal"})
-        </GymTitle>
-        <GymText style={{ color: theme.text, opacity: 0.7 }}>
-          {getBrands()}
-        </GymText>
-      </View>
-
-      <ScrollView
-        style={styles.scrollView}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Basic Nutrition - Per 100g */}
-        <SectionHeader title="Nutrition Facts (per 100g)" />
-        <View
-          style={[
-            styles.section,
-            { backgroundColor: isDark ? "#1e1e1e" : "#fff" },
-          ]}
+    <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
+      <GymView>
+        <TouchableOpacity
+          onPress={() => router.back()}
+          style={styles.backButton}
         >
-          <NutrientRow
-            label="Energy"
-            value={nutriments?.["energy-kcal_100g"]}
-            unit=" kcal"
-            icon="flame"
-          />
-          <NutrientRow
-            label="Proteins"
-            value={nutriments?.["proteins_100g"]}
-            icon="barbell"
-          />
-          <NutrientRow
-            label="Carbohydrates"
-            value={nutriments?.["carbohydrates_100g"]}
-            icon="water"
-          />
-          <NutrientRow
-            label="Sugars"
-            value={nutriments?.["sugars_100g"]}
-            icon="cube"
-          />
-          <NutrientRow
-            label="Fat"
-            value={nutriments?.["fat_100g"]}
-            icon="leaf"
-          />
-          <NutrientRow
-            label="Saturated Fat"
-            value={nutriments?.["saturated-fat_100g"]}
-            icon="warning"
-          />
-          <NutrientRow
-            label="Fiber"
-            value={nutriments?.["fiber_100g"]}
-            icon="git-branch"
-          />
-          <NutrientRow
-            label="Salt"
-            value={nutriments?.["salt_100g"]}
-            icon="diamond"
-          />
-          <NutrientRow
-            label="Sodium"
-            value={nutriments?.["sodium_100g"]}
-            unit=" mg"
-            icon="diamond-outline"
-          />
+          <Ionicons name="arrow-back" size={24} color={theme.text} />
+        </TouchableOpacity>
+
+        <View style={styles.header}>
+          <GymTitle style={{ color: theme.text }}>
+            {getProductName()} ({isEditMode ? "editing" : "adding to"}{" "}
+            {mealType ? mealType.toLowerCase() : "unknown meal"})
+          </GymTitle>
+          <GymText style={{ color: theme.text, opacity: 0.7 }}>
+            {getBrands()}
+          </GymText>
         </View>
 
-        {/* Vitamins */}
-        {(nutriments?.["vitamin-b2_100g"] ||
-          nutriments?.["vitamin-b6_100g"] ||
-          nutriments?.["vitamin-b12_100g"] ||
-          nutriments?.["vitamin-pp_100g"]) && (
-          <>
-            <SectionHeader title="Vitamins (per 100g)" />
-            <View
-              style={[
-                styles.section,
-                { backgroundColor: isDark ? "#1e1e1e" : "#fff" },
-              ]}
-            >
-              <NutrientRow
-                label="Vitamin B2 (Riboflavin)"
-                value={nutriments?.["vitamin-b2_100g"]}
-                unit=" mg"
-                icon="medical"
-              />
-              <NutrientRow
-                label="Vitamin B6"
-                value={nutriments?.["vitamin-b6_100g"]}
-                unit=" mg"
-                icon="medical"
-              />
-              <NutrientRow
-                label="Vitamin B12"
-                value={nutriments?.["vitamin-b12_100g"]}
-                unit=" μg"
-                icon="medical"
-              />
-              <NutrientRow
-                label="Vitamin PP (Niacin)"
-                value={nutriments?.["vitamin-pp_100g"]}
-                unit=" mg"
-                icon="medical"
-              />
-              <NutrientRow
-                label="Biotin"
-                value={nutriments?.["biotin_100g"]}
-                unit=" μg"
-                icon="medical"
-              />
-            </View>
-          </>
-        )}
-      </ScrollView>
-      <BottomSheet
-        ref={bottomSheetRef}
-        snapPoints={["13%", "27%"]}
-        android_keyboardInputMode="adjustResize"
-        enablePanDownToClose={false}
-        index={0}
-        handleIndicatorStyle={{ backgroundColor: theme.text }}
-        backgroundStyle={{ backgroundColor: theme.background }}
-      >
-        {!isEditMode ? (
-          <BottomSheetView style={styles.bottomSheetContent}>
-            <GymButtonFullWidth onPress={handleAddToMeal} disabled={isAdding}>
-              {isAdding ? (
-                <ActivityIndicator size="small" color="#fff" />
-              ) : (
-                <GymText>
-                  Add {amount}
-                  {unit === "grams" ? "g" : " portions"} to{" "}
-                  {mealType?.toLowerCase() || "meal"}
-                </GymText>
-              )}
-            </GymButtonFullWidth>
-            {/* Amount Input */}
-            <GymBr />
-            <View style={styles.bottomSheetRow}>
-              <View style={styles.inputRow}>
-                <BottomSheetTextInput
-                  style={{
-                    borderColor: isDark ? "#444" : "#ddd",
-                    backgroundColor: isDark ? "#2a2a2a" : "#f8f8f8",
-                    color: theme.text,
-                  }}
-                  value={amount}
-                  onChangeText={setAmount}
-                  keyboardType="numeric"
-                  placeholder="100"
-                  placeholderTextColor={isDark ? "#666" : "#999"}
+        <ScrollView
+          style={styles.scrollView}
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Basic Nutrition - Per 100g */}
+          <SectionHeader title="Nutrition Facts (per 100g)" />
+          <View
+            style={[
+              styles.section,
+              { backgroundColor: isDark ? "#1e1e1e" : "#fff" },
+            ]}
+          >
+            <NutrientRow
+              label="Energy"
+              value={nutriments?.["energy-kcal_100g"]}
+              unit=" kcal"
+              icon="flame"
+            />
+            <NutrientRow
+              label="Proteins"
+              value={nutriments?.["proteins_100g"]}
+              icon="barbell"
+            />
+            <NutrientRow
+              label="Carbohydrates"
+              value={nutriments?.["carbohydrates_100g"]}
+              icon="water"
+            />
+            <NutrientRow
+              label="Sugars"
+              value={nutriments?.["sugars_100g"]}
+              icon="cube"
+            />
+            <NutrientRow
+              label="Fat"
+              value={nutriments?.["fat_100g"]}
+              icon="leaf"
+            />
+            <NutrientRow
+              label="Saturated Fat"
+              value={nutriments?.["saturated-fat_100g"]}
+              icon="warning"
+            />
+            <NutrientRow
+              label="Fiber"
+              value={nutriments?.["fiber_100g"]}
+              icon="git-branch"
+            />
+            <NutrientRow
+              label="Salt"
+              value={nutriments?.["salt_100g"]}
+              icon="diamond"
+            />
+            <NutrientRow
+              label="Sodium"
+              value={nutriments?.["sodium_100g"]}
+              unit=" mg"
+              icon="diamond-outline"
+            />
+          </View>
+
+          {/* Vitamins */}
+          {(nutriments?.["vitamin-b2_100g"] ||
+            nutriments?.["vitamin-b6_100g"] ||
+            nutriments?.["vitamin-b12_100g"] ||
+            nutriments?.["vitamin-pp_100g"]) && (
+            <>
+              <SectionHeader title="Vitamins (per 100g)" />
+              <View
+                style={[
+                  styles.section,
+                  { backgroundColor: isDark ? "#1e1e1e" : "#fff" },
+                ]}
+              >
+                <NutrientRow
+                  label="Vitamin B2 (Riboflavin)"
+                  value={nutriments?.["vitamin-b2_100g"]}
+                  unit=" mg"
+                  icon="medical"
                 />
-                <DropDownPicker
-                  open={openDropdownPicker}
-                  value={unit}
-                  items={unitItems}
-                  setOpen={setOpenDropdownPicker}
-                  setValue={setUnit}
-                  setItems={setUnitItems}
-                  style={{
-                    borderColor: isDark ? "#444" : "#ddd",
-                    backgroundColor: isDark ? "#2a2a2a" : "#f8f8f8",
-                  }}
-                  textStyle={{ color: theme.text }}
-                  dropDownContainerStyle={{
-                    borderColor: isDark ? "#444" : "#ddd",
-                    backgroundColor: isDark ? "#2a2a2a" : "#f8f8f8",
-                  }}
+                <NutrientRow
+                  label="Vitamin B6"
+                  value={nutriments?.["vitamin-b6_100g"]}
+                  unit=" mg"
+                  icon="medical"
+                />
+                <NutrientRow
+                  label="Vitamin B12"
+                  value={nutriments?.["vitamin-b12_100g"]}
+                  unit=" μg"
+                  icon="medical"
+                />
+                <NutrientRow
+                  label="Vitamin PP (Niacin)"
+                  value={nutriments?.["vitamin-pp_100g"]}
+                  unit=" mg"
+                  icon="medical"
+                />
+                <NutrientRow
+                  label="Biotin"
+                  value={nutriments?.["biotin_100g"]}
+                  unit=" μg"
+                  icon="medical"
                 />
               </View>
-            </View>
+            </>
+          )}
+        </ScrollView>
+        <BottomSheet
+          ref={bottomSheetRef}
+          snapPoints={["13%", "27%"]}
+          android_keyboardInputMode="adjustResize"
+          enablePanDownToClose={false}
+          index={0}
+          handleIndicatorStyle={{ backgroundColor: theme.text }}
+          backgroundStyle={{ backgroundColor: theme.background }}
+        >
+          {!isEditMode ? (
+            <BottomSheetView style={styles.bottomSheetContent}>
+              <GymButtonFullWidth onPress={handleAddToMeal} disabled={isAdding}>
+                {isAdding ? (
+                  <ActivityIndicator size="small" color="#fff" />
+                ) : (
+                  <GymText>
+                    Add {amount}
+                    {unit === "grams" ? "g" : " portions"} to{" "}
+                    {mealType?.toLowerCase() || "meal"}
+                  </GymText>
+                )}
+              </GymButtonFullWidth>
+              {/* Amount Input */}
+              <GymBr />
+              <View style={styles.bottomSheetRow}>
+                <View style={styles.inputRow}>
+                  <BottomSheetTextInput
+                    style={{
+                      borderColor: isDark ? "#444" : "#ddd",
+                      backgroundColor: isDark ? "#2a2a2a" : "#f8f8f8",
+                      color: theme.text,
+                    }}
+                    value={amount}
+                    onChangeText={setAmount}
+                    keyboardType="numeric"
+                    placeholder="100"
+                    placeholderTextColor={isDark ? "#666" : "#999"}
+                  />
+                  <DropDownPicker
+                    open={openDropdownPicker}
+                    value={unit}
+                    items={unitItems}
+                    setOpen={setOpenDropdownPicker}
+                    setValue={setUnit}
+                    setItems={setUnitItems}
+                    style={{
+                      borderColor: isDark ? "#444" : "#ddd",
+                      backgroundColor: isDark ? "#2a2a2a" : "#f8f8f8",
+                    }}
+                    textStyle={{ color: theme.text }}
+                    dropDownContainerStyle={{
+                      borderColor: isDark ? "#444" : "#ddd",
+                      backgroundColor: isDark ? "#2a2a2a" : "#f8f8f8",
+                    }}
+                  />
+                </View>
+              </View>
 
-            {/* Nutrition Preview */}
-            {amount && Number(amount) > 0 && (
-              <GymText
-                style={{ marginTop: 8, textAlign: "center", color: theme.text }}
-              >
-                You will add: {calculateNutritionPreview().calories.toFixed(0)}{" "}
-                kcal
-              </GymText>
-            )}
-          </BottomSheetView>
-        ) : (
-          <BottomSheetView style={{ height: 16 }}>
-            {/* In edit mode */}
-            <BottomSheetTextInput value="100" />
-            <GymButtonFullWidth
-              onPress={() => {
-                router.back();
-              }}
-              disabled={isAdding}
-            >
-              {isAdding ? (
-                <ActivityIndicator size="small" color="#fff" />
-              ) : (
-                <GymText>
-                  Update {amount}
-                  {unit === "grams" ? "g" : " portions"} to{" "}
-                  {mealType?.toLowerCase() || "meal"}
+              {/* Nutrition Preview */}
+              {amount && Number(amount) > 0 && (
+                <GymText
+                  style={{
+                    marginTop: 8,
+                    textAlign: "center",
+                    color: theme.text,
+                  }}
+                >
+                  You will add:{" "}
+                  {calculateNutritionPreview().calories.toFixed(0)} kcal
                 </GymText>
               )}
-            </GymButtonFullWidth>
-          </BottomSheetView>
-        )}
-      </BottomSheet>
-    </GymView>
+            </BottomSheetView>
+          ) : (
+            <BottomSheetView style={styles.bottomSheetContent}>
+              <GymButtonFullWidth onPress={handleEditMeal} disabled={isAdding}>
+                {isAdding ? (
+                  <ActivityIndicator size="small" color="#fff" />
+                ) : (
+                  <GymText>
+                    Submit new Amount: {amount}
+                    {unit === "grams" ? "g" : " portions"} to{" "}
+                    {mealType?.toLowerCase() || "meal"}
+                  </GymText>
+                )}
+              </GymButtonFullWidth>
+              {/* Amount Input */}
+              <GymBr />
+              <View style={styles.bottomSheetRow}>
+                <View style={styles.inputRow}>
+                  <BottomSheetTextInput
+                    style={{
+                      borderColor: isDark ? "#444" : "#ddd",
+                      backgroundColor: isDark ? "#2a2a2a" : "#f8f8f8",
+                      color: theme.text,
+                    }}
+                    value={amount}
+                    onChangeText={setAmount}
+                    keyboardType="numeric"
+                    placeholder="100"
+                    placeholderTextColor={isDark ? "#666" : "#999"}
+                  />
+                  <DropDownPicker
+                    open={openDropdownPicker}
+                    value={unit}
+                    items={unitItems}
+                    setOpen={setOpenDropdownPicker}
+                    setValue={setUnit}
+                    setItems={setUnitItems}
+                    style={{
+                      borderColor: isDark ? "#444" : "#ddd",
+                      backgroundColor: isDark ? "#2a2a2a" : "#f8f8f8",
+                    }}
+                    textStyle={{ color: theme.text }}
+                    dropDownContainerStyle={{
+                      borderColor: isDark ? "#444" : "#ddd",
+                      backgroundColor: isDark ? "#2a2a2a" : "#f8f8f8",
+                    }}
+                  />
+                </View>
+              </View>
+
+              {/* Nutrition Preview */}
+              {amount && Number(amount) > 0 && (
+                <GymText
+                  style={{
+                    marginTop: 8,
+                    textAlign: "center",
+                    color: theme.text,
+                  }}
+                >
+                  You will change it to:{" "}
+                  {calculateNutritionPreview().calories.toFixed(0)} kcal
+                </GymText>
+              )}
+            </BottomSheetView>
+          )}
+        </BottomSheet>
+      </GymView>
+    </SafeAreaView>
   );
 }
 
